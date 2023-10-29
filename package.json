@@ -1,7 +1,7 @@
 {
   "name": "@learlify/dashboard",
   "scripts": {
-    "start": "webpack serve",
+    "start": "cross-env NODE_ENV=development webpack serve --port 9004 --env development",
     "start:standalone": "webpack serve --env standalone",
     "build": "concurrently npm:build:*",
     "build:webpack": "webpack --mode=production",
