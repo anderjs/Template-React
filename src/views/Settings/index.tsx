@@ -9,7 +9,7 @@ import {
   selectedCountryTemplate,
 } from "@b1b2/components.ui.country";
 
-import { alias } from "@/lang";
+import { alias } from "@lang";
 
 const Settings: React.FC = () => {
   const { t } = useTranslation();
@@ -17,6 +17,14 @@ const Settings: React.FC = () => {
   const [country, setCountry] = React.useState<ICountry>();
 
   const countries: ICountry[] = [
+    {
+      code: "AR",
+      name: t(alias["dashboard.settings.country.ar"]),
+    },
+    {
+      code: "CO",
+      name: t(alias["dashboard.settings.country.co"]),
+    },
     {
       code: "ES",
       name: t(alias["dashboard.settings.country.es"]),

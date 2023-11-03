@@ -5,8 +5,8 @@
     "declarationDir": "dist",
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"]
-    },
+      "@*": ["./src/*"]
+    }
   },
   "files": ["src/learlify-dashboard.tsx"],
   "include": ["src/**/*"],
