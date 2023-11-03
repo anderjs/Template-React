@@ -14,7 +14,7 @@
     "prepare": "husky install",
     "coverage": "cross-env BABEL_ENV=test jest --coverage",
     "build:types": "tsc",
-    "build:langs": "cross-env NODE_ENV=development tsc i18n.ts && node i18n.js && del i18n.js"
+    "build:langs": "cross-env NODE_ENV=development tsc i18n.ts && node i18n.js && del i18n.js && npm run format"
   },
   "devDependencies": {
     "@babel/core": "^7.15.0",

@@ -1,4 +1,6 @@
 export const alias = {
+  ["dashboard.settings.countries.placeholder"]:
+    "dashboard.settings.countries.placeholder",
   ["dashboard.settings.country.ca"]: "dashboard.settings.country.ca",
   ["dashboard.settings.country.ec"]: "dashboard.settings.country.ec",
   ["dashboard.settings.country.us"]: "dashboard.settings.country.us",

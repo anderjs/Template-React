@@ -16,28 +16,44 @@ const Settings: React.FC = () => {
 
   const [country, setCountry] = React.useState<ICountry>();
 
-  const countries: ICountry[] = [
-    {
-      code: "AR",
-      name: t(alias["dashboard.settings.country.ar"]),
-    },
-    {
-      code: "CO",
-      name: t(alias["dashboard.settings.country.co"]),
-    },
-    {
-      code: "ES",
-      name: t(alias["dashboard.settings.country.es"]),
-    },
-    {
-      code: "FR",
-      name: t(alias["dashboard.settings.country.fr"]),
-    },
-  ];
-
+  /**
+   * @description
+   * Changes the current country.
+   */
   const handleChangeCountry = (option: DropdownChangeEvent) => {
     setCountry(option.value);
   };
+
+  /**
+   * @description
+   * Render countries translated.
+   */
+  const countries: ICountry[] = React.useMemo(() => {
+    return [
+      {
+        code: "AR",
+        name: t(alias["dashboard.settings.country.ar"]),
+      },
+      {
+        code: "CO",
+        name: t(alias["dashboard.settings.country.co"]),
+      },
+      {
+        code: "ES",
+        name: t(alias["dashboard.settings.country.es"]),
+      },
+      {
+        code: "FR",
+        name: t(alias["dashboard.settings.country.fr"]),
+      },
+    ];
+  }, [t]);
+
+  /**
+   * @description
+   * @alias SelectText - as "Select a country".
+   */
+  const placeholder = t(alias["dashboard.settings.countries.placeholder"]);
 
   return (
     <React.Fragment>
@@ -46,11 +62,11 @@ const Settings: React.FC = () => {
         value={country}
         options={countries}
         optionLabel="name"
-        placeholder="Selecciona un País"
+        placeholder={placeholder}
+        className="w-1/4 md:w-14rem"
         onChange={handleChangeCountry}
         itemTemplate={countryOptionTemplate}
         valueTemplate={selectedCountryTemplate}
-        className="w-1/4 md:w-14rem"
       />
       <div />
     </React.Fragment>
