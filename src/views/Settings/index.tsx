@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { Dropdown, DropdownChangeEvent } from "primereact/dropdown";
 
 // - Hooks
@@ -8,19 +9,23 @@ import {
   selectedCountryTemplate,
 } from "@b1b2/components.ui.country";
 
+import { alias } from "@/lang";
+
 const Settings: React.FC = () => {
+  const { t } = useTranslation();
+
   const [country, setCountry] = React.useState<ICountry>();
 
-  const countries = React.useRef<ICountry[]>([
+  const countries: ICountry[] = [
     {
       code: "ES",
-      name: "España",
+      name: t(alias["dashboard.settings.country.es"]),
     },
     {
       code: "FR",
-      name: "France",
+      name: t(alias["dashboard.settings.country.fr"]),
     },
-  ]);
+  ];
 
   const handleChangeCountry = (option: DropdownChangeEvent) => {
     setCountry(option.value);
@@ -31,7 +36,7 @@ const Settings: React.FC = () => {
       <br />
       <Dropdown
         value={country}
-        options={countries.current}
+        options={countries}
         optionLabel="name"
         placeholder="Selecciona un País"
         onChange={handleChangeCountry}

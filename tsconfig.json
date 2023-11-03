@@ -2,7 +2,13 @@
   "extends": "ts-config-single-spa",
   "compilerOptions": {
     "jsx": "react-jsx",
-    "declarationDir": "dist"
+    "declarationDir": "dist",
+    "baseUrl": "./",
+    "paths": {
+      "@/*": ["src/*"]
+    },
+    "outDir": "./build/",
+    "moduleResolution": "Node"
   },
   "files": ["src/learlify-dashboard.tsx"],
   "include": ["src/**/*"],
