@@ -1,6 +1,7 @@
 const { merge } = require("webpack-merge");
 const { DefinePlugin } = require("webpack");
 const { ModuleFederationPlugin } = require("webpack").container;
+const TsconfigPathsPlugin = require("tsconfig-paths-webpack-plugin");
 const singleSpaDefaults = require("webpack-config-single-spa-react-ts");
 
 const path = require("path");
@@ -36,11 +37,7 @@ module.exports = (webpackConfigEnv, argv) => {
 
   return merge(defaultConfig, {
     resolve: {
-      alias: {
-        extensions: [".ts", ".js", ".tsx", ".jsx"],
-        langs: path.resolve(__dirname, "src/lang/"),
-        router: path.resolve(__dirname, "src/router/"),
-      },
+      plugins: [new TsconfigPathsPlugin()],
     },
     plugins: [
       new DefinePlugin({

@@ -3,14 +3,12 @@
   "compilerOptions": {
     "jsx": "react-jsx",
     "declarationDir": "dist",
-    "baseUrl": "./",
+    "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": ["./src/*"]
     },
-    "outDir": "./build/",
-    "moduleResolution": "Node"
   },
   "files": ["src/learlify-dashboard.tsx"],
   "include": ["src/**/*"],
-  "exclude": ["src/**/*.test*"]
+  "exclude": ["src/**/*.test*", "node_modules"]
 }
