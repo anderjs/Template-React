@@ -13,7 +13,8 @@
     "watch-tests": "cross-env BABEL_ENV=test jest --watch",
     "prepare": "husky install",
     "coverage": "cross-env BABEL_ENV=test jest --coverage",
-    "build:types": "tsc"
+    "build:types": "tsc",
+    "build:langs": "cross-env NODE_ENV=development tsc i18n.ts && node i18n.js && del i18n.js"
   },
   "devDependencies": {
     "@babel/core": "^7.15.0",
@@ -38,6 +39,7 @@
     "identity-obj-proxy": "^3.0.0",
     "jest": "^27.0.6",
     "jest-cli": "^27.0.6",
+    "node-fetch": "^3.3.2",
     "prettier": "^2.3.2",
     "pretty-quick": "^3.1.1",
     "ts-config-single-spa": "^3.0.0",
@@ -54,6 +56,7 @@
     "@b1b2/components.hooks.use-form": "^0.0.2",
     "@b1b2/components.providers.connector": "^0.0.1",
     "@b1b2/components.providers.https": "^0.0.3",
+    "@b1b2/components.ui.country": "^0.0.2",
     "@tanstack/react-query": "^4.32.6",
     "@types/jest": "^27.0.1",
     "@types/react": "^17.0.19",

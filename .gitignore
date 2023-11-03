@@ -74,3 +74,6 @@ dist
 .env.development
 .env.production
 .env.staging
+
+# File created for push keys
+i18n.js
