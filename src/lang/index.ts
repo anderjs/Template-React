@@ -6,6 +6,7 @@ export const alias = {
   ["dashboard.settings.country.us"]: "dashboard.settings.country.us",
   ["dashboard.settings.country.sv"]: "dashboard.settings.country.sv",
   ["dashboard.settings.country.uy"]: "dashboard.settings.country.uy",
+  ["dashboard.welcome"]: "dashboard.welcome",
   ["dashboard.settings.country.cl"]: "dashboard.settings.country.cl",
   ["dashboard.settings.country.py"]: "dashboard.settings.country.py",
   ["dashboard.settings.country.mx"]: "dashboard.settings.country.mx",
@@ -16,5 +17,6 @@ export const alias = {
   ["dashboard.settings.country.br"]: "dashboard.settings.country.br",
   ["dashboard.settings.country.ar"]: "dashboard.settings.country.ar",
   ["dashboard.settings.country.pa"]: "dashboard.settings.country.pa",
+  ["dashboard.settings"]: "dashboard.settings",
   ["dashboard.settings.country.pe"]: "dashboard.settings.country.pe",
 };

@@ -77,7 +77,10 @@
     "react-i18next": "^13.3.1",
     "react-router-dom": "^6.17.0",
     "single-spa": "^5.9.3",
-    "single-spa-react": "^4.3.1"
+    "single-spa-react": "^4.3.1",
+    "styled-components": "^6.1.0",
+    "tailwind-styled-components": "^2.2.0",
+    "tailwindcss-classnames": "^3.1.0"
   },
   "types": "dist/learlify-dashboard.d.ts"
 }

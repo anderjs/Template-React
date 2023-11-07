@@ -12,8 +12,17 @@ import {
 import { alias } from "@lang";
 
 const Settings: React.FC = () => {
+  /**
+   * @description
+   * Translator
+   * @requires i18next
+   */
   const { t } = useTranslation();
 
+  /**
+   * @description
+   * Set the current country.
+   */
   const [country, setCountry] = React.useState<ICountry>();
 
   /**
@@ -35,8 +44,24 @@ const Settings: React.FC = () => {
         name: t(alias["dashboard.settings.country.ar"]),
       },
       {
+        code: "BR",
+        name: t(alias["dashboard.settings.country.br"]),
+      },
+      {
+        code: "CA",
+        name: t(alias["dashboard.settings.country.ca"]),
+      },
+      {
+        code: "CL",
+        name: t(alias["dashboard.settings.country.cl"]),
+      },
+      {
         code: "CO",
         name: t(alias["dashboard.settings.country.co"]),
+      },
+      {
+        code: "EC",
+        name: t(alias["dashboard.settings.country.ec"]),
       },
       {
         code: "ES",
@@ -45,6 +70,10 @@ const Settings: React.FC = () => {
       {
         code: "FR",
         name: t(alias["dashboard.settings.country.fr"]),
+      },
+      {
+        code: "MX",
+        name: t(alias["dashboard.settings.country.mx"]),
       },
     ];
   }, [t]);
