@@ -6,6 +6,9 @@ import Admin from "@views/Admin";
 import Settings from "@views/Settings";
 import Dashboard from "@views/Dashboard";
 
+// - Admin Views
+import Coupon from "@views/Coupon";
+
 /**
  * @description
  * React router dom, installing libraries here.
@@ -16,6 +19,7 @@ export const Router: React.FC = React.memo(() => {
       <Routes>
         <Route path="/" element={<Dashboard />} />
         <Route path="/admin" element={<Admin />} />
+        <Route path="/coupons" element={<Coupon />} />
         <Route path="/settings" element={<Settings />} />
       </Routes>
     </BrowserRouter>

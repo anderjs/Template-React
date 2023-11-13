@@ -1,5 +1,5 @@
 import React from "react";
-import { Connector } from "@b1b2/components.providers.connector";
+import { Host } from "@learlifyweb/providers.host";
 
 import { I18nextProvider } from "react-i18next";
 import { PrimeReactProvider } from "primereact/api";
@@ -15,13 +15,13 @@ const Root = () => {
   return (
     <React.Suspense fallback={<div />}>
       <I18nextProvider i18n={i18n}>
-        <Connector app={bootstrap}>
+        <Host app={bootstrap}>
           <PrimeReactProvider>
             <QueryClientProvider client={https}>
               <Router />
             </QueryClientProvider>
           </PrimeReactProvider>
-        </Connector>
+        </Host>
       </I18nextProvider>
     </React.Suspense>
   );

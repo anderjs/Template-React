@@ -25,3 +25,5 @@ export const WishText = tw(WishTextContainer)`
   text-base
   font-normal
 `;
+
+export const smile = "fa-regular fa-face-smile-beam ml-1";
