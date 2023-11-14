@@ -1,6 +1,8 @@
 import React from "react";
 import { Host } from "@learlifyweb/providers.host";
 
+import { navigateToUrl } from "single-spa";
+
 import { I18nextProvider } from "react-i18next";
 import { PrimeReactProvider } from "primereact/api";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
@@ -12,10 +14,14 @@ import { Router } from "./router";
 import i18n from "./root.i18next";
 
 const Root = () => {
+  const handleLogout = () => {
+    navigateToUrl("/login");
+  };
+
   return (
     <React.Suspense fallback={<div />}>
       <I18nextProvider i18n={i18n}>
-        <Host app={bootstrap}>
+        <Host app={bootstrap} onLogout={handleLogout}>
           <PrimeReactProvider>
             <QueryClientProvider client={https}>
               <Router />

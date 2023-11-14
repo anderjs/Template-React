@@ -8,6 +8,7 @@ import { useNodes } from "@learlifyweb/providers.services";
 
 // - Https
 import { httpsClient } from "@learlifyweb/providers.https";
+import { Loading } from "@learlifyweb/providers.loading";
 
 // - Styles
 import { Toast } from "primereact/toast";
@@ -156,6 +157,10 @@ const Admin: React.FC = () => {
               message.current?.clear();
             },
           },
+          {
+            label: "Usuario",
+            icon: PrimeIcons.USER,
+          },
         ],
       },
       {
@@ -203,7 +208,7 @@ const Admin: React.FC = () => {
           {
             label: "Cupones",
             icon: PrimeIcons.PERCENTAGE,
-            command: () => navigateToUrl("/dashboard/coupon"),
+            command: () => navigateToUrl("/dashboard/coupons"),
           },
           {
             label: "Regalos",
@@ -212,6 +217,10 @@ const Admin: React.FC = () => {
           {
             label: "Paquetes",
             icon: PrimeIcons.CREDIT_CARD,
+          },
+          {
+            label: "Reportes",
+            icon: PrimeIcons.FLAG,
           },
         ],
       },
@@ -257,23 +266,25 @@ const Admin: React.FC = () => {
           </TextTitle>
           <Menubar model={userModelTemplate} />
           <br />
-          <TableTreeStyled
-            paginator
-            rows={10}
-            showGridlines
-            resizableColumns
-            selectionMode="checkbox"
-            value={userNodeRef.nodes}
-            paginatorLeft={paginatorLeft}
-            paginatorRight={paginatorRight}
-            selectionKeys={state.users}
-            paginatorTemplate={paginatorTemplate}
-            onSelectionChange={handleSelectUser}
-            currentPageReportTemplate={pageReportTemplate}
-          >
-            <Column field="firstName" expander sortable />
-            <Column field="email" sortable />
-          </TableTreeStyled>
+          <Loading status={users.isLoading || users.isRefetching}>
+            <TableTreeStyled
+              paginator
+              rows={10}
+              showGridlines
+              resizableColumns
+              selectionMode="checkbox"
+              value={userNodeRef.nodes}
+              paginatorLeft={paginatorLeft}
+              paginatorRight={paginatorRight}
+              selectionKeys={state.users}
+              paginatorTemplate={paginatorTemplate}
+              onSelectionChange={handleSelectUser}
+              currentPageReportTemplate={pageReportTemplate}
+            >
+              <Column field="firstName" expander sortable />
+              <Column field="email" sortable />
+            </TableTreeStyled>
+          </Loading>
         </div>
         <div>
           <TextTitle>
@@ -282,23 +293,25 @@ const Admin: React.FC = () => {
           </TextTitle>
           <Menubar model={professorModelTemplate} />
           <br />
-          <TableTreeStyled
-            paginator
-            rows={10}
-            showGridlines
-            resizableColumns
-            selectionMode="checkbox"
-            value={professorNodeRef.nodes}
-            paginatorLeft={paginatorLeft}
-            paginatorRight={paginatorRight}
-            paginatorTemplate={paginatorTemplate}
-            selectionKeys={state.professors}
-            onSelectionChange={handleSelectProfessor}
-            currentPageReportTemplate={pageReportTemplate}
-          >
-            <Column field="firstName" expander sortable />
-            <Column field="email" sortable />
-          </TableTreeStyled>
+          <Loading status={professors.isLoading || professors.isRefetching}>
+            <TableTreeStyled
+              paginator
+              rows={10}
+              showGridlines
+              resizableColumns
+              selectionMode="checkbox"
+              value={professorNodeRef.nodes}
+              paginatorLeft={paginatorLeft}
+              paginatorRight={paginatorRight}
+              paginatorTemplate={paginatorTemplate}
+              selectionKeys={state.professors}
+              onSelectionChange={handleSelectProfessor}
+              currentPageReportTemplate={pageReportTemplate}
+            >
+              <Column field="firstName" expander sortable />
+              <Column field="email" sortable />
+            </TableTreeStyled>
+          </Loading>
         </div>
       </Container>
     </>
