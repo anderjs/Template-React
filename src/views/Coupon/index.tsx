@@ -1,6 +1,8 @@
 import React from "react";
+import { navigateToUrl } from "single-spa";
+import { PrimeIcons } from "primereact/api";
 
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useHost } from "@learlifyweb/providers.host";
 import { useNodes } from "@learlifyweb/providers.services";
 import { httpsClient } from "@learlifyweb/providers.https";
@@ -9,34 +11,74 @@ import { httpsClient } from "@learlifyweb/providers.https";
 import { CouponQuery } from "@query";
 
 // - Prime
+import { Toast } from "primereact/toast";
 import { Column } from "primereact/column";
 import { Button } from "primereact/button";
 import { Divider } from "primereact/divider";
-import { TieredMenu } from "primereact/tieredmenu";
+import { Menubar } from "primereact/menubar";
+import { TreeNode } from "primereact/treenode";
+import { MenuItem } from "primereact/menuitem";
 import { Loading } from "@learlifyweb/providers.loading";
-import { Container, TableTreeStyled, TextTitle } from "@views/Admin/styles";
+import {
+  Container,
+  TextTitle,
+  ActionTemplate,
+  TableTreeStyled,
+} from "@views/Admin/styles";
+import { styles } from "@views/Create-Coupon/styles";
 
 // - API
 import { request } from "./api/requests";
 import { ICoupon } from "./api/interface";
 
-import { pageReportTemplate, paginatorTemplate } from "@utils";
-import { MenuItem } from "primereact/menuitem";
-import { PrimeIcons } from "primereact/api";
-import { Menubar } from "primereact/menubar";
-import { navigateToUrl } from "single-spa";
+// - Utils
+import { render } from "./utils";
+import { pageReportTemplate, paginatorTemplate, path } from "@utils";
 
 const Coupon: React.FC = () => {
   const { token } = useHost();
 
   /**
    * @description
+   * Message ref.
+   */
+  const message = React.useRef<Toast>();
+
+  /**
+   * @description
    * All coupon information.
    */
   const coupon = useQuery({
-    refetchOnMount: false,
     queryKey: [CouponQuery.DATA],
     queryFn: httpsClient<ICoupon[]>({ token }, request.coupons),
+  });
+
+  /**
+   * @description
+   * Delete coupon service.
+   */
+  const deleteCouponService = useMutation({
+    mutationKey: [CouponQuery.DELETE],
+    mutationFn: ({ id }: Pick<ICoupon, "code" | "id">) => {
+      const query = httpsClient<number>({ token }, request.delete, {
+        params: [id],
+      });
+
+      return query();
+    },
+    onSuccess: (data, { code }) => {
+      if (data?.response) {
+        coupon.refetch();
+
+        message.current?.clear();
+
+        return message.current?.show({
+          summary: code,
+          severity: "success",
+          detail: "Se ha eliminado el código",
+        });
+      }
+    },
   });
 
   /**
@@ -45,13 +87,84 @@ const Coupon: React.FC = () => {
    */
   const { nodes } = useNodes(coupon?.data?.response, {
     key: "code",
-    data: {
-      code: (input) => {
-        return input.code;
-      },
-    },
+    data: render,
     label: (info) => info.code,
   });
+
+  /**
+   * @description
+   * Handle delete nodes.
+   */
+  const handleDeleteNode = React.useCallback(
+    (id: number, code: string) => {
+      message.current?.clear();
+
+      const handleDeleteService = () => {
+        deleteCouponService.mutate({
+          id,
+          code,
+        });
+      };
+
+      return message.current?.show({
+        sticky: true,
+        severity: "info",
+        content: () => (
+          <div className={styles.content}>
+            <div className={styles.center}>
+              ¿Desea eliminar el código <b>{code}</b>?
+            </div>
+            <br />
+            <div className={styles.controls}>
+              <Button
+                size="small"
+                severity="danger"
+                onClick={handleDeleteService}
+              >
+                Eliminar
+              </Button>
+              <Button
+                size="small"
+                severity="secondary"
+                onClick={message?.current?.clear}
+              >
+                Cancelar
+              </Button>
+            </div>
+          </div>
+        ),
+      });
+    },
+    [deleteCouponService]
+  );
+
+  const ActionTemplateBody = React.useCallback(
+    (node: TreeNode) => {
+      const ref = node?.data as Partial<ICoupon>;
+
+      const edit = path("/dashboard/coupons", ref.id);
+
+      return (
+        <ActionTemplate>
+          <Button
+            size="small"
+            severity="info"
+            onClick={() => navigateToUrl(edit)}
+          >
+            <i className="fa-solid fa-pencil"></i>
+          </Button>
+          <Button
+            size="small"
+            severity="danger"
+            onClick={() => handleDeleteNode(ref.id, ref.code)}
+          >
+            <i className="fa-regular fa-trash-can"></i>
+          </Button>
+        </ActionTemplate>
+      );
+    },
+    [handleDeleteNode]
+  );
 
   /**
    * @description
@@ -89,6 +202,7 @@ const Coupon: React.FC = () => {
 
   return (
     <>
+      <Toast position="bottom-right" ref={message} />
       <Container>
         <div>
           <TextTitle>Cupones</TextTitle>
@@ -107,7 +221,13 @@ const Coupon: React.FC = () => {
               currentPageReportTemplate={pageReportTemplate}
               emptyMessage="No hay cupones disponibles"
             >
-              <Column field="code" />
+              <Column header="#" field="id" />
+              <Column header="Código" field="code" />
+              <Column header="Cantidad" field="usageLimit" />
+              <Column header="Estado" field="status" />
+              <Column header="Descuento" field="discountType" />
+              <Column header="Expira" field="endDate" />
+              <Column body={ActionTemplateBody} />
             </TableTreeStyled>
           </Loading>
         </div>

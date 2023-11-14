@@ -31,6 +31,11 @@ export const TableTreeStyled = styled(TreeTable)`
     border-bottom-left-radius: 8px;
     border-bottom-right-radius: 8px;
   }
+
+  .p-column-title {
+    font-weight: 500;
+    font-family: var(--font);
+  }
 `;
 
 export const TextTitle = tailwind.div`
@@ -39,4 +44,11 @@ export const TextTitle = tailwind.div`
   leading-5
   my-4
   mr-2
+`;
+
+export const ActionTemplate = tailwind.div`
+  flex
+  justify-center
+  flex-wrap
+  gap-2
 `;

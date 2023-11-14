@@ -1,7 +1,9 @@
 import tailwind from "tailwind-styled-components";
 
 export const styles = {
-  content: "flex flex-column align-items-center flex-1",
+  center: "text-center",
+  content: "flex-column items-center flex-1",
+  controls: "flex gap-2 justify-center",
   inputGroup: "p-input-group flex-1",
 };
 

@@ -11,4 +11,9 @@ export const request = {
     endpoint: "/api/v2/coupons",
     method: Method.POST,
   },
+  delete: {
+    baseURL: process.env.API,
+    endpoint: "/api/v2/coupons",
+    method: Method.DELETE,
+  },
 };

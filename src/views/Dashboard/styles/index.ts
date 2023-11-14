@@ -7,13 +7,13 @@ const WishTextContainer = styled.p`
 `;
 
 export const Container = tw.div`
-  grid
+  flex
 `;
 
 export const Content = tw.div`
   mx-2
   my-4
-  col-start-3
+  justify-start
 `;
 
 export const GreetText = tw.p`

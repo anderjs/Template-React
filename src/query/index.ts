@@ -5,4 +5,5 @@ export enum AdminQuery {
 
 export enum CouponQuery {
   DATA = "coupons",
+  DELETE = "delete-coupon",
 }
