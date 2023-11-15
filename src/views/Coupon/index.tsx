@@ -142,7 +142,7 @@ const Coupon: React.FC = () => {
     (node: TreeNode) => {
       const ref = node?.data as Partial<ICoupon>;
 
-      const edit = path("/dashboard/coupons", ref.id);
+      const edit = path("/dashboard/coupons/edit", ref.id);
 
       return (
         <ActionTemplate>

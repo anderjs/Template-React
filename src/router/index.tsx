@@ -8,6 +8,7 @@ import Dashboard from "@views/Dashboard";
 
 // - Admin Views
 import Coupon from "@views/Coupon";
+import EditCoupon from "@views/Edit-Coupon";
 import CreateCoupon from "@views/Create-Coupon";
 
 /**
@@ -23,6 +24,7 @@ export const Router: React.FC = React.memo(() => {
         <Route path="/coupons" element={<Coupon />} />
         <Route path="/settings" element={<Settings />} />
         <Route path="/coupons/create" element={<CreateCoupon />} />
+        <Route path="/coupons/edit/:id" element={<EditCoupon />} />
       </Routes>
     </BrowserRouter>
   );

@@ -2,7 +2,7 @@ import React from "react";
 import { capitalize } from "lodash";
 import { navigateToUrl } from "single-spa";
 import { classNames } from "primereact/utils";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useForm, useWatch, Controller } from "react-hook-form";
 
 import { useHost } from "@learlifyweb/providers.host";
@@ -32,15 +32,21 @@ import { request } from "@views/Coupon/api/requests";
 // - Rules
 import { codeAsRules, discountAsRules, usageAsRules } from "./rules";
 import { path } from "@utils";
+import { CouponQuery } from "@query";
 
 export interface State {
   enabled: boolean;
 }
 
-const CreateCoupon: React.FC = () => {
+export interface Props {
+  id?: string;
+  isEditMode?: boolean;
+}
+
+const CreateCoupon: React.FC<Props> = ({ id, isEditMode }) => {
   const { token } = useHost();
 
-  const { register, handleSubmit, formState, reset, control } = useForm<
+  const { register, handleSubmit, reset, control, formState } = useForm<
     ICoupon & State
   >({
     defaultValues: {
@@ -54,6 +60,20 @@ const CreateCoupon: React.FC = () => {
   });
 
   const toast = React.useRef<Toast>();
+
+  /**
+   * @description
+   * This will fetch only if is edit mode.
+   */
+  const coupon = useQuery({
+    enabled: isEditMode,
+    refetchOnMount: isEditMode,
+    queryKey: [CouponQuery.EDIT],
+    queryFn: httpsClient<ICoupon>({ token }, request.coupons, {
+      params: [id],
+    }),
+  });
+
   /**
    * @description
    * Creating coupon code.
@@ -70,7 +90,10 @@ const CreateCoupon: React.FC = () => {
 
       toast.current?.clear();
 
-      const route = path("/dashboard/coupons", mutationContext?.response?.id);
+      const route = path(
+        "/dashboard/coupons/edit/",
+        mutationContext?.response?.id
+      );
 
       toast.current?.show({
         sticky: true,
@@ -104,6 +127,69 @@ const CreateCoupon: React.FC = () => {
 
   /**
    * @description
+   * Updating service.
+   */
+  const updateCouponService = useMutation({
+    mutationKey: ["coupon"],
+    mutationFn: (coupon: Partial<ICoupon>) => {
+      const query = httpsClient<ICoupon>(
+        { token },
+        request.update,
+        {
+          params: [id],
+        },
+        coupon
+      );
+
+      return query();
+    },
+    onSuccess: () => {
+      reset();
+
+      toast.current?.clear();
+
+      toast.current?.show({
+        sticky: true,
+        severity: "success",
+        content: (
+          <div className={styles.content}>
+            <div className="text-center">
+              <div className="text-base">¡Código actualizado!</div>
+            </div>
+            <MarginY />
+            <div className="text-center">
+              <div className="text-base">¿Deseas visualizar los códigos?</div>
+            </div>
+            <MarginY />
+            <div className={styles.controls}>
+              <Button
+                severity="info"
+                onClick={() => navigateToUrl("/dashboard/coupons")}
+              >
+                Aceptar
+              </Button>
+              <Button severity="secondary" onClick={toast.current?.clear}>
+                Cancelar
+              </Button>
+            </div>
+          </div>
+        ),
+      });
+    },
+  });
+
+  /**
+   * @description
+   * This will only run whe isEditMode is true.
+   */
+  React.useEffect(() => {
+    if (coupon.data) {
+      reset(coupon.data.response);
+    }
+  }, [coupon.data, reset]);
+
+  /**
+   * @description
    * Handler to reset all fields.
    */
   const handleResetForm = () => {
@@ -115,7 +201,18 @@ const CreateCoupon: React.FC = () => {
    * Submit coupon object.
    */
   const onSubmitCoupon = ({ enabled, ...data }: ICoupon & State) => {
-    createCouponService.mutate({
+    /**
+     * @description
+     * Updating instead of creating.
+     */
+    if (isEditMode) {
+      return updateCouponService.mutate({
+        ...coupon.data.response,
+        ...data,
+      });
+    }
+
+    return createCouponService.mutate({
       ...data,
       status: Status.Active,
     });
@@ -124,16 +221,21 @@ const CreateCoupon: React.FC = () => {
   return (
     <>
       <Toast position="bottom-right" ref={toast} />
-      <Loading size={224} status={createCouponService.isLoading}>
+      <Loading
+        size={224}
+        status={createCouponService.isLoading || updateCouponService.isLoading}
+      >
         <form onSubmit={handleSubmit(onSubmitCoupon)}>
-          <TextTitle>Crear Cupón</TextTitle>
+          <TextTitle>{isEditMode ? "Editar Cupón" : "Crear Cupón"}</TextTitle>
           <Controller
             name="code"
             control={control}
             rules={codeAsRules}
+            disabled={isEditMode}
             render={({ field }) => (
               <div>
                 <InputText
+                  disabled={isEditMode}
                   className={classNames(
                     "p-inputtext-md",
                     formState.errors.code && "p-invalid"
@@ -346,14 +448,18 @@ const CreateCoupon: React.FC = () => {
             <Button
               type="submit"
               severity="success"
-              loading={createCouponService.isLoading}
+              loading={
+                createCouponService.isLoading || updateCouponService.isLoading
+              }
             >
-              Generar
+              {isEditMode ? "Actualizar" : "Generar"}
             </Button>
             <Button
               severity="info"
               onClick={handleResetForm}
-              loading={createCouponService.isLoading}
+              loading={
+                createCouponService.isLoading || updateCouponService.isLoading
+              }
             >
               Restaurar
             </Button>
