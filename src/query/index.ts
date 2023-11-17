@@ -8,3 +8,7 @@ export enum CouponQuery {
   EDIT = "coupon",
   DELETE = "delete-coupon",
 }
+
+export enum PlanQuery {
+  DATA = "plans",
+}

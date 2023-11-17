@@ -7,6 +7,8 @@ import { useHost } from "@learlifyweb/providers.host";
 import { useNodes } from "@learlifyweb/providers.services";
 import { httpsClient } from "@learlifyweb/providers.https";
 
+import { ICoupon } from "@learlifyweb/providers.schema";
+
 // - Query
 import { CouponQuery } from "@query";
 
@@ -29,7 +31,6 @@ import { styles } from "@views/Create-Coupon/styles";
 
 // - API
 import { request } from "./api/requests";
-import { ICoupon } from "./api/interface";
 
 // - Utils
 import { render } from "./utils";
@@ -223,10 +224,10 @@ const Coupon: React.FC = () => {
             >
               <Column header="#" field="id" />
               <Column header="Código" field="code" />
-              <Column header="Cantidad" field="usageLimit" />
+              <Column header="Cantidad" field="usage_limit" />
               <Column header="Estado" field="status" />
-              <Column header="Descuento" field="discountType" />
-              <Column header="Expira" field="endDate" />
+              <Column header="Descuento" field="discount_type" />
+              <Column header="Expira" field="end_date" />
               <Column body={ActionTemplateBody} />
             </TableTreeStyled>
           </Loading>

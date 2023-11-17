@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 // - Views
 import Admin from "@views/Admin";
+import Pricing from "@views/Pricing";
 import Settings from "@views/Settings";
 import Dashboard from "@views/Dashboard";
 
@@ -22,6 +23,7 @@ export const Router: React.FC = React.memo(() => {
         <Route path="/" element={<Dashboard />} />
         <Route path="/admin" element={<Admin />} />
         <Route path="/coupons" element={<Coupon />} />
+        <Route path="/pricing" element={<Pricing />} />
         <Route path="/settings" element={<Settings />} />
         <Route path="/coupons/create" element={<CreateCoupon />} />
         <Route path="/coupons/edit/:id" element={<EditCoupon />} />

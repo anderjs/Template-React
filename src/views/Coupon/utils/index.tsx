@@ -1,24 +1,24 @@
 import moment from "moment";
 import { Node } from "@learlifyweb/providers.services";
+import { ICoupon, DiscountType } from "@learlifyweb/providers.schema";
 
 // - Types
-import { ICoupon, Type } from "../api/interface";
 
 export const render: Node<ICoupon>["data"] = {
   id: ({ id }) => id,
   code: ({ code }) => code,
   status: ({ status }) => status,
-  usageLimit: ({ usageLimit }) => usageLimit,
-  discountType: (input) => {
-    if (input.discountType === Type.FIXED) {
-      return `${input.discountValue} $`;
+  usage_limit: ({ usage_limit }) => usage_limit,
+  discount_type: (input) => {
+    if (input.discount_type === DiscountType.FIXED) {
+      return `${input.discount_type} $`;
     }
 
-    if (input.discountType === Type.PERCENTAGE) {
-      return `${input.discountValue} %`;
+    if (input.discount_type === DiscountType.PERCENTAGE) {
+      return `${input.discount_type} %`;
     }
   },
-  endDate: (input) => {
-    return moment(input.endDate).format("DD MMMM (YYYY)");
+  end_date: (input) => {
+    return moment(input.end_date).format("DD MMMM (YYYY)");
   },
 };

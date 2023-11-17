@@ -20,7 +20,7 @@ import { InputTextarea } from "primereact/inputtextarea";
 import { Calendar, CalendarProps } from "primereact/calendar";
 
 // - Types
-import { ICoupon, Status, Type } from "@views/Coupon/api/interface";
+import { ICoupon, DiscountType, Status } from "@learlifyweb/providers.schema";
 
 // - Styles
 import { Container, MarginY, RadioButtonContainer, styles } from "./styles";
@@ -30,8 +30,13 @@ import { TextTitle } from "@views/Admin/styles";
 import { request } from "@views/Coupon/api/requests";
 
 // - Rules
+
 import { codeAsRules, discountAsRules, usageAsRules } from "./rules";
+
+// - Utils
 import { path } from "@utils";
+
+// - Query
 import { CouponQuery } from "@query";
 
 export interface State {
@@ -50,12 +55,12 @@ const CreateCoupon: React.FC<Props> = ({ id, isEditMode }) => {
     ICoupon & State
   >({
     defaultValues: {
-      discountType: Type.FIXED,
+      discount_type: DiscountType.FIXED,
     },
   });
 
   const [enabled, discount] = useWatch({
-    name: ["enabled", "discountType"],
+    name: ["enabled", "discount_type"],
     control,
   });
 
@@ -144,7 +149,7 @@ const CreateCoupon: React.FC<Props> = ({ id, isEditMode }) => {
       return query();
     },
     onSuccess: () => {
-      reset();
+      coupon.refetch();
 
       toast.current?.clear();
 
@@ -206,9 +211,10 @@ const CreateCoupon: React.FC<Props> = ({ id, isEditMode }) => {
      * Updating instead of creating.
      */
     if (isEditMode) {
+      const { code, id, updatedAt, createdAt, ...update } = data;
+
       return updateCouponService.mutate({
-        ...coupon.data.response,
-        ...data,
+        ...update,
       });
     }
 
@@ -259,35 +265,35 @@ const CreateCoupon: React.FC<Props> = ({ id, isEditMode }) => {
             <RadioButtonContainer>
               <Controller
                 control={control}
-                name="discountType"
+                name="discount_type"
                 render={({ field }) => (
                   <RadioButton
-                    id={Type.FIXED}
-                    value={Type.FIXED}
-                    checked={field.value === Type.FIXED}
+                    id={DiscountType.FIXED}
+                    value={DiscountType.FIXED}
+                    checked={field.value === DiscountType.FIXED}
                     onChange={(e) => field.onChange(e.value)}
                   />
                 )}
               />
-              <label className="text-white" htmlFor={Type.FIXED}>
-                {capitalize(Type.FIXED)}
+              <label className="text-white" htmlFor={DiscountType.FIXED}>
+                {capitalize(DiscountType.FIXED)}
               </label>
             </RadioButtonContainer>
             <RadioButtonContainer>
               <Controller
                 control={control}
-                name="discountType"
+                name="discount_type"
                 render={({ field }) => (
                   <RadioButton
-                    id={Type.PERCENTAGE}
-                    value={Type.PERCENTAGE}
-                    checked={field.value === Type.PERCENTAGE}
+                    id={DiscountType.PERCENTAGE}
+                    value={DiscountType.PERCENTAGE}
+                    checked={field.value === DiscountType.PERCENTAGE}
                     onChange={(e) => field.onChange(e.value)}
                   />
                 )}
               />
-              <label className="text-white" htmlFor={Type.PERCENTAGE}>
-                {capitalize(Type.PERCENTAGE)}
+              <label className="text-white" htmlFor={DiscountType.PERCENTAGE}>
+                {capitalize(DiscountType.PERCENTAGE)}
               </label>
             </RadioButtonContainer>
           </Container>
@@ -295,7 +301,7 @@ const CreateCoupon: React.FC<Props> = ({ id, isEditMode }) => {
           <TextTitle>Aplicar descuento</TextTitle>
           <Controller
             control={control}
-            name="discountValue"
+            name="discount_value"
             rules={discountAsRules}
             render={({ field }) => (
               <div>
@@ -303,21 +309,21 @@ const CreateCoupon: React.FC<Props> = ({ id, isEditMode }) => {
                   min={1}
                   max={100}
                   placeholder={
-                    discount === Type.FIXED
+                    discount === DiscountType.FIXED
                       ? "Se aplica en EUR/USD"
                       : "Se aplica en %"
                   }
                   value={field.value}
                   className={classNames(
                     "p-inputtext-md",
-                    formState.errors?.discountValue && "p-invalid"
+                    formState.errors?.discount_value && "p-invalid"
                   )}
                   onChange={(e) => field.onChange(e.value)}
                 />
-                {formState.errors?.discountValue && (
+                {formState.errors?.discount_value && (
                   <Message
                     severity="error"
-                    text={formState.errors?.discountValue?.message}
+                    text={formState.errors?.discount_value?.message}
                   />
                 )}
               </div>
@@ -326,7 +332,7 @@ const CreateCoupon: React.FC<Props> = ({ id, isEditMode }) => {
           <TextTitle>Cantidad de usos</TextTitle>
           <Container>
             <Controller
-              name="usageLimit"
+              name="usage_limit"
               control={control}
               rules={usageAsRules}
               render={({ field }) => (
@@ -337,15 +343,15 @@ const CreateCoupon: React.FC<Props> = ({ id, isEditMode }) => {
                     value={field.value}
                     className={classNames(
                       "p-inputtext-md",
-                      formState.errors?.usageLimit && "p-invalid"
+                      formState.errors?.usage_limit && "p-invalid"
                     )}
                     onChange={(e) => field.onChange(e.value)}
                     placeholder="Ingresar cantidad máxima de usos"
                   />
-                  {formState.errors?.usageLimit && (
+                  {formState.errors?.usage_limit && (
                     <Message
                       severity="error"
-                      text={formState.errors?.usageLimit?.message}
+                      text={formState.errors?.usage_limit?.message}
                     />
                   )}
                 </div>
@@ -356,7 +362,7 @@ const CreateCoupon: React.FC<Props> = ({ id, isEditMode }) => {
           <TextTitle>Valor de compra mínimo</TextTitle>
           <Container>
             <Controller
-              name="purchaseAmount"
+              name="purchase_amount"
               control={control}
               render={({ field }) => (
                 <InputNumber
@@ -391,7 +397,7 @@ const CreateCoupon: React.FC<Props> = ({ id, isEditMode }) => {
               <TextTitle>Fecha</TextTitle>
               <Container>
                 <Controller
-                  name="startDate"
+                  name="start_date"
                   rules={{ required: "Se necesita una fecha de inicio" }}
                   control={control}
                   render={({ field }) => (
@@ -400,22 +406,22 @@ const CreateCoupon: React.FC<Props> = ({ id, isEditMode }) => {
                         placeholder="Válido desde"
                         className={classNames(
                           "p-inputtext-md",
-                          formState.errors.startDate && "p-invalid"
+                          formState.errors.start_date && "p-invalid"
                         )}
                         value={new Date(field.value)}
                         onChange={(e: CalendarProps) => field.onChange(e.value)}
                       />
-                      {formState.errors?.startDate && (
+                      {formState.errors?.start_date && (
                         <Message
                           severity="error"
-                          text={formState.errors.startDate.message}
+                          text={formState.errors.start_date.message}
                         />
                       )}
                     </div>
                   )}
                 />
                 <Controller
-                  name="endDate"
+                  name="end_date"
                   rules={{
                     required: "Se requiere una fecha de cierre",
                   }}
@@ -426,15 +432,15 @@ const CreateCoupon: React.FC<Props> = ({ id, isEditMode }) => {
                         placeholder="Válido hasta"
                         className={classNames(
                           "p-inputtext-md",
-                          formState.errors?.endDate && "p-invalid"
+                          formState.errors?.end_date && "p-invalid"
                         )}
                         value={new Date(field.value)}
                         onChange={(e: CalendarProps) => field.onChange(e.value)}
                       />
-                      {formState.errors?.endDate && (
+                      {formState.errors?.end_date && (
                         <Message
                           severity="error"
-                          text={formState.errors.endDate.message}
+                          text={formState.errors.end_date.message}
                         />
                       )}
                     </div>

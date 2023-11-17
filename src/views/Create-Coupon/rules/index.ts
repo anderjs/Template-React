@@ -1,4 +1,4 @@
-import { ICoupon } from "@views/Coupon/api/interface";
+import { ICoupon } from "@learlifyweb/providers.schema";
 import { RegisterOptions } from "react-hook-form";
 import { State } from "..";
 
@@ -14,7 +14,7 @@ export const codeAsRules: Omit<
 };
 
 export const discountAsRules: Omit<
-  RegisterOptions<ICoupon & State, "discountValue">,
+  RegisterOptions<ICoupon & State, "discount_value">,
   "disabled" | "valueAsNumber" | "valueAsDate" | "setValueAs"
 > = {
   min: {
@@ -25,7 +25,7 @@ export const discountAsRules: Omit<
 };
 
 export const usageAsRules: Omit<
-  RegisterOptions<ICoupon & State, "discountValue">,
+  RegisterOptions<ICoupon & State, "discount_value">,
   "disabled" | "valueAsNumber" | "valueAsDate" | "setValueAs"
 > = {
   min: {

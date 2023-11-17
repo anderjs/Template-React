@@ -1,11 +1,3 @@
-export enum IRole {
-  USER = 3,
-  ADMIN = 1,
-  TEACHER = 2,
-}
+import { IUser } from "@learlifyweb/providers.schema";
 
-export interface ISearch {
-  email: string;
-  lastName: string;
-  firstName: string;
-}
+export type Search = Pick<IUser, "id" | "first_name" | "last_name" | "email">;

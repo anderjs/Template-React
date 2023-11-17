@@ -1,5 +1,6 @@
 import React from "react";
 import { PrimeIcons } from "primereact/api";
+import { navigateToUrl } from "single-spa";
 
 // - Hooks
 import { useQuery } from "@tanstack/react-query";
@@ -7,8 +8,9 @@ import { useHost } from "@learlifyweb/providers.host";
 import { useNodes } from "@learlifyweb/providers.services";
 
 // - Https
-import { httpsClient } from "@learlifyweb/providers.https";
+import { Role } from "@learlifyweb/providers.schema";
 import { Loading } from "@learlifyweb/providers.loading";
+import { httpsClient } from "@learlifyweb/providers.https";
 
 // - Styles
 import { Toast } from "primereact/toast";
@@ -26,7 +28,7 @@ import { request } from "./api/requests";
 import { AdminQuery } from "@query";
 
 // - Interfaces
-import { IRole, ISearch } from "./api/interface";
+import { ISearch } from "./api/interface";
 
 // - State
 import { initialState, reducer } from "./state/slice";
@@ -34,7 +36,6 @@ import { selectProfessor, selectUser } from "./state/actions";
 
 // - Utils
 import { getName, pageReportTemplate, paginatorTemplate } from "@utils";
-import { navigateToUrl } from "single-spa";
 
 const Admin: React.FC = () => {
   const host = useHost();
@@ -71,7 +72,7 @@ const Admin: React.FC = () => {
     refetchOnWindowFocus: false,
     queryFn: httpsClient<ISearch[]>({ token: host.token }, request.users, {
       query: {
-        role: IRole.USER,
+        role: Role.USER,
         search: state.user.search,
       },
     }),
@@ -86,7 +87,7 @@ const Admin: React.FC = () => {
     icon: "fa fa-user",
     data: {
       email: (value) => value.email,
-      firstName: ({ firstName, lastName }) => getName(firstName, lastName),
+      first_name: ({ first_name, last_name }) => getName(first_name, last_name),
     },
     label: (user) => user.email,
   });
@@ -100,7 +101,7 @@ const Admin: React.FC = () => {
     refetchOnWindowFocus: false,
     queryFn: httpsClient<ISearch[]>({ token: host.token }, request.users, {
       query: {
-        role: IRole.TEACHER,
+        role: Role.PROFESSOR,
         search: state.professor.search,
       },
     }),
@@ -114,7 +115,7 @@ const Admin: React.FC = () => {
     key: "email",
     data: {
       email: (data) => data.email,
-      firstName: ({ firstName, lastName }) => getName(firstName, lastName),
+      first_name: ({ first_name, last_name }) => getName(first_name, last_name),
     },
     label: (user) => user.email,
   });
