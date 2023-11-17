@@ -59,7 +59,7 @@
     "@b1b2/components.ui.country": "^0.0.2",
     "@learlifyweb/providers.event": "^0.0.7",
     "@learlifyweb/providers.forms": "^0.0.1",
-    "@learlifyweb/providers.host": "^0.0.13",
+    "@learlifyweb/providers.host": "^0.0.16",
     "@learlifyweb/providers.https": "^0.0.1",
     "@learlifyweb/providers.i18n": "^0.0.6",
     "@learlifyweb/providers.loading": "^0.0.2",

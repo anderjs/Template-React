@@ -15,7 +15,7 @@ const Dashboard: React.FC = () => {
     <Container>
       <Content>
         <GreetText>
-          {t(alias["dashboard.welcome"], { user: user?.firstName })}
+          {t(alias["dashboard.welcome"], { user: user?.first_name })}
           <i className={smile}></i>
         </GreetText>
         <WishText>Have a good day!</WishText>
