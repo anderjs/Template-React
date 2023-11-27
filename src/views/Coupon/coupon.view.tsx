@@ -26,14 +26,14 @@ import {
   TextTitle,
   ActionTemplate,
   TableTreeStyled,
-} from "@views/Admin/styles";
+} from "@views/Admin/admin.style";
 import { styles } from "@views/Create-Coupon/styles";
 
 // - API
-import { request } from "./api/requests";
+import { service } from "./coupon.service";
 
 // - Utils
-import { render } from "./utils";
+import { render } from "./coupon.utils";
 import { pageReportTemplate, paginatorTemplate, path } from "@utils";
 
 const Coupon: React.FC = () => {
@@ -51,7 +51,8 @@ const Coupon: React.FC = () => {
    */
   const coupon = useQuery({
     queryKey: [CouponQuery.DATA],
-    queryFn: httpsClient<ICoupon[]>({ token }, request.coupons),
+    refetchOnWindowFocus: false,
+    queryFn: httpsClient<ICoupon[]>({ token }, service.coupons),
   });
 
   /**
@@ -61,7 +62,7 @@ const Coupon: React.FC = () => {
   const deleteCouponService = useMutation({
     mutationKey: [CouponQuery.DELETE],
     mutationFn: ({ id }: Pick<ICoupon, "code" | "id">) => {
-      const query = httpsClient<number>({ token }, request.delete, {
+      const query = httpsClient<number>({ token }, service.delete, {
         params: [id],
       });
 

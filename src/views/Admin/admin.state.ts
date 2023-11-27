@@ -1,6 +1,7 @@
 import { createReducer } from "@reduxjs/toolkit";
-import { selectUser } from "./actions";
 import { TreeSelectSelectionKeysType } from "primereact/treeselect";
+
+import { selectUser, selectProfessor } from "./admin.action";
 
 export const initialState: State = {
   user: {
@@ -26,6 +27,10 @@ export const reducer = createReducer<State>(initialState, (builder) => {
    */
   builder.addCase(selectUser, (state, action) => {
     state.users = action.payload;
+  });
+
+  builder.addCase(selectProfessor, (state, action) => {
+    state.professors = action.payload;
   });
 });
 

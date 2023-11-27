@@ -19,7 +19,7 @@ import { Button } from "primereact/button";
 import { Menubar } from "primereact/menubar";
 import { MenuItem } from "primereact/menuitem";
 import { TreeTableSelectionEvent } from "primereact/treetable";
-import { Container, TableTreeStyled, TextTitle } from "./styles";
+import { Container, TableTreeStyled, TextTitle } from "./admin.style";
 
 // - API
 import { request } from "./api/requests";
@@ -31,14 +31,15 @@ import { AdminQuery } from "@query";
 import { ISearch } from "./api/interface";
 
 // - State
-import { initialState, reducer } from "./state/slice";
-import { selectProfessor, selectUser } from "./state/actions";
+import { initialState, reducer } from "./admin.state";
+import { selectProfessor, selectUser } from "./admin.action";
 
 // - Utils
-import { getName, pageReportTemplate, paginatorTemplate } from "@utils";
+import { pageReportTemplate, paginatorTemplate } from "@utils";
+import { render } from "./admin.utils";
 
 const Admin: React.FC = () => {
-  const host = useHost();
+  const { token } = useHost();
 
   /**
    * @description
@@ -70,7 +71,7 @@ const Admin: React.FC = () => {
   const users = useQuery({
     queryKey: [AdminQuery.USERS],
     refetchOnWindowFocus: false,
-    queryFn: httpsClient<ISearch[]>({ token: host.token }, request.users, {
+    queryFn: httpsClient<ISearch[]>({ token }, request.users, {
       query: {
         role: Role.USER,
         search: state.user.search,
@@ -84,11 +85,8 @@ const Admin: React.FC = () => {
    */
   const userNodeRef = useNodes(users.data?.response ?? [], {
     key: "email",
+    data: render,
     icon: "fa fa-user",
-    data: {
-      email: (value) => value.email,
-      first_name: ({ first_name, last_name }) => getName(first_name, last_name),
-    },
     label: (user) => user.email,
   });
 
@@ -99,7 +97,7 @@ const Admin: React.FC = () => {
   const professors = useQuery({
     queryKey: [AdminQuery.PROFESSORS],
     refetchOnWindowFocus: false,
-    queryFn: httpsClient<ISearch[]>({ token: host.token }, request.users, {
+    queryFn: httpsClient<ISearch[]>({ token }, request.users, {
       query: {
         role: Role.PROFESSOR,
         search: state.professor.search,
@@ -113,10 +111,8 @@ const Admin: React.FC = () => {
    */
   const professorNodeRef = useNodes(professors.data?.response ?? [], {
     key: "email",
-    data: {
-      email: (data) => data.email,
-      first_name: ({ first_name, last_name }) => getName(first_name, last_name),
-    },
+    data: render,
+    icon: "fa fa-user",
     label: (user) => user.email,
   });
 
@@ -265,9 +261,9 @@ const Admin: React.FC = () => {
             Usuarios
             <i className="fa-solid fa-users fa-fade fa-sm float-right" />
           </TextTitle>
-          <Menubar model={userModelTemplate} />
-          <br />
           <Loading status={users.isLoading || users.isRefetching}>
+            <Menubar model={userModelTemplate} />
+            <br />
             <TableTreeStyled
               paginator
               rows={10}
@@ -292,9 +288,9 @@ const Admin: React.FC = () => {
             Profesores
             <i className="fa-solid fa-users fa-fade fa-sm float-right" />
           </TextTitle>
-          <Menubar model={professorModelTemplate} />
-          <br />
           <Loading status={professors.isLoading || professors.isRefetching}>
+            <Menubar model={professorModelTemplate} />
+            <br />
             <TableTreeStyled
               paginator
               rows={10}

@@ -24,10 +24,10 @@ import { ICoupon, DiscountType, Status } from "@learlifyweb/providers.schema";
 
 // - Styles
 import { Container, MarginY, RadioButtonContainer, styles } from "./styles";
-import { TextTitle } from "@views/Admin/styles";
+import { TextTitle } from "@views/Admin/admin.style";
 
 // - Request
-import { request } from "@views/Coupon/api/requests";
+import { service } from "@views/Coupon/coupon.service";
 
 // - Rules
 
@@ -73,8 +73,9 @@ const CreateCoupon: React.FC<Props> = ({ id, isEditMode }) => {
   const coupon = useQuery({
     enabled: isEditMode,
     refetchOnMount: isEditMode,
+    refetchOnWindowFocus: false,
     queryKey: [CouponQuery.EDIT],
-    queryFn: httpsClient<ICoupon>({ token }, request.coupons, {
+    queryFn: httpsClient<ICoupon>({ token }, service.coupons, {
       params: [id],
     }),
   });
@@ -86,7 +87,7 @@ const CreateCoupon: React.FC<Props> = ({ id, isEditMode }) => {
   const createCouponService = useMutation({
     mutationKey: ["coupon"],
     mutationFn: (coupon: Partial<ICoupon>) => {
-      const query = httpsClient<ICoupon>({ token }, request.create, {}, coupon);
+      const query = httpsClient<ICoupon>({ token }, service.create, {}, coupon);
 
       return query();
     },
@@ -139,7 +140,7 @@ const CreateCoupon: React.FC<Props> = ({ id, isEditMode }) => {
     mutationFn: (coupon: Partial<ICoupon>) => {
       const query = httpsClient<ICoupon>(
         { token },
-        request.update,
+        service.update,
         {
           params: [id],
         },
@@ -148,50 +149,48 @@ const CreateCoupon: React.FC<Props> = ({ id, isEditMode }) => {
 
       return query();
     },
-    onSuccess: () => {
-      coupon.refetch();
+    onSuccess: (update) => {
+      if (update?.response) {
+        coupon.refetch();
 
-      toast.current?.clear();
+        toast.current?.clear();
 
-      toast.current?.show({
-        sticky: true,
-        severity: "success",
-        content: (
-          <div className={styles.content}>
-            <div className="text-center">
-              <div className="text-base">¡Código actualizado!</div>
+        toast.current?.show({
+          sticky: true,
+          severity: "success",
+          content: (
+            <div className={styles.content}>
+              <div className="text-center">
+                <div className="text-base">¡Código actualizado!</div>
+              </div>
+              <MarginY />
+              <div className="text-center">
+                <div className="text-base">¿Deseas visualizar los códigos?</div>
+              </div>
+              <MarginY />
+              <div className={styles.controls}>
+                <Button
+                  severity="info"
+                  onClick={() => navigateToUrl("/dashboard/coupons")}
+                >
+                  Aceptar
+                </Button>
+                <Button severity="secondary" onClick={toast.current?.clear}>
+                  Cancelar
+                </Button>
+              </div>
             </div>
-            <MarginY />
-            <div className="text-center">
-              <div className="text-base">¿Deseas visualizar los códigos?</div>
-            </div>
-            <MarginY />
-            <div className={styles.controls}>
-              <Button
-                severity="info"
-                onClick={() => navigateToUrl("/dashboard/coupons")}
-              >
-                Aceptar
-              </Button>
-              <Button severity="secondary" onClick={toast.current?.clear}>
-                Cancelar
-              </Button>
-            </div>
-          </div>
-        ),
-      });
+          ),
+        });
+      }
     },
   });
 
-  /**
-   * @description
-   * This will only run whe isEditMode is true.
-   */
   React.useEffect(() => {
-    if (coupon.data) {
-      reset(coupon.data.response);
+    if (isEditMode && id && coupon.data) {
+      reset(coupon?.data?.response);
     }
-  }, [coupon.data, reset]);
+  }, [isEditMode, id, coupon.data]);
 
   /**
    * @description
