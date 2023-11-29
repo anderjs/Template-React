@@ -9,8 +9,8 @@ import Dashboard from "@views/Dashboard";
 
 // - Admin Views
 import Coupon from "@views/Coupon/coupon.view";
-import EditCoupon from "@views/Edit-Coupon";
-import CreateCoupon from "@views/Create-Coupon";
+import EditCoupon from "@views/Coupon/Edit";
+import CreateCoupon from "@views/Coupon/Create";
 
 // - Plans
 import Plans from "@views/Plans/plans.view";

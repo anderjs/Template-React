@@ -1,4 +1,4 @@
-import { styles } from "@views/Create-Coupon/styles";
+import { styles } from "@views/Coupon/coupon.styles";
 import { Button } from "primereact/button";
 import React from "react";
 

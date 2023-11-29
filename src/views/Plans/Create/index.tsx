@@ -9,7 +9,7 @@ import { AxiosError, HttpStatusCode } from "axios";
 import { httpsClient } from "@learlifyweb/providers.https";
 
 import { Title } from "@views/Admin/admin.style";
-import { MarginY, Container } from "@views/Create-Coupon/styles";
+import { MarginY, Container } from "@views/Coupon/coupon.styles";
 
 import { Toast } from "primereact/toast";
 import { Button } from "primereact/button";

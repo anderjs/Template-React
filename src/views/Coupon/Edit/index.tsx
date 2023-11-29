@@ -2,7 +2,7 @@ import React from "react";
 import { useParams } from "react-router-dom";
 
 // - View
-import CreateCoupon from "@views/Create-Coupon";
+import CreateCoupon from "@views/Coupon/Create";
 
 const EditCoupon: React.FC = (props) => {
   const { id } = useParams();

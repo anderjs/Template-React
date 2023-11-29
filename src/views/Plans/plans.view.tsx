@@ -14,7 +14,7 @@ import { Column } from "primereact/column";
 import { Button } from "primereact/button";
 
 // - Styled
-import { MarginY } from "@views/Create-Coupon/styles";
+import { MarginY } from "@views/Coupon/coupon.styles";
 import {
   ActionTemplate,
   Container,

@@ -1,7 +1,7 @@
 import React from "react";
 
 import { Button } from "primereact/button";
-import { MarginY, styles } from "@views/Create-Coupon/styles";
+import { MarginY, styles } from "@views/Coupon/coupon.styles";
 
 type Props = {
   title: string;

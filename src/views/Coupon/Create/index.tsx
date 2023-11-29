@@ -23,7 +23,12 @@ import { Calendar, CalendarProps } from "primereact/calendar";
 import { ICoupon, DiscountType, Status } from "@learlifyweb/providers.schema";
 
 // - Styles
-import { Container, MarginY, RadioButtonContainer, styles } from "./styles";
+import {
+  Container,
+  MarginY,
+  RadioButtonContainer,
+  styles,
+} from "../coupon.styles";
 import { Title } from "@views/Admin/admin.style";
 
 // - Request
@@ -31,13 +36,15 @@ import { service } from "@views/Coupon/coupon.service";
 
 // - Rules
 
-import { codeAsRules, discountAsRules, usageAsRules } from "./rules";
+import { codeAsRules, discountAsRules, usageAsRules } from "../coupon.rules";
 
 // - Utils
 import { path } from "@utils";
 
 // - Query
 import { CouponQuery } from "@query";
+
+// - Components
 import { Created } from "@components/Created";
 
 export interface State {

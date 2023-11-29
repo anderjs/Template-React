@@ -27,7 +27,7 @@ import {
   ActionTemplate,
   TableTreeStyled,
 } from "@views/Admin/admin.style";
-import { styles } from "@views/Create-Coupon/styles";
+import { styles } from "@views/Coupon/coupon.styles";
 
 // - API
 import { service } from "./coupon.service";

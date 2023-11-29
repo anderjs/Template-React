@@ -1,10 +1,16 @@
 import { ICoupon } from "@learlifyweb/providers.schema";
 import { RegisterOptions } from "react-hook-form";
-import { State } from "..";
+import { State } from "./Create";
+
+type PlanRegisterOptions =
+  | "disabled"
+  | "valueAsNumber"
+  | "valueAsDate"
+  | "setValueAs";
 
 export const codeAsRules: Omit<
   RegisterOptions<ICoupon & State, "code">,
-  "disabled" | "valueAsNumber" | "valueAsDate" | "setValueAs"
+  PlanRegisterOptions
 > = {
   required: "El nombre del cupón, es requerido",
   minLength: {
@@ -15,7 +21,7 @@ export const codeAsRules: Omit<
 
 export const discountAsRules: Omit<
   RegisterOptions<ICoupon & State, "discount_value">,
-  "disabled" | "valueAsNumber" | "valueAsDate" | "setValueAs"
+  PlanRegisterOptions
 > = {
   min: {
     value: 1,
@@ -26,7 +32,7 @@ export const discountAsRules: Omit<
 
 export const usageAsRules: Omit<
   RegisterOptions<ICoupon & State, "discount_value">,
-  "disabled" | "valueAsNumber" | "valueAsDate" | "setValueAs"
+  PlanRegisterOptions
 > = {
   min: {
     value: 1,
