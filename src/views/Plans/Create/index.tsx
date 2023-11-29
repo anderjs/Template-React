@@ -1,4 +1,5 @@
 import React from "react";
+import lodash from "lodash";
 import { navigateToUrl } from "single-spa";
 import { classNames } from "primereact/utils";
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -43,6 +44,10 @@ const CreatePlan: React.FC<Props> = ({ id, isEditMode }) => {
 
   const toast = React.useRef<Toast>();
 
+  /**
+   * @description
+   * Create mode.
+   */
   const create = useMutation({
     mutationKey: [PlanMutation.CREATE],
     mutationFn: (data: Partial<IPlan>) => {
@@ -51,7 +56,11 @@ const CreatePlan: React.FC<Props> = ({ id, isEditMode }) => {
       return request();
     },
     onSuccess: () => {
-      reset();
+      reset({
+        name: null,
+        price: null,
+        description: null,
+      });
 
       toast.current?.clear();
 
@@ -72,18 +81,61 @@ const CreatePlan: React.FC<Props> = ({ id, isEditMode }) => {
 
   /**
    * @description
+   * Update mode.
+   */
+  const update = useMutation({
+    mutationKey: [PlanMutation.UPDATE],
+    mutationFn: (data: Partial<IPlan>) => {
+      const request = httpsClient<IPlan>(
+        { token },
+        api.update,
+        {
+          params: [id],
+        },
+        data
+      );
+
+      return request();
+    },
+    onSuccess: (mutation) => {
+      if (mutation.status === HttpStatusCode.Ok) {
+        reset(mutation?.response);
+
+        toast.current?.clear();
+
+        toast.current?.show({
+          sticky: true,
+          severity: "info",
+          content: (
+            <Created
+              title="¡Plan Actualizado!"
+              description="¿Deseas visualizar los planes?"
+              onClickCancel={toast.current?.clear}
+              onClickAccept={() => navigateToUrl("/dashboard/plans")}
+            />
+          ),
+        });
+      }
+    },
+  });
+
+  /**
+   * @description
    * Getting plan only if is edit mode.
    */
   const plan = useQuery({
     enabled: isEditMode,
     queryKey: [PlanQuery.GET],
+    refetchOnMount: isEditMode,
     refetchOnWindowFocus: false,
     queryFn: httpsClient<IPlan>({ token }, api.plans, {
       params: [id],
     }),
     onSuccess: (query) => {
       if (query?.status === HttpStatusCode.Ok) {
-        reset(query.response);
+        if (isEditMode) {
+          reset(query.response);
+        }
       }
     },
     onError: (err: AxiosError) => {
@@ -99,11 +151,37 @@ const CreatePlan: React.FC<Props> = ({ id, isEditMode }) => {
     },
   });
 
-  const onSubmitPlan = (plan: IPlan) => {
-    create.mutate({
-      name: plan.name,
-      price: plan.price,
-      description: plan.description,
+  /**
+   * @description
+   * On submit plan updated/created.
+   */
+  const onSubmitPlan = (ref: IPlan) => {
+    const { name, price, description } = ref;
+
+    if (isEditMode) {
+      /**
+       * @description
+       * Client side validation to avoid unnecessary updates.
+       */
+      if (lodash.isEqual(ref, plan.data?.response)) {
+        return toast.current.show({
+          summary: name,
+          detail: "Sin cambios disponibles",
+          severity: "info",
+        });
+      }
+
+      return update.mutate({
+        name,
+        price,
+        description,
+      });
+    }
+
+    return create.mutate({
+      name,
+      price,
+      description,
     });
   };
 
@@ -198,13 +276,17 @@ const CreatePlan: React.FC<Props> = ({ id, isEditMode }) => {
         />
         <MarginY />
         <Container>
-          <Button type="submit" severity="success" size="large">
-            <i className="fa fa-plus fa-solid fa-md" />
+          <Button type="submit" severity="info" size="large">
+            {isEditMode ? (
+              <i className="fa fa-circle-check fa-solid fa-md" />
+            ) : (
+              <i className="fa fa-plus fa-solid fa-md" />
+            )}
           </Button>
           <Button
             type="reset"
             size="large"
-            severity="info"
+            severity="danger"
             onClick={handleReset}
           >
             <i className="fa fa-refresh fa-solid fa-md" />

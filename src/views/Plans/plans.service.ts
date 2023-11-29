@@ -16,10 +16,16 @@ export const api = {
     baseURL: process.env.API,
     endpoint: "/api/v2/management/plans",
   },
+  update: {
+    method: Method.PUT,
+    baseURL: process.env.API,
+    endpoint: "/api/v2/management/plans",
+  },
 };
 
 export enum PlanMutation {
   CREATE = "CREATE_PLAN",
+  UPDATE = "UPDATE_PLAN",
 }
 
 export enum PlanQuery {

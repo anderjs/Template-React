@@ -111,7 +111,7 @@ const Plans: React.FC = () => {
         ),
       });
     },
-    [deletePlan]
+    [deletePlan, plans]
   );
 
   const ActionTemplateBody = React.useCallback(
@@ -153,7 +153,7 @@ const Plans: React.FC = () => {
 
   return (
     <>
-      <Toast ref={message} />
+      <Toast position="bottom-right" ref={message} />
       <Title>Planes</Title>
       <Button type="button" onClick={handleClickCreate}>
         Crear <i className="fa fa-plus fa-solid ml-1" />
