@@ -24,7 +24,7 @@ import { ICoupon, DiscountType, Status } from "@learlifyweb/providers.schema";
 
 // - Styles
 import { Container, MarginY, RadioButtonContainer, styles } from "./styles";
-import { TextTitle } from "@views/Admin/admin.style";
+import { Title } from "@views/Admin/admin.style";
 
 // - Request
 import { service } from "@views/Coupon/coupon.service";
@@ -38,6 +38,7 @@ import { path } from "@utils";
 
 // - Query
 import { CouponQuery } from "@query";
+import { Created } from "@components/Created";
 
 export interface State {
   enabled: boolean;
@@ -105,27 +106,12 @@ const CreateCoupon: React.FC<Props> = ({ id, isEditMode }) => {
         sticky: true,
         severity: "success",
         content: (
-          <div className={styles.content}>
-            <div className="text-center">
-              <div className="text-base">¡Código creado!</div>
-            </div>
-            <MarginY />
-            <div className="text-center">
-              <div className="text-base">¿Deseas visualizar los códigos?</div>
-            </div>
-            <MarginY />
-            <div className={styles.controls}>
-              <Button
-                severity="info"
-                onClick={() => navigateToUrl("/dashboard/coupons")}
-              >
-                Aceptar
-              </Button>
-              <Button severity="secondary" onClick={() => navigateToUrl(route)}>
-                Cancelar
-              </Button>
-            </div>
-          </div>
+          <Created
+            title="¡Código creado!"
+            description="¿Deseas visualizar los códigos?"
+            onClickCancel={() => navigateToUrl(route)}
+            onClickAccept={() => navigateToUrl("/dashboard/coupons")}
+          />
         ),
       });
     },
@@ -231,7 +217,7 @@ const CreateCoupon: React.FC<Props> = ({ id, isEditMode }) => {
         status={createCouponService.isLoading || updateCouponService.isLoading}
       >
         <form onSubmit={handleSubmit(onSubmitCoupon)}>
-          <TextTitle>{isEditMode ? "Editar Cupón" : "Crear Cupón"}</TextTitle>
+          <Title>{isEditMode ? "Editar Cupón" : "Crear Cupón"}</Title>
           <Controller
             name="code"
             control={control}
@@ -259,7 +245,7 @@ const CreateCoupon: React.FC<Props> = ({ id, isEditMode }) => {
             )}
           />
           <MarginY />
-          <TextTitle>Tipo de descuento</TextTitle>
+          <Title>Tipo de descuento</Title>
           <Container>
             <RadioButtonContainer>
               <Controller
@@ -297,7 +283,7 @@ const CreateCoupon: React.FC<Props> = ({ id, isEditMode }) => {
             </RadioButtonContainer>
           </Container>
           <MarginY />
-          <TextTitle>Aplicar descuento</TextTitle>
+          <Title>Aplicar descuento</Title>
           <Controller
             control={control}
             name="discount_value"
@@ -328,7 +314,7 @@ const CreateCoupon: React.FC<Props> = ({ id, isEditMode }) => {
               </div>
             )}
           />
-          <TextTitle>Cantidad de usos</TextTitle>
+          <Title>Cantidad de usos</Title>
           <Container>
             <Controller
               name="usage_limit"
@@ -358,7 +344,7 @@ const CreateCoupon: React.FC<Props> = ({ id, isEditMode }) => {
             />
           </Container>
           <MarginY />
-          <TextTitle>Valor de compra mínimo</TextTitle>
+          <Title>Valor de compra mínimo</Title>
           <Container>
             <Controller
               name="purchase_amount"
@@ -374,9 +360,9 @@ const CreateCoupon: React.FC<Props> = ({ id, isEditMode }) => {
             />
           </Container>
           <MarginY />
-          <TextTitle>
+          <Title>
             {enabled ? "Deshabilitar Horario" : "Habilitar Horario"}
-          </TextTitle>
+          </Title>
           <Controller
             name="enabled"
             control={control}
@@ -384,7 +370,7 @@ const CreateCoupon: React.FC<Props> = ({ id, isEditMode }) => {
               <InputSwitch checked={field.value} onChange={field.onChange} />
             )}
           />
-          <TextTitle>Descripción del cupón</TextTitle>
+          <Title>Descripción del cupón</Title>
           <InputTextarea
             placeholder="Descripción del cupón"
             rows={4}
@@ -393,7 +379,7 @@ const CreateCoupon: React.FC<Props> = ({ id, isEditMode }) => {
           />
           {enabled && (
             <>
-              <TextTitle>Fecha</TextTitle>
+              <Title>Fecha</Title>
               <Container>
                 <Controller
                   name="start_date"

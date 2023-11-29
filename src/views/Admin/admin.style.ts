@@ -6,8 +6,8 @@ import { TreeTable } from "primereact/treetable";
 export const Container = tailwind.div`
   flex
   items-center
-  justify-between
-  gap-4
+  justify-center
+  gap-20
 `;
 
 export const Actions = tailwind.div`
@@ -38,7 +38,7 @@ export const TableTreeStyled = styled(TreeTable)`
   }
 `;
 
-export const TextTitle = tailwind.div`
+export const Title = tailwind.div`
   text-lg
   text-white
   leading-5

@@ -22,8 +22,8 @@ import { TreeNode } from "primereact/treenode";
 import { MenuItem } from "primereact/menuitem";
 import { Loading } from "@learlifyweb/providers.loading";
 import {
+  Title,
   Container,
-  TextTitle,
   ActionTemplate,
   TableTreeStyled,
 } from "@views/Admin/admin.style";
@@ -36,6 +36,10 @@ import { render } from "./roles.utils";
 import { pageReportTemplate, paginatorTemplate } from "@utils";
 
 const Coupon: React.FC = () => {
+  /**
+   * @description
+   * Token host.
+   */
   const { token } = useHost();
 
   /**
@@ -109,7 +113,7 @@ const Coupon: React.FC = () => {
       <Toast position="bottom-right" ref={message} />
       <Container>
         <div>
-          <TextTitle>Roles</TextTitle>
+          <Title>Roles</Title>
           <Loading status={roles.isLoading || roles.isRefetching}>
             <Menubar model={menu} />
             <Divider type="solid" />

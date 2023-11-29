@@ -6,11 +6,7 @@ import { useHost } from "@learlifyweb/providers.host";
 import { Toast } from "primereact/toast";
 import { Button } from "primereact/button";
 import { Column } from "primereact/column";
-import {
-  Container,
-  TextTitle,
-  TableTreeStyled,
-} from "@views/Admin/admin.style";
+import { Title, Container, TableTreeStyled } from "@views/Admin/admin.style";
 
 // - Providers
 import { Loading } from "@learlifyweb/providers.loading";
@@ -51,10 +47,7 @@ const History: React.FC = () => {
   return (
     <>
       <Toast ref={message} />
-      <TextTitle>
-        Historial
-        <i className="fa-solid fa-cloack-rotate-left fa-sm float-right" />
-      </TextTitle>
+      <Title>Historial</Title>
       <Container>
         <Loading status={history.isLoading || history.isRefetching}>
           <TableTreeStyled

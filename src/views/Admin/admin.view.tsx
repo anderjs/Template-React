@@ -19,7 +19,7 @@ import { Button } from "primereact/button";
 import { Menubar } from "primereact/menubar";
 import { MenuItem } from "primereact/menuitem";
 import { TreeTableSelectionEvent } from "primereact/treetable";
-import { Container, TableTreeStyled, TextTitle } from "./admin.style";
+import { Container, TableTreeStyled, Title } from "./admin.style";
 
 // - API
 import { request } from "./api/requests";
@@ -257,10 +257,7 @@ const Admin: React.FC = () => {
       <br />
       <Container>
         <div>
-          <TextTitle>
-            Usuarios
-            <i className="fa-solid fa-users fa-fade fa-sm float-right" />
-          </TextTitle>
+          <Title>Usuarios</Title>
           <Loading status={users.isLoading || users.isRefetching}>
             <Menubar model={userModelTemplate} />
             <br />
@@ -284,10 +281,7 @@ const Admin: React.FC = () => {
           </Loading>
         </div>
         <div>
-          <TextTitle>
-            Profesores
-            <i className="fa-solid fa-users fa-fade fa-sm float-right" />
-          </TextTitle>
+          <Title>Profesores</Title>
           <Loading status={professors.isLoading || professors.isRefetching}>
             <Menubar model={professorModelTemplate} />
             <br />

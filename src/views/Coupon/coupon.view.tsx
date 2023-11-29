@@ -22,8 +22,8 @@ import { TreeNode } from "primereact/treenode";
 import { MenuItem } from "primereact/menuitem";
 import { Loading } from "@learlifyweb/providers.loading";
 import {
+  Title,
   Container,
-  TextTitle,
   ActionTemplate,
   TableTreeStyled,
 } from "@views/Admin/admin.style";
@@ -207,7 +207,7 @@ const Coupon: React.FC = () => {
       <Toast position="bottom-right" ref={message} />
       <Container>
         <div>
-          <TextTitle>Cupones</TextTitle>
+          <Title>Cupones</Title>
           <Menubar model={menu} />
           <Divider type="solid" />
           <Loading status={coupon.isLoading || coupon.isRefetching}>
