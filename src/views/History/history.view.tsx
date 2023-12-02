@@ -6,6 +6,7 @@ import { useHost } from "@learlifyweb/providers.host";
 import { Toast } from "primereact/toast";
 import { Button } from "primereact/button";
 import { Column } from "primereact/column";
+import { Tooltip } from "primereact/tooltip";
 import { Title, Container, TableTreeStyled } from "@views/Admin/admin.style";
 
 // - Providers

@@ -1,0 +1,18 @@
+.p-dropdown-panel .p-dropdown-items .p-dropdown-item {
+  margin: 0;
+  padding: 2rem 1.25rem;
+  border: 0 none;
+  color: #495057;
+  background: rgba(0, 0, 0, 0);
+  transition: box-shadow 0.2s;
+  border-radius: 0;
+}
+
+.message-error {
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.message-error.show {
+  opacity: 1;
+}

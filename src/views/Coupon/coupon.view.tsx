@@ -223,7 +223,6 @@ const Coupon: React.FC = () => {
               currentPageReportTemplate={pageReportTemplate}
               emptyMessage="No hay cupones disponibles"
             >
-              <Column header="#" field="id" />
               <Column header="Código" field="code" />
               <Column header="Cantidad" field="usage_limit" />
               <Column header="Estado" field="status" />

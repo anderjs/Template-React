@@ -14,6 +14,7 @@ import CreateCoupon from "@views/Coupon/Create";
 
 // - Plans
 import Plans from "@views/Plans/plans.view";
+import EditPlan from "@views/Plans/Edit";
 import CreatePlan from "@views/Plans/Create";
 
 // - Roles
@@ -21,7 +22,12 @@ import Roles from "@views/Roles/roles.view";
 
 // - History
 import History from "@views/History/history.view";
-import EditPlan from "@views/Plans/Edit";
+
+// - Courses
+import Courses from "@views/Courses";
+import Categories from "@views/Categories/categories.view";
+import CreateCategory from "@views/Categories/Create";
+import EditCategory from "@views/Categories/Edit";
 
 /**
  * @description
@@ -37,12 +43,17 @@ export const Router: React.FC = React.memo(() => {
         <Route path="/plans" element={<Plans />} />
         <Route path="/coupons" element={<Coupon />} />
         <Route path="/pricing" element={<Pricing />} />
+        <Route path="/courses" element={<Courses />} />
         <Route path="/history" element={<History />} />
         <Route path="/settings" element={<Settings />} />
+        <Route path="/categories" element={<Categories />} />
         <Route path="/plans/create" element={<CreatePlan />} />
         <Route path="/plans/edit/:id" element={<EditPlan />} />
+        <Route path="/courses/create" element={<div />} />
         <Route path="/coupons/create" element={<CreateCoupon />} />
         <Route path="/coupons/edit/:id" element={<EditCoupon />} />
+        <Route path="/categories/create" element={<CreateCategory />} />
+        <Route path="/categories/edit/:id" element={<EditCategory />} />
       </Routes>
     </BrowserRouter>
   );
