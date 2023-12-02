@@ -31,10 +31,10 @@ import { ICategory } from "@learlifyweb/providers.schema";
 import { Toast } from "primereact/toast";
 import { Button } from "primereact/button";
 import { Message } from "primereact/message";
-import { Dropdown, DropdownChangeEvent } from "primereact/dropdown";
 import { InputText } from "primereact/inputtext";
 import { ColorPicker } from "primereact/colorpicker";
 import { InputTextarea } from "primereact/inputtextarea";
+import { Dropdown, DropdownChangeEvent } from "primereact/dropdown";
 
 // - Styled Components
 import { Title } from "@views/Admin/admin.style";
@@ -201,7 +201,7 @@ const CreateCategory: React.FC<Props> = ({ id, isEditMode }) => {
       params: [id],
     }),
     onSuccess: (query) => {
-      if (query.status === HttpStatusCode.Ok) {
+      if (isEditMode && query.status === HttpStatusCode.Ok) {
         toast.current?.show({
           severity: "success",
           summary: query.response?.name,

@@ -25,6 +25,9 @@ import History from "@views/History/history.view";
 
 // - Courses
 import Courses from "@views/Courses";
+import CreateCourse from "@views/Courses/Create";
+
+// - Categories
 import Categories from "@views/Categories/categories.view";
 import CreateCategory from "@views/Categories/Create";
 import EditCategory from "@views/Categories/Edit";
@@ -49,7 +52,7 @@ export const Router: React.FC = React.memo(() => {
         <Route path="/categories" element={<Categories />} />
         <Route path="/plans/create" element={<CreatePlan />} />
         <Route path="/plans/edit/:id" element={<EditPlan />} />
-        <Route path="/courses/create" element={<div />} />
+        <Route path="/courses/create" element={<CreateCourse />} />
         <Route path="/coupons/create" element={<CreateCoupon />} />
         <Route path="/coupons/edit/:id" element={<EditCoupon />} />
         <Route path="/categories/create" element={<CreateCategory />} />

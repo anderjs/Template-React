@@ -1,6 +1,7 @@
 import React from "react";
 import { PrimeIcons } from "primereact/api";
 import { navigateToUrl } from "single-spa";
+import { Fade } from "react-awesome-reveal";
 
 // - Hooks
 import { useQuery } from "@tanstack/react-query";
@@ -8,7 +9,7 @@ import { useHost } from "@learlifyweb/providers.host";
 import { useNodes } from "@learlifyweb/providers.services";
 
 // - Https
-import { Role } from "@learlifyweb/providers.schema";
+import { IRoles, Role } from "@learlifyweb/providers.schema";
 import { Loading } from "@learlifyweb/providers.loading";
 import { httpsClient } from "@learlifyweb/providers.https";
 
@@ -18,8 +19,9 @@ import { Column } from "primereact/column";
 import { Button } from "primereact/button";
 import { Menubar } from "primereact/menubar";
 import { MenuItem } from "primereact/menuitem";
+import { Dropdown, DropdownChangeEvent } from "primereact/dropdown";
 import { TreeTableSelectionEvent } from "primereact/treetable";
-import { Container, TableTreeStyled, Title } from "./admin.style";
+import { Container, Filter, TableTreeStyled, Title } from "./admin.style";
 
 // - API
 import { request } from "./api/requests";
@@ -32,11 +34,14 @@ import { ISearch } from "./api/interface";
 
 // - State
 import { initialState, reducer } from "./admin.state";
-import { selectProfessor, selectUser } from "./admin.action";
+import { selectProfessor, selectRole, selectUser } from "./admin.action";
 
 // - Utils
 import { pageReportTemplate, paginatorTemplate } from "@utils";
 import { render } from "./admin.utils";
+import { MarginY } from "@views/Coupon/coupon.styles";
+import { StyledDropdown } from "@views/Categories/categories.styled";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const Admin: React.FC = () => {
   const { token } = useHost();
@@ -69,14 +74,19 @@ const Admin: React.FC = () => {
    * Query for users.
    */
   const users = useQuery({
-    queryKey: [AdminQuery.USERS],
+    queryKey: ["users"],
     refetchOnWindowFocus: false,
     queryFn: httpsClient<ISearch[]>({ token }, request.users, {
       query: {
-        role: Role.USER,
-        search: state.user.search,
+        role: state.role ?? Role.INSTRUCTOR,
       },
     }),
+  });
+
+  const roles = useQuery({
+    queryKey: ["roles"],
+    refetchOnWindowFocus: false,
+    queryFn: httpsClient<IRoles[]>({ token }, request.roles),
   });
 
   /**
@@ -92,29 +102,13 @@ const Admin: React.FC = () => {
 
   /**
    * @description
-   * Query for professors.
+   * Every time state.role changes, refetch users.
    */
-  const professors = useQuery({
-    queryKey: [AdminQuery.PROFESSORS],
-    refetchOnWindowFocus: false,
-    queryFn: httpsClient<ISearch[]>({ token }, request.users, {
-      query: {
-        role: Role.PROFESSOR,
-        search: state.professor.search,
-      },
-    }),
-  });
-
-  /**
-   * @description
-   * Professors node to get into table.
-   */
-  const professorNodeRef = useNodes(professors.data?.response ?? [], {
-    key: "email",
-    data: render,
-    icon: "fa fa-user",
-    label: (user) => user.email,
-  });
+  React.useEffect(() => {
+    if (users.isFetchedAfterMount) {
+      users.refetch();
+    }
+  }, [users.isFetchedAfterMount, state.role]);
 
   /**
    * @description
@@ -225,27 +219,13 @@ const Admin: React.FC = () => {
     [state.users]
   );
 
-  /**
-   * @description
-   * User model template.
-   * @requires MenuItem
-   */
-  const professorModelTemplate = React.useMemo<MenuItem[]>(
-    () => [
-      {
-        label: "Agregar",
-        icon: PrimeIcons.PLUS,
-        items: [
-          {
-            label: "Paquete",
-            icon: PrimeIcons.CREDIT_CARD,
-            command: () => {},
-          },
-        ],
-      },
-    ],
-    []
-  );
+  const handleFilterByRole = (e: DropdownChangeEvent) => {
+    dispatch(selectRole(e.value));
+  };
+
+  const ItemTemplate = (item) => {
+    return <small>{item.name}</small>;
+  };
 
   const paginatorLeft = <Button type="button" icon="pi pi-refresh" text />;
 
@@ -254,57 +234,51 @@ const Admin: React.FC = () => {
   return (
     <>
       <Toast position="bottom-left" ref={message} />
-      <br />
-      <Container>
-        <div>
-          <Title>Usuarios</Title>
-          <Loading status={users.isLoading || users.isRefetching}>
+      <Fade delay={0.5}>
+        <Container>
+          <div>
+            <Title>Usuarios</Title>
             <Menubar model={userModelTemplate} />
-            <br />
-            <TableTreeStyled
-              paginator
-              rows={10}
-              showGridlines
-              resizableColumns
-              selectionMode="checkbox"
-              value={userNodeRef.nodes}
-              paginatorLeft={paginatorLeft}
-              paginatorRight={paginatorRight}
-              selectionKeys={state.users}
-              paginatorTemplate={paginatorTemplate}
-              onSelectionChange={handleSelectUser}
-              currentPageReportTemplate={pageReportTemplate}
-            >
-              <Column field="firstName" expander sortable />
-              <Column field="email" sortable />
-            </TableTreeStyled>
-          </Loading>
-        </div>
-        <div>
-          <Title>Profesores</Title>
-          <Loading status={professors.isLoading || professors.isRefetching}>
-            <Menubar model={professorModelTemplate} />
-            <br />
-            <TableTreeStyled
-              paginator
-              rows={10}
-              showGridlines
-              resizableColumns
-              selectionMode="checkbox"
-              value={professorNodeRef.nodes}
-              paginatorLeft={paginatorLeft}
-              paginatorRight={paginatorRight}
-              paginatorTemplate={paginatorTemplate}
-              selectionKeys={state.professors}
-              onSelectionChange={handleSelectProfessor}
-              currentPageReportTemplate={pageReportTemplate}
-            >
-              <Column field="firstName" expander sortable />
-              <Column field="email" sortable />
-            </TableTreeStyled>
-          </Loading>
-        </div>
-      </Container>
+            <MarginY />
+            <Filter>
+              <Dropdown
+                optionLabel="name"
+                optionValue="name"
+                value={state?.role}
+                onChange={handleFilterByRole}
+                placeholder="Tipo de usuario"
+                options={roles?.data?.response}
+                itemTemplate={ItemTemplate}
+              />
+              <FontAwesomeIcon color="white" size="xl" icon="folder-tree" />
+            </Filter>
+            <MarginY />
+            <Loading>
+              <TableTreeStyled
+                paginator
+                rows={10}
+                showGridlines
+                resizableColumns
+                selectionMode="checkbox"
+                value={userNodeRef.nodes}
+                paginatorLeft={paginatorLeft}
+                paginatorRight={paginatorRight}
+                selectionKeys={state.users}
+                paginatorTemplate={paginatorTemplate}
+                onSelectionChange={handleSelectUser}
+                loading={users.isLoading || users.isRefetching}
+                loadingIcon={
+                  <FontAwesomeIcon size="2xl" icon="circle-user" fade />
+                }
+                currentPageReportTemplate={pageReportTemplate}
+              >
+                <Column field="first_name" sortable />
+                <Column header="Correo electrónico" field="email" />
+              </TableTreeStyled>
+            </Loading>
+          </div>
+        </Container>
+      </Fade>
     </>
   );
 };

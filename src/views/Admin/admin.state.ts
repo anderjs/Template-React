@@ -1,19 +1,11 @@
 import { createReducer } from "@reduxjs/toolkit";
 import { TreeSelectSelectionKeysType } from "primereact/treeselect";
 
-import { selectUser, selectProfessor } from "./admin.action";
+import { selectUser, selectProfessor, selectRole } from "./admin.action";
+import { Role } from "@learlifyweb/providers.schema";
 
 export const initialState: State = {
-  user: {
-    page: 1,
-    search: "",
-  },
-  professor: {
-    page: 1,
-    search: "",
-  },
-  users: null,
-  professors: null,
+  users: {},
 };
 
 /**
@@ -29,19 +21,16 @@ export const reducer = createReducer<State>(initialState, (builder) => {
     state.users = action.payload;
   });
 
-  builder.addCase(selectProfessor, (state, action) => {
-    state.professors = action.payload;
+  /**
+   * @description
+   * Select a role.
+   */
+  builder.addCase(selectRole, (state, action) => {
+    state.role = action.payload;
   });
 });
 
-interface IPaginator {
-  page: number;
-  search: string;
-}
-
 export interface State {
-  user: IPaginator;
-  professor: IPaginator;
+  role?: Role;
   users: TreeSelectSelectionKeysType;
-  professors: TreeSelectSelectionKeysType;
 }

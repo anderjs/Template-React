@@ -10,6 +10,13 @@ export const Container = tailwind.div`
   gap-20
 `;
 
+export const Filter = tailwind.div`
+  flex
+  items-center
+  justify-start
+  gap-2
+`;
+
 export const Actions = tailwind.div`
   flex
   flex-wrap
