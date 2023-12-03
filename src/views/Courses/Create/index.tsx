@@ -5,11 +5,9 @@ import "./styles.css";
 // - Prime API
 import { Card } from "primereact/card";
 import { Steps } from "primereact/steps";
-import { Button } from "primereact/button";
 import { MenuItem } from "primereact/menuitem";
 
 import { Context } from "../styles";
-import { Container } from "@views/Admin/admin.style";
 
 // - State
 import { initialState, reducer, Step } from "./state";
@@ -20,6 +18,7 @@ import {
   selectCategory,
   selectInstructor,
   selectTag,
+  setInteractive,
 } from "./state/action";
 
 // - Stepper
@@ -37,7 +36,7 @@ import {
 } from "@learlifyweb/providers.schema";
 
 // - Animation
-import { Fade, Slide } from "react-awesome-reveal";
+import { Fade } from "react-awesome-reveal";
 
 const CreateCourse: React.FC = () => {
   const course = useForm<ICourse>();
@@ -64,6 +63,13 @@ const CreateCourse: React.FC = () => {
     name: "title",
   });
 
+  React.useEffect(() => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  }, [state.active]);
+
   /**
    * @description
    * Handle click back.
@@ -78,6 +84,14 @@ const CreateCourse: React.FC = () => {
    */
   const handleNextStep = () => {
     return dispatch(nextStep());
+  };
+
+  /**
+   * @description
+   * Handle click next.
+   */
+  const handleInteract = () => {
+    return dispatch(setInteractive());
   };
 
   /**
@@ -112,6 +126,10 @@ const CreateCourse: React.FC = () => {
     return dispatch(removeTag(tag));
   };
 
+  /**
+   * @description
+   * Uses AI under the hood.
+   */
   const handleEnrichDescription = (value: string) => {
     course.setValue("description", value);
   };
@@ -150,8 +168,8 @@ const CreateCourse: React.FC = () => {
               onBack={handleBackStep}
               onNext={handleNextStep}
               disabledNext={
-                state.tags.length === 0 &&
-                !course.getValues("title") &&
+                state.tags.length === 0 ||
+                !course.getValues("title") ||
                 !course.getValues("description")
               }
             />
@@ -162,7 +180,7 @@ const CreateCourse: React.FC = () => {
 
   return (
     <Fade delay={0.5}>
-      <Card footer={FooterTemplate}>
+      <Card footer={FooterTemplate} className="mb-5">
         <Steps model={steps} activeIndex={state.active} />
         <Context>
           {state.active === Step.COURSES && (
@@ -190,6 +208,8 @@ const CreateCourse: React.FC = () => {
             <Fade delay={0.1}>
               <Instructor
                 value={state?.instructor}
+                onInteract={handleInteract}
+                interactive={state.interactive}
                 onSelect={handleSelectInstructor}
               />
             </Fade>

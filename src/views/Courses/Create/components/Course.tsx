@@ -18,13 +18,12 @@ import { InputText } from "primereact/inputtext";
 
 // - Componets
 import EnrichmentButton from "@components/EnrichmentButton";
-import { StepperTitle, Tag, Tags } from "@views/Courses/styles";
+import { StepperTitle, Tag, Tags, size } from "@views/Courses/styles";
 
 // - Styled Components
 import { MarginY } from "@views/Coupon/coupon.styles";
 
 // - Utils
-import { size } from "@views/Courses/styles";
 import { generateFreshColor } from "@views/Categories/categories.utils";
 
 // - Schemas

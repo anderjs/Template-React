@@ -38,6 +38,8 @@ export const removeTag = createAction(
   }
 );
 
+export const setInteractive = createAction("@courses/instructor/interact");
+
 export const backStep = createAction("@courses/next/back");
 
 export const nextStep = createAction("@courses/next/step");

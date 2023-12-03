@@ -13,6 +13,7 @@ import {
   selectCategory,
   selectInstructor,
   selectTag,
+  setInteractive,
 } from "./action";
 
 interface IState {
@@ -21,6 +22,7 @@ interface IState {
   tags: Pick<ITags, "name" | "color">[];
   instructor?: IUser;
   category?: ICategory;
+  interactive?: boolean;
   course?: Pick<ICourse, "title" | "description">;
 }
 
@@ -65,6 +67,10 @@ const reducer = createReducer(initialState, (builder) => {
 
   builder.addCase(backStep, (state) => {
     state.active -= 1;
+  });
+
+  builder.addCase(setInteractive, (state) => {
+    state.interactive = !state.interactive;
   });
 });
 
