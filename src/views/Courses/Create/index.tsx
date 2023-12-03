@@ -1,4 +1,5 @@
 import React from "react";
+import { useForm, useWatch } from "react-hook-form";
 import "./styles.css";
 
 // - Prime API
@@ -12,18 +13,35 @@ import { Container } from "@views/Admin/admin.style";
 
 // - State
 import { initialState, reducer, Step } from "./state";
-import { nextStep, selectCategory } from "./state/action";
+import {
+  backStep,
+  nextStep,
+  removeTag,
+  selectCategory,
+  selectInstructor,
+  selectTag,
+} from "./state/action";
 
 // - Stepper
+import Course from "./components/Course";
 import Categories from "./components/Categories";
+import Instructor from "./components/Instructor";
+import { Controllers } from "./components/Controllers";
 
 // - Schema
-import { ICategory } from "@learlifyweb/providers.schema";
+import {
+  ICategory,
+  ICourse,
+  ITags,
+  IUser,
+} from "@learlifyweb/providers.schema";
 
 // - Animation
-import { Fade, Zoom } from "react-awesome-reveal";
+import { Fade, Slide } from "react-awesome-reveal";
 
 const CreateCourse: React.FC = () => {
+  const course = useForm<ICourse>();
+
   const [state, dispatch] = React.useReducer(reducer, initialState);
 
   const steps = React.useMemo<MenuItem[]>(
@@ -34,10 +52,30 @@ const CreateCourse: React.FC = () => {
       {
         label: "Instructor",
       },
+      {
+        label: "Información",
+      },
     ],
     []
   );
 
+  const title = useWatch({
+    control: course.control,
+    name: "title",
+  });
+
+  /**
+   * @description
+   * Handle click back.
+   */
+  const handleBackStep = () => {
+    return dispatch(backStep());
+  };
+
+  /**
+   * @description
+   * Handle click next.
+   */
   const handleNextStep = () => {
     return dispatch(nextStep());
   };
@@ -50,23 +88,74 @@ const CreateCourse: React.FC = () => {
     return dispatch(selectCategory(category));
   };
 
+  /**
+   * @description
+   * Select the current instructor.
+   */
+  const handleSelectInstructor = (instructor: IUser) => {
+    return dispatch(selectInstructor(instructor));
+  };
+
+  /**
+   * @description
+   * Select the current tags for the course.
+   */
+  const handleSelectTag = (tag: Pick<ITags, "name" | "color">) => {
+    return dispatch(selectTag(tag));
+  };
+
+  /**
+   * @description
+   * Select the current tags for the course.
+   */
+  const handleRemoveTag = (tag: Pick<ITags, "name" | "color">) => {
+    return dispatch(removeTag(tag));
+  };
+
+  const handleEnrichDescription = (value: string) => {
+    course.setValue("description", value);
+  };
+
+  /**
+   * @description
+   * Footer template.
+   */
   const FooterTemplate = () => {
     switch (state.active) {
       case Step.CATEGORIES:
         return (
-          <Container>
-            <Button disabled severity="help">
-              Back
-            </Button>
-            <Button
-              onClick={handleNextStep}
-              tooltip="Continuarás con la siguiente etapa"
-              disabled={!state.category}
-              severity="info"
-            >
-              Next
-            </Button>
-          </Container>
+          <>
+            <Controllers
+              onNext={handleNextStep}
+              disabledNext={!state?.category}
+            />
+          </>
+        );
+
+      case Step.INSTRUCTOR:
+        return (
+          <>
+            <Controllers
+              onBack={handleBackStep}
+              onNext={handleNextStep}
+              disabledNext={!state?.instructor}
+            />
+          </>
+        );
+
+      case Step.COURSES:
+        return (
+          <>
+            <Controllers
+              onBack={handleBackStep}
+              onNext={handleNextStep}
+              disabledNext={
+                state.tags.length === 0 &&
+                !course.getValues("title") &&
+                !course.getValues("description")
+              }
+            />
+          </>
         );
     }
   };
@@ -76,13 +165,34 @@ const CreateCourse: React.FC = () => {
       <Card footer={FooterTemplate}>
         <Steps model={steps} activeIndex={state.active} />
         <Context>
+          {state.active === Step.COURSES && (
+            <Fade delay={0.1}>
+              <Course
+                title={title}
+                tags={state.tags}
+                control={course.control}
+                onTag={handleSelectTag}
+                onRemoveTag={handleRemoveTag}
+                category={state?.category?.name}
+                onEnrichDescription={handleEnrichDescription}
+              />
+            </Fade>
+          )}
           {state.active === Step.CATEGORIES && (
-            <Zoom delay={0.5}>
+            <Fade delay={0.1}>
               <Categories
                 value={state?.category}
                 onSelect={handleSelectCategory}
               />
-            </Zoom>
+            </Fade>
+          )}
+          {state.active === Step.INSTRUCTOR && (
+            <Fade delay={0.1}>
+              <Instructor
+                value={state?.instructor}
+                onSelect={handleSelectInstructor}
+              />
+            </Fade>
           )}
         </Context>
       </Card>

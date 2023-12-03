@@ -12,15 +12,17 @@ import { httpsClient } from "@learlifyweb/providers.https";
 import { Toast } from "primereact/toast";
 import { Column } from "primereact/column";
 import { Button } from "primereact/button";
+import { TreeNode } from "primereact/treenode";
 
 // - Styled
 import { MarginY } from "@views/Coupon/coupon.styles";
 import {
-  ActionTemplate,
-  Container,
-  TableTreeStyled,
   Title,
+  Container,
+  ActionTemplate,
+  TableTreeStyled,
 } from "@views/Admin/admin.style";
+import { Deleted } from "@components/Deleted";
 
 // - Query
 import { PlanMutation, PlanQuery } from "./plans.query";
@@ -29,8 +31,6 @@ import { api } from "./plans.service";
 // - Utils
 import { render } from "./plans.utils";
 import { pageReportTemplate, paginatorTemplate, path } from "@utils";
-import { TreeNode } from "primereact/treenode";
-import { Deleted } from "@components/Deleted";
 
 const Plans: React.FC = () => {
   const { token } = useHost();

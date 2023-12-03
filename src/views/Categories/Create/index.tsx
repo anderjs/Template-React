@@ -89,15 +89,10 @@ const CreateCategory: React.FC<Props> = ({ id, isEditMode }) => {
   const enrichment = useMutation({
     mutationKey: ["enrichment"],
     mutationFn: (name: string) => {
-      const request = httpsClient<string>(
-        { token },
-        api.enrichment,
-        {},
-        {
-          name,
-          context: "categories",
-        }
-      );
+      const request = httpsClient<string>({ token }, api.enrichment, null, {
+        name,
+        context: "categories",
+      });
 
       return request();
     },
