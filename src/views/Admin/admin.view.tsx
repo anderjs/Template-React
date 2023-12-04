@@ -1,17 +1,18 @@
 import React from "react";
-import { PrimeIcons } from "primereact/api";
-import { navigateToUrl } from "single-spa";
 import { Fade } from "react-awesome-reveal";
+import { PrimeIcons } from "primereact/api";
+import { useQuery } from "@tanstack/react-query";
+import { navigateToUrl } from "single-spa";
 
 // - Hooks
-import { useQuery } from "@tanstack/react-query";
+
+import { http } from "@learlifyweb/providers.https";
 import { useHost } from "@learlifyweb/providers.host";
 import { useNodes } from "@learlifyweb/providers.services";
 
 // - Https
 import { IRoles, Role } from "@learlifyweb/providers.schema";
 import { Loading } from "@learlifyweb/providers.loading";
-import { httpsClient } from "@learlifyweb/providers.https";
 
 // - Styles
 import { Toast } from "primereact/toast";
@@ -76,7 +77,7 @@ const Admin: React.FC = () => {
   const users = useQuery({
     queryKey: ["users"],
     refetchOnWindowFocus: false,
-    queryFn: httpsClient<ISearch[]>({ token }, request.users, {
+    queryFn: http<ISearch[]>({ token }, request.users, {
       query: {
         role: state.role ?? Role.INSTRUCTOR,
       },
@@ -86,7 +87,7 @@ const Admin: React.FC = () => {
   const roles = useQuery({
     queryKey: ["roles"],
     refetchOnWindowFocus: false,
-    queryFn: httpsClient<IRoles[]>({ token }, request.roles),
+    queryFn: http<IRoles[]>({ token }, request.roles),
   });
 
   /**

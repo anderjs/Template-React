@@ -7,8 +7,8 @@ import {
 } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
 
+import { http } from "@learlifyweb/providers.https";
 import { useHost } from "@learlifyweb/providers.host";
-import { httpsClient } from "@learlifyweb/providers.https";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
@@ -48,10 +48,12 @@ const Course: React.FC<Props> = (props) => {
   const markdownEnrichment = useMutation({
     mutationKey: ["markdown"],
     mutationFn: () => {
-      const request = httpsClient<string>({ token }, api.enrichment, null, {
-        name: props?.title,
-        target: props?.category,
-        context: "markdown",
+      const request = http<string>({ token }, api.enrichment, {
+        body: {
+          name: props?.title,
+          target: props?.category,
+          context: "markdown",
+        },
       });
 
       return request();

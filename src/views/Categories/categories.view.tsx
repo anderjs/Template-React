@@ -2,8 +2,8 @@ import React from "react";
 import { navigateToUrl } from "single-spa";
 import { useQuery } from "@tanstack/react-query";
 import { ICategory } from "@learlifyweb/providers.schema";
-import { httpsClient } from "@learlifyweb/providers.https";
 
+import { http } from "@learlifyweb/providers.https";
 import { useHost } from "@learlifyweb/providers.host";
 import { Loading } from "@learlifyweb/providers.loading";
 import { useNodes } from "@learlifyweb/providers.services";
@@ -45,10 +45,10 @@ const Categories: React.FC = () => {
   const categories = useQuery({
     refetchOnWindowFocus: false,
     queryKey: [CategoryQuery.FETCH],
-    queryFn: httpsClient<ICategory[]>({ token }, api.categories),
+    queryFn: http<ICategory[]>({ token }, api.categories),
   });
 
-  const { nodes } = useNodes(categories?.data?.response.reverse(), {
+  const { nodes } = useNodes(categories?.data?.response, {
     key: "id",
     data: render,
     label: (label) => label.id,

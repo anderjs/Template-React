@@ -42,3 +42,5 @@ export const Tags = tw.div`
   lg:grid-cols-4 
   gap-2
 `;
+
+export const flex = "flex justify-start gap-1";

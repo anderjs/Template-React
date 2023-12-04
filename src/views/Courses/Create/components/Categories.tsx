@@ -2,8 +2,8 @@ import React from "react";
 import { isUndefined } from "lodash";
 import { useQuery } from "@tanstack/react-query";
 
+import { http } from "@learlifyweb/providers.https";
 import { useHost } from "@learlifyweb/providers.host";
-import { httpsClient } from "@learlifyweb/providers.https";
 
 import { Loading } from "@learlifyweb/providers.loading";
 import { ICategory } from "@learlifyweb/providers.schema";
@@ -32,7 +32,7 @@ const Categories: React.FC<Props> = ({ value, onSelect }) => {
   const categories = useQuery({
     queryKey: ["categories"],
     refetchOnWindowFocus: false,
-    queryFn: httpsClient<ICategory[]>({ token }, api.categories),
+    queryFn: http<ICategory[]>({ token }, api.categories),
     onSuccess: () => {
       if (isUndefined(value)) {
         message?.current?.show({

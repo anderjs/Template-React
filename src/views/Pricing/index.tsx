@@ -1,17 +1,14 @@
 import React from "react";
-import styled from "styled-components";
 
 import { useQuery } from "@tanstack/react-query";
 import { useHost } from "@learlifyweb/providers.host";
 
 import { Loading } from "@learlifyweb/providers.loading";
-import { httpsClient } from "@learlifyweb/providers.https";
+import { http } from "@learlifyweb/providers.https";
 
 import { PlanQuery } from "@query";
 
 import {
-  Color,
-  styles,
   Container,
   StyledCard,
   StyledIcon,
@@ -33,7 +30,7 @@ const Pricing: React.FC = () => {
 
   const plans = useQuery({
     queryKey: [PlanQuery.DATA],
-    queryFn: httpsClient<IPlan[]>({ token }, request.pricing),
+    queryFn: http<IPlan[]>({ token }, request.pricing),
   });
 
   return (

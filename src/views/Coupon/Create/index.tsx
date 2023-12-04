@@ -5,9 +5,9 @@ import { classNames } from "primereact/utils";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useForm, useWatch, Controller } from "react-hook-form";
 
+import { http } from "@learlifyweb/providers.https";
 import { useHost } from "@learlifyweb/providers.host";
 import { Loading } from "@learlifyweb/providers.loading";
-import { httpsClient } from "@learlifyweb/providers.https";
 
 import { Toast } from "primereact/toast";
 import { Button } from "primereact/button";
@@ -83,7 +83,7 @@ const CreateCoupon: React.FC<Props> = ({ id, isEditMode }) => {
     refetchOnMount: isEditMode,
     refetchOnWindowFocus: false,
     queryKey: [CouponQuery.EDIT],
-    queryFn: httpsClient<ICoupon>({ token }, service.coupons, {
+    queryFn: http<ICoupon>({ token }, service.coupons, {
       params: [id],
     }),
   });
@@ -94,8 +94,10 @@ const CreateCoupon: React.FC<Props> = ({ id, isEditMode }) => {
    */
   const createCouponService = useMutation({
     mutationKey: ["coupon"],
-    mutationFn: (coupon: Partial<ICoupon>) => {
-      const query = httpsClient<ICoupon>({ token }, service.create, {}, coupon);
+    mutationFn: (body: Partial<ICoupon>) => {
+      const query = http<ICoupon>({ token }, service.create, {
+        body,
+      });
 
       return query();
     },
@@ -131,14 +133,10 @@ const CreateCoupon: React.FC<Props> = ({ id, isEditMode }) => {
   const updateCouponService = useMutation({
     mutationKey: ["coupon"],
     mutationFn: (coupon: Partial<ICoupon>) => {
-      const query = httpsClient<ICoupon>(
-        { token },
-        service.update,
-        {
-          params: [id],
-        },
-        coupon
-      );
+      const query = http<ICoupon>({ token }, service.update, {
+        body: coupon,
+        params: [id],
+      });
 
       return query();
     },

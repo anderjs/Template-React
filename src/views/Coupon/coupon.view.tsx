@@ -5,7 +5,7 @@ import { PrimeIcons } from "primereact/api";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useHost } from "@learlifyweb/providers.host";
 import { useNodes } from "@learlifyweb/providers.services";
-import { httpsClient } from "@learlifyweb/providers.https";
+import { http } from "@learlifyweb/providers.https";
 
 import { ICoupon } from "@learlifyweb/providers.schema";
 
@@ -52,7 +52,7 @@ const Coupon: React.FC = () => {
   const coupon = useQuery({
     queryKey: [CouponQuery.DATA],
     refetchOnWindowFocus: false,
-    queryFn: httpsClient<ICoupon[]>({ token }, service.coupons),
+    queryFn: http<ICoupon[]>({ token }, service.coupons),
   });
 
   /**
@@ -62,7 +62,7 @@ const Coupon: React.FC = () => {
   const deleteCouponService = useMutation({
     mutationKey: [CouponQuery.DELETE],
     mutationFn: ({ id }: Pick<ICoupon, "code" | "id">) => {
-      const query = httpsClient<number>({ token }, service.delete, {
+      const query = http<number>({ token }, service.delete, {
         params: [id],
       });
 

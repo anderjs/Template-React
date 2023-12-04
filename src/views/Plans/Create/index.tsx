@@ -7,7 +7,7 @@ import { useHost } from "@learlifyweb/providers.host";
 import { Controller, useForm } from "react-hook-form";
 import { AxiosError, HttpStatusCode } from "axios";
 
-import { httpsClient } from "@learlifyweb/providers.https";
+import { http } from "@learlifyweb/providers.https";
 
 import { Title } from "@views/Admin/admin.style";
 import { MarginY, Container } from "@views/Coupon/coupon.styles";
@@ -50,8 +50,10 @@ const CreatePlan: React.FC<Props> = ({ id, isEditMode }) => {
    */
   const create = useMutation({
     mutationKey: [PlanMutation.CREATE],
-    mutationFn: (data: Partial<IPlan>) => {
-      const request = httpsClient<IPlan>({ token }, api.create, {}, data);
+    mutationFn: (body: Partial<IPlan>) => {
+      const request = http<IPlan>({ token }, api.create, {
+        body,
+      });
 
       return request();
     },
@@ -85,15 +87,11 @@ const CreatePlan: React.FC<Props> = ({ id, isEditMode }) => {
    */
   const update = useMutation({
     mutationKey: [PlanMutation.UPDATE],
-    mutationFn: (data: Partial<IPlan>) => {
-      const request = httpsClient<IPlan>(
-        { token },
-        api.update,
-        {
-          params: [id],
-        },
-        data
-      );
+    mutationFn: (body: Partial<IPlan>) => {
+      const request = http<IPlan>({ token }, api.update, {
+        body,
+        params: [id],
+      });
 
       return request();
     },
@@ -128,7 +126,7 @@ const CreatePlan: React.FC<Props> = ({ id, isEditMode }) => {
     queryKey: [PlanQuery.GET],
     refetchOnMount: isEditMode,
     refetchOnWindowFocus: false,
-    queryFn: httpsClient<IPlan>({ token }, api.plans, {
+    queryFn: http<IPlan>({ token }, api.plans, {
       params: [id],
     }),
     onSuccess: (query) => {

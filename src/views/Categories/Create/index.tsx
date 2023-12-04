@@ -15,8 +15,8 @@ import "./styles.css";
 import { Fade } from "react-awesome-reveal";
 
 // - Providers
+import { http } from "@learlifyweb/providers.https";
 import { useHost } from "@learlifyweb/providers.host";
-import { httpsClient } from "@learlifyweb/providers.https";
 
 // - Font Awesome
 import { fas } from "@fortawesome/free-solid-svg-icons";
@@ -89,9 +89,11 @@ const CreateCategory: React.FC<Props> = ({ id, isEditMode }) => {
   const enrichment = useMutation({
     mutationKey: ["enrichment"],
     mutationFn: (name: string) => {
-      const request = httpsClient<string>({ token }, api.enrichment, null, {
-        name,
-        context: "categories",
+      const request = http<string>({ token }, api.enrichment, {
+        body: {
+          name,
+          context: "categories",
+        },
       });
 
       return request();
@@ -129,7 +131,9 @@ const CreateCategory: React.FC<Props> = ({ id, isEditMode }) => {
         "name" | "description" | "first_color" | "second_color" | "icon"
       >
     ) => {
-      const request = httpsClient({ token }, api.create, {}, data);
+      const request = http({ token }, api.create, {
+        body: data,
+      });
 
       return request();
     },
@@ -159,14 +163,10 @@ const CreateCategory: React.FC<Props> = ({ id, isEditMode }) => {
         "name" | "description" | "first_color" | "second_color" | "icon"
       >
     ) => {
-      const request = httpsClient(
-        { token },
-        api.update,
-        {
-          params: [id],
-        },
-        data
-      );
+      const request = http({ token }, api.update, {
+        body: data,
+        params: [id],
+      });
 
       return request();
     },
@@ -192,7 +192,7 @@ const CreateCategory: React.FC<Props> = ({ id, isEditMode }) => {
     enabled: isEditMode,
     queryKey: ["CATEGORY"],
     refetchOnWindowFocus: false,
-    queryFn: httpsClient<ICategory>({ token }, api.categories, {
+    queryFn: http<ICategory>({ token }, api.categories, {
       params: [id],
     }),
     onSuccess: (query) => {

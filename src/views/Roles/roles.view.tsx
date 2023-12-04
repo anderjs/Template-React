@@ -5,7 +5,7 @@ import { PrimeIcons } from "primereact/api";
 import { useQuery } from "@tanstack/react-query";
 import { useHost } from "@learlifyweb/providers.host";
 import { useNodes } from "@learlifyweb/providers.services";
-import { httpsClient } from "@learlifyweb/providers.https";
+import { http } from "@learlifyweb/providers.https";
 
 import { ICoupon, IRoles } from "@learlifyweb/providers.schema";
 
@@ -55,7 +55,7 @@ const Coupon: React.FC = () => {
   const roles = useQuery({
     queryKey: [CouponQuery.DATA],
     refetchOnWindowFocus: false,
-    queryFn: httpsClient<IRoles[]>({ token }, service.roles),
+    queryFn: http<IRoles[]>({ token }, service.roles),
   });
 
   /**

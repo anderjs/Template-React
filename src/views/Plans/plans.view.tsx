@@ -6,7 +6,7 @@ import { IPlan } from "@learlifyweb/providers.schema";
 import { useHost } from "@learlifyweb/providers.host";
 import { Loading } from "@learlifyweb/providers.loading";
 import { useNodes } from "@learlifyweb/providers.services";
-import { httpsClient } from "@learlifyweb/providers.https";
+import { http } from "@learlifyweb/providers.https";
 
 // - Components
 import { Toast } from "primereact/toast";
@@ -41,7 +41,7 @@ const Plans: React.FC = () => {
    */
   const plans = useQuery({
     queryKey: [PlanQuery.PLANS],
-    queryFn: httpsClient<IPlan[]>({ token }, api.plans),
+    queryFn: http<IPlan[]>({ token }, api.plans),
   });
 
   /**
@@ -51,7 +51,7 @@ const Plans: React.FC = () => {
   const deletePlan = useMutation({
     mutationKey: [PlanMutation.DELETE],
     mutationFn: (id: number) => {
-      const request = httpsClient({ token }, api.delete, {
+      const request = http({ token }, api.delete, {
         params: [id],
       });
 

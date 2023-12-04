@@ -19,7 +19,7 @@ import { service } from "./history.service";
 import { HistoryQuery } from "./history.query";
 
 // - Client
-import { httpsClient } from "@learlifyweb/providers.https";
+import { http } from "@learlifyweb/providers.https";
 
 // - Schema
 import { IHistory } from "@learlifyweb/providers.schema";
@@ -30,7 +30,7 @@ const History: React.FC = () => {
 
   const history = useQuery({
     queryKey: [HistoryQuery.HISTORY],
-    queryFn: httpsClient<IHistory[]>({ token }, service.history),
+    queryFn: http<IHistory[]>({ token }, service.history),
   });
 
   const historyNodeRef = useNodes(history?.data?.response, {

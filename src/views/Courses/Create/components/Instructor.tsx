@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 
 import { useHost } from "@learlifyweb/providers.host";
 import { Loading } from "@learlifyweb/providers.loading";
-import { httpsClient } from "@learlifyweb/providers.https";
+import { http } from "@learlifyweb/providers.https";
 
 // - Prime API
 import { Toast } from "primereact/toast";
@@ -41,7 +41,7 @@ const Instructor: React.FC<Props> = ({
   const instructors = useQuery({
     enabled: false,
     queryKey: ["instructor"],
-    queryFn: httpsClient<IUser[]>({ token }, request.users, {
+    queryFn: http<IUser[]>({ token }, request.users, {
       query: {
         role: Role.INSTRUCTOR,
       },
