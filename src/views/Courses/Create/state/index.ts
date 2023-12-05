@@ -33,7 +33,7 @@ enum Step {
 }
 
 const initialState: IState = {
-  active: Step.COURSES,
+  active: Step.CATEGORIES,
   tags: [],
   names: [],
 };

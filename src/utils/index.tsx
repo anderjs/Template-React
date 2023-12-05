@@ -10,7 +10,7 @@ export const paginatorTemplate =
 
 export const pageReportTemplate = "{first} to {last} of {totalRecords}";
 
-export const path = (route: string, id: number) => {
+export const path = (route: string, id: number | string) => {
   return `${route}/${id}`;
 };
 

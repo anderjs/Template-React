@@ -1,6 +1,12 @@
 import React from "react";
+import { navigateToUrl } from "single-spa";
+import { useParams } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 import { useForm, useWatch } from "react-hook-form";
 import "./styles.css";
+
+import { http } from "@learlifyweb/providers.https";
+import { useHost } from "@learlifyweb/providers.host";
 
 // - Prime API
 import { Card } from "primereact/card";
@@ -15,11 +21,16 @@ import {
   backStep,
   nextStep,
   removeTag,
-  selectCategory,
-  selectInstructor,
   selectTag,
+  setDraftState,
+  selectCategory,
   setInteractive,
+  selectInstructor,
 } from "./state/action";
+
+// - API
+import { api } from "../courses.service";
+import { IDraft } from "../courses.interface";
 
 // - Stepper
 import Course from "./components/Course";
@@ -39,28 +50,31 @@ import {
 import { Fade } from "react-awesome-reveal";
 
 const CreateCourse: React.FC = () => {
-  const course = useForm<ICourse>();
+  const { token } = useHost();
 
   const [state, dispatch] = React.useReducer(reducer, initialState);
 
-  const steps = React.useMemo<MenuItem[]>(
-    () => [
-      {
-        label: "Categoría",
-      },
-      {
-        label: "Instructor",
-      },
-      {
-        label: "Información",
-      },
-    ],
-    []
-  );
+  const { control, getValues, setValue } = useForm<ICourse>();
+
+  const { _id } = useParams();
 
   const title = useWatch({
-    control: course.control,
+    control,
     name: "title",
+  });
+
+  const draft = useQuery({
+    queryKey: ["draft"],
+    refetchOnWindowFocus: false,
+    queryFn: http<IDraft>({ token }, api.findDraft, {
+      params: [_id],
+    }),
+    onSuccess: () => {
+      dispatch(setDraftState(draft.data?.response));
+    },
+    onError: () => {
+      navigateToUrl("/dashboard/courses");
+    },
   });
 
   React.useEffect(() => {
@@ -131,8 +145,23 @@ const CreateCourse: React.FC = () => {
    * Uses AI under the hood.
    */
   const handleEnrichDescription = (value: string) => {
-    course.setValue("description", value);
+    setValue("description", value);
   };
+
+  const steps = React.useMemo<MenuItem[]>(
+    () => [
+      {
+        label: "Categoría",
+      },
+      {
+        label: "Instructor",
+      },
+      {
+        label: "Información",
+      },
+    ],
+    []
+  );
 
   /**
    * @description
@@ -169,8 +198,8 @@ const CreateCourse: React.FC = () => {
               onNext={handleNextStep}
               disabledNext={
                 state.tags.length === 0 ||
-                !course.getValues("title") ||
-                !course.getValues("description")
+                !getValues("title") ||
+                !getValues("description")
               }
             />
           </>
@@ -188,7 +217,7 @@ const CreateCourse: React.FC = () => {
               <Course
                 title={title}
                 tags={state.tags}
-                control={course.control}
+                control={control}
                 onTag={handleSelectTag}
                 onRemoveTag={handleRemoveTag}
                 category={state?.category?.name}

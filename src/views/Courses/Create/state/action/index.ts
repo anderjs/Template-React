@@ -1,6 +1,7 @@
 import { createAction } from "@reduxjs/toolkit";
 
 import { ICategory, ITags, IUser } from "@learlifyweb/providers.schema";
+import { IDraft } from "@views/Courses/courses.interface";
 
 export const selectCategory = createAction(
   "@courses/select/category",
@@ -34,6 +35,15 @@ export const removeTag = createAction(
   (tag: Pick<ITags, "name" | "color">) => {
     return {
       payload: tag,
+    };
+  }
+);
+
+export const setDraftState = createAction(
+  "@courses/draft/state",
+  (draft: IDraft) => {
+    return {
+      payload: draft,
     };
   }
 );

@@ -18,6 +18,7 @@ import { CategoryContainer, Label, StepperTitle } from "@views/Courses/styles";
 // -
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useParams } from "react-router-dom";
 
 interface Props {
   value?: ICategory;
@@ -52,7 +53,7 @@ const Categories: React.FC<Props> = ({ value, onSelect }) => {
 
   return (
     <>
-      <Toast ref={message} />
+      <Toast position="bottom-right" ref={message} />
       <Loading status={categories.isLoading || categories.isFetching}>
         <StepperTitle>Escoge una categoría para el curso:</StepperTitle>
         {categories?.data?.response?.map((category) => (
