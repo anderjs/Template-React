@@ -31,6 +31,7 @@ import CreateCourse from "@views/Courses/Create";
 import Categories from "@views/Categories/categories.view";
 import CreateCategory from "@views/Categories/Create";
 import EditCategory from "@views/Categories/Edit";
+import App from "@views/App/AppView";
 
 /**
  * @description
@@ -41,6 +42,7 @@ export const Router: React.FC = React.memo(() => {
     <BrowserRouter basename="/dashboard">
       <Routes>
         <Route path="/" element={<Dashboard />} />
+        <Route path="/app" element={<App />} />
         <Route path="/roles" element={<Roles />} />
         <Route path="/admin" element={<Admin />} />
         <Route path="/plans" element={<Plans />} />
