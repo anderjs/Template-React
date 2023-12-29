@@ -37,3 +37,7 @@ declare module "*.svg" {
   const src: string;
   export default src;
 }
+
+declare module "components/AudioPlayer.tsx";
+
+declare module "components/SimpleSelection.tsx";

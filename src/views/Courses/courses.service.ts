@@ -11,6 +11,11 @@ export const api = {
     baseURL: process.env.API,
     endpoint: "/api/v2/draft/courses",
   },
+  updateDraft: {
+    method: Method.PUT,
+    baseURL: process.env.API,
+    endpoint: "/api/v2/draft/courses",
+  },
   findDrafts: {
     method: Method.GET,
     baseURL: process.env.API,

@@ -15,11 +15,6 @@ import { RadioButton } from "primereact/radiobutton";
 
 import { CategoryContainer, Label, StepperTitle } from "@views/Courses/styles";
 
-// -
-import { IconProp } from "@fortawesome/fontawesome-svg-core";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useParams } from "react-router-dom";
-
 interface Props {
   value?: ICategory;
   onSelect?: (category: ICategory) => void;

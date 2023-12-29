@@ -17,4 +17,5 @@ export const draft = {
     id: null,
     name: null,
   },
+  tags: [],
 };

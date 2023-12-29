@@ -1,8 +1,9 @@
 import React from "react";
 import { navigateToUrl } from "single-spa";
 import { useParams } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useForm, useWatch } from "react-hook-form";
+import { AxiosError, HttpStatusCode } from "axios";
 import "./styles.css";
 
 import { http } from "@learlifyweb/providers.https";
@@ -26,6 +27,10 @@ import {
   selectCategory,
   setInteractive,
   selectInstructor,
+  setUpdateDraft,
+  setNewModule,
+  setDeleteModule,
+  setLessonModule,
 } from "./state/action";
 
 // - API
@@ -48,6 +53,8 @@ import {
 
 // - Animation
 import { Fade } from "react-awesome-reveal";
+import { Loading } from "@learlifyweb/providers.loading";
+import Modules from "./components/Modules";
 
 const CreateCourse: React.FC = () => {
   const { token } = useHost();
@@ -56,7 +63,7 @@ const CreateCourse: React.FC = () => {
 
   const { control, getValues, setValue } = useForm<ICourse>();
 
-  const { _id } = useParams();
+  const { id } = useParams();
 
   const title = useWatch({
     control,
@@ -67,13 +74,42 @@ const CreateCourse: React.FC = () => {
     queryKey: ["draft"],
     refetchOnWindowFocus: false,
     queryFn: http<IDraft>({ token }, api.findDraft, {
-      params: [_id],
+      params: [id],
     }),
-    onSuccess: () => {
-      dispatch(setDraftState(draft.data?.response));
+    onSuccess: ({ response }) => {
+      dispatch(setDraftState(response));
     },
-    onError: () => {
-      navigateToUrl("/dashboard/courses");
+    onError: (err: AxiosError) => {
+      switch (err.response.status) {
+        case HttpStatusCode.NotFound:
+          return navigateToUrl("/dashboard/courses");
+
+        case HttpStatusCode.InternalServerError:
+          return navigateToUrl("/dashboard/courses");
+      }
+    },
+  });
+
+  /**
+   * @description
+   * Update the current draft information.
+   */
+  const updateDraft = useMutation({
+    mutationKey: ["draft"],
+    mutationFn: (data: Partial<IDraft>) => {
+      const request = http<IDraft>({ token }, api.updateDraft, {
+        body: data,
+        params: [id],
+      });
+
+      return request();
+    },
+    onSuccess: () => {
+      /**
+       * @description
+       * Mark the state as readed and settled.
+       */
+      dispatch(setUpdateDraft());
     },
   });
 
@@ -94,9 +130,61 @@ const CreateCourse: React.FC = () => {
 
   /**
    * @description
+   * Search for every instance of draft to update.
+   * If one entity contain "update", it will be updated.
+   */
+  const update = () => {
+    /**
+     * @description
+     * Omitting unnecesary keys.
+     */
+    const args: Partial<IDraft> = {
+      status: draft.data?.response?.status,
+      category: draft.data?.response?.category,
+      instructor: draft.data?.response?.instructor,
+    };
+
+    /**
+     * @description
+     * Check if can be updated.
+     */
+    if (state.category?.update) {
+      args.category = {
+        id: state.category.id,
+        name: state.category.name,
+      };
+    }
+
+    /**
+     * @description
+     * Check if can be updated.
+     */
+    if (state.instructor?.update) {
+      args.instructor = {
+        id: state.instructor.id,
+        first_name: state.instructor.first_name,
+      };
+    }
+
+    /**
+     * @description
+     * Avoiding unnecesary update call.
+     */
+    if (state.category?.update || state.instructor?.update) {
+      updateDraft.mutate({
+        ...args,
+        active: state.active + 1,
+      });
+    }
+  };
+
+  /**
+   * @description
    * Handle click next.
    */
   const handleNextStep = () => {
+    update();
+
     return dispatch(nextStep());
   };
 
@@ -148,6 +236,30 @@ const CreateCourse: React.FC = () => {
     setValue("description", value);
   };
 
+  /**
+   * @description
+   * Adds a module.
+   */
+  const handleAddModule = (title: string) => {
+    dispatch(setNewModule(title));
+  };
+
+  /**
+   * @description
+   * Adds a module's lesson.
+   */
+  const handleAddLesson = (view: number, title: string) => {
+    dispatch(setLessonModule(view, title));
+  };
+
+  /**
+   * @description
+   * Adds a module.
+   */
+  const handleDeleteModule = (id: number) => {
+    dispatch(setDeleteModule(id));
+  };
+
   const steps = React.useMemo<MenuItem[]>(
     () => [
       {
@@ -158,6 +270,9 @@ const CreateCourse: React.FC = () => {
       },
       {
         label: "Información",
+      },
+      {
+        label: "Modulo",
       },
     ],
     []
@@ -185,7 +300,9 @@ const CreateCourse: React.FC = () => {
             <Controllers
               onBack={handleBackStep}
               onNext={handleNextStep}
-              disabledNext={!state?.instructor}
+              disabledNext={
+                state.interactive ? !state.interactive : !state?.instructor
+              }
             />
           </>
         );
@@ -204,48 +321,72 @@ const CreateCourse: React.FC = () => {
             />
           </>
         );
+
+      case Step.MODULES:
+        return (
+          <>
+            <Controllers
+              onBack={handleBackStep}
+              onNext={handleNextStep}
+              disabledNext={state.modules.length === 0}
+            />
+          </>
+        );
     }
   };
 
   return (
-    <Fade delay={0.5}>
-      <Card footer={FooterTemplate} className="mb-5">
-        <Steps model={steps} activeIndex={state.active} />
-        <Context>
-          {state.active === Step.COURSES && (
-            <Fade delay={0.1}>
-              <Course
-                title={title}
-                tags={state.tags}
-                control={control}
-                onTag={handleSelectTag}
-                onRemoveTag={handleRemoveTag}
-                category={state?.category?.name}
-                onEnrichDescription={handleEnrichDescription}
-              />
-            </Fade>
-          )}
-          {state.active === Step.CATEGORIES && (
-            <Fade delay={0.1}>
-              <Categories
-                value={state?.category}
-                onSelect={handleSelectCategory}
-              />
-            </Fade>
-          )}
-          {state.active === Step.INSTRUCTOR && (
-            <Fade delay={0.1}>
-              <Instructor
-                value={state?.instructor}
-                onInteract={handleInteract}
-                interactive={state.interactive}
-                onSelect={handleSelectInstructor}
-              />
-            </Fade>
-          )}
-        </Context>
-      </Card>
-    </Fade>
+    <Loading status={draft.isLoading || draft.isRefetching}>
+      <Fade delay={0.5}>
+        <Card footer={FooterTemplate} className="mb-5">
+          <Steps model={steps} activeIndex={state.active} />
+          <Context>
+            {state.active === Step.MODULES && (
+              <Fade delay={0.1}>
+                <Modules
+                  data={state.modules}
+                  onAddModule={handleAddModule}
+                  onAddLesson={handleAddLesson}
+                  interactive={state.interactive}
+                  onDeleteModule={handleDeleteModule}
+                />
+              </Fade>
+            )}
+            {state.active === Step.COURSES && (
+              <Fade delay={0.1}>
+                <Course
+                  title={title}
+                  tags={state.tags}
+                  control={control}
+                  onTag={handleSelectTag}
+                  onRemoveTag={handleRemoveTag}
+                  category={state?.category?.name}
+                  onEnrichDescription={handleEnrichDescription}
+                />
+              </Fade>
+            )}
+            {state.active === Step.CATEGORIES && (
+              <Fade delay={0.1}>
+                <Categories
+                  value={state?.category}
+                  onSelect={handleSelectCategory}
+                />
+              </Fade>
+            )}
+            {state.active === Step.INSTRUCTOR && (
+              <Fade delay={0.1}>
+                <Instructor
+                  value={state?.instructor}
+                  onInteract={handleInteract}
+                  interactive={state.interactive}
+                  onSelect={handleSelectInstructor}
+                />
+              </Fade>
+            )}
+          </Context>
+        </Card>
+      </Fade>
+    </Loading>
   );
 };
 

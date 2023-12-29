@@ -1,7 +1,11 @@
+// - Interface
+import { IDraft } from "@views/Courses/courses.interface";
+
+// - Redux
 import { createAction } from "@reduxjs/toolkit";
 
+// - Schemas
 import { ICategory, ITags, IUser } from "@learlifyweb/providers.schema";
-import { IDraft } from "@views/Courses/courses.interface";
 
 export const selectCategory = createAction(
   "@courses/select/category",
@@ -48,8 +52,40 @@ export const setDraftState = createAction(
   }
 );
 
-export const setInteractive = createAction("@courses/instructor/interact");
+export const setUpdateDraft = createAction("@courses/draft/update");
+
+export const setNewModule = createAction(
+  "@courses/draft/module",
+  (title: string) => {
+    return {
+      payload: title,
+    };
+  }
+);
+
+export const setDeleteModule = createAction(
+  "@courses/module/delete",
+  (id: number) => {
+    return {
+      payload: id,
+    };
+  }
+);
+
+export const setLessonModule = createAction(
+  "@courses/module/addLesson",
+  (idModule: number, title: string) => {
+    return {
+      payload: {
+        title,
+        id: idModule,
+      },
+    };
+  }
+);
 
 export const backStep = createAction("@courses/next/back");
 
 export const nextStep = createAction("@courses/next/step");
+
+export const setInteractive = createAction("@courses/instructor/interact");

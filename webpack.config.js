@@ -44,10 +44,13 @@ module.exports = (webpackConfigEnv, argv) => {
         "process.env": JSON.stringify(process.env),
       }),
       new ModuleFederationPlugin({
-        name: "dashboard",
+        name: "@dashboard",
+        filename: "remoteEntry.js",
         remotes: {
-          styleguide: "styleguide@http://localhost:9004/remoteEntry.js",
+          components: "components@http://localhost:8080/remoteEntry.js",
         },
+        exposes: {},
+        shared: require("./package.json").dependencies,
       }),
     ],
   });

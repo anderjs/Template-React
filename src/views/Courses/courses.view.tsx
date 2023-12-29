@@ -44,6 +44,7 @@ import { draft, render } from "./courses.utils";
 // - Service
 import { api } from "./courses.service";
 import { IDraft } from "./courses.interface";
+import { AxiosError, HttpStatusCode } from "axios";
 
 const Courses: React.FC = () => {
   const { token } = useHost();
@@ -53,6 +54,12 @@ const Courses: React.FC = () => {
   const [isDraftMode, setIsDraftMode] = React.useState(true);
 
   const draftService = useMutation({
+    onError: (err: AxiosError) => {
+      switch (err.response.status) {
+        case HttpStatusCode.Unauthorized:
+          return navigateToUrl("/login");
+      }
+    },
     onSuccess: ({ response }) => {
       const { _id } = response;
 
@@ -88,6 +95,10 @@ const Courses: React.FC = () => {
     });
 
     draftService.mutate();
+  };
+
+  const handleChangeIsDraft = () => {
+    setIsDraftMode((draftStatus) => !draftStatus);
   };
 
   const ActionTemplateBody = React.useCallback((node: TreeNode) => {
@@ -128,6 +139,7 @@ const Courses: React.FC = () => {
           <InputSwitch
             tooltip="Desactiva el draft mode para ver los cursos creados"
             checked={isDraftMode}
+            onChange={handleChangeIsDraft}
           />
         </div>
         <MarginY />
