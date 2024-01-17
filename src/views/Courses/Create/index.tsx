@@ -31,6 +31,10 @@ import {
   setNewModule,
   setDeleteModule,
   setLessonModule,
+  setPushNewElement,
+  setAnswerElement,
+  setDeleteAnswer,
+  setDragAndDropAnswers,
 } from "./state/action";
 
 // - API
@@ -55,6 +59,7 @@ import {
 import { Fade } from "react-awesome-reveal";
 import { Loading } from "@learlifyweb/providers.loading";
 import Modules from "./components/Modules";
+import { EditorContext, EditorContextProps } from "./context/EditorContext";
 
 const CreateCourse: React.FC = () => {
   const { token } = useHost();
@@ -260,6 +265,8 @@ const CreateCourse: React.FC = () => {
     dispatch(setDeleteModule(id));
   };
 
+  const handleSetEditorProperty = () => {};
+
   const steps = React.useMemo<MenuItem[]>(
     () => [
       {
@@ -335,6 +342,54 @@ const CreateCourse: React.FC = () => {
     }
   };
 
+  /**
+   * @description
+   * API That manages the editor context.
+   * We dont allow dispatch directly from any child component.
+   */
+  const EditorContextValue = React.useMemo<EditorContextProps>(() => {
+    return {
+      editor: state.editor,
+      /**
+       * Add answer method.
+       */
+      onAddNewAnswer: (element) => {
+        /**
+         * @description
+         * Pushing a new answer element from the editor.
+         */
+        dispatch(setAnswerElement(element));
+      },
+      /**
+       * Delete answer method.
+       */
+      onDeleteAnswer: (element) => {
+        /**
+         * @description
+         * Deleting the current element from the editor.
+         */
+        dispatch(setDeleteAnswer(element));
+      },
+      /**
+       * Add new element method.
+       */
+      onSetNewElement: (element) => {
+        /**
+         * @description
+         * Creating a new element based on the editor selection.
+         */
+        dispatch(setPushNewElement(element));
+      },
+      /**
+       * @description
+       * Re order drag and drop elements.
+       */
+      onDragAndDropAnswer: (element) => {
+        dispatch(setDragAndDropAnswers(element));
+      },
+    };
+  }, [state.editor]);
+
   return (
     <Loading status={draft.isLoading || draft.isRefetching}>
       <Fade delay={0.5}>
@@ -343,13 +398,15 @@ const CreateCourse: React.FC = () => {
           <Context>
             {state.active === Step.MODULES && (
               <Fade delay={0.1}>
-                <Modules
-                  data={state.modules}
-                  onAddModule={handleAddModule}
-                  onAddLesson={handleAddLesson}
-                  interactive={state.interactive}
-                  onDeleteModule={handleDeleteModule}
-                />
+                <EditorContext.Provider value={EditorContextValue}>
+                  <Modules
+                    data={state.modules}
+                    onAddModule={handleAddModule}
+                    onAddLesson={handleAddLesson}
+                    interactive={state.interactive}
+                    onDeleteModule={handleDeleteModule}
+                  />
+                </EditorContext.Provider>
               </Fade>
             )}
             {state.active === Step.COURSES && (

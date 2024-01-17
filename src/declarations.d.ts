@@ -38,6 +38,11 @@ declare module "*.svg" {
   export default src;
 }
 
-declare module "components/AudioPlayer.tsx";
+declare module "AudioPlayer.tsx" {
+  interface Props {}
 
+  const AudioPlayer: React.FunctionComponent<Props>;
+
+  export default AudioPlayer;
+}
 declare module "components/SimpleSelection.tsx";

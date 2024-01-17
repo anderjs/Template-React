@@ -5,7 +5,22 @@ import { IDraft } from "@views/Courses/courses.interface";
 import { createAction } from "@reduxjs/toolkit";
 
 // - Schemas
-import { ICategory, ITags, IUser } from "@learlifyweb/providers.schema";
+import {
+  IAnswer,
+  ICategory,
+  ITags,
+  IUser,
+} from "@learlifyweb/providers.schema";
+
+// - Schema Editor
+import { IEditorContext } from "../schema";
+
+// - Context Callback
+import {
+  DeleteAnswerCallback,
+  DragAndDropElements,
+  PushAnswerCallback,
+} from "../../context/EditorContext";
 
 export const selectCategory = createAction(
   "@courses/select/category",
@@ -43,6 +58,10 @@ export const removeTag = createAction(
   }
 );
 
+/**
+ * @description
+ * Set the draft state.
+ */
 export const setDraftState = createAction(
   "@courses/draft/state",
   (draft: IDraft) => {
@@ -52,8 +71,16 @@ export const setDraftState = createAction(
   }
 );
 
+/**
+ * @description
+ * Draft update.
+ */
 export const setUpdateDraft = createAction("@courses/draft/update");
 
+/**
+ * @description
+ * Create a new module.
+ */
 export const setNewModule = createAction(
   "@courses/draft/module",
   (title: string) => {
@@ -63,6 +90,10 @@ export const setNewModule = createAction(
   }
 );
 
+/**
+ * @description
+ * Deleting a module.
+ */
 export const setDeleteModule = createAction(
   "@courses/module/delete",
   (id: number) => {
@@ -72,6 +103,10 @@ export const setDeleteModule = createAction(
   }
 );
 
+/**
+ * @description
+ * Create a new module.
+ */
 export const setLessonModule = createAction(
   "@courses/module/addLesson",
   (idModule: number, title: string) => {
@@ -84,8 +119,76 @@ export const setLessonModule = createAction(
   }
 );
 
+/**
+ * @description
+ * Goes back.
+ */
 export const backStep = createAction("@courses/next/back");
 
+/**
+ * @description
+ * Goes next.
+ */
 export const nextStep = createAction("@courses/next/step");
 
+/**
+ * @description
+ * Set as an interactive course.
+ */
 export const setInteractive = createAction("@courses/instructor/interact");
+
+/**
+ * @description
+ * Set editor edit.
+ */
+export const setEditorProperty = createAction(
+  "@courses/editor/edit",
+  (payload: EditProperty) => {
+    return {
+      payload,
+    };
+  }
+);
+
+export const setPushNewElement = createAction(
+  "@courses/editor/element",
+  (payload: IEditorContext) => {
+    return {
+      payload,
+    };
+  }
+);
+
+export const setAnswerElement = createAction(
+  "@courses/editor/answer/create",
+  (payload: PushAnswerCallback) => {
+    return {
+      payload,
+    };
+  }
+);
+
+export const setDeleteAnswer = createAction(
+  "@courses/editor/answer/delete",
+  (payload: DeleteAnswerCallback) => {
+    return {
+      payload,
+    };
+  }
+);
+
+export const setDragAndDropAnswers = createAction(
+  "@courses/editor/answer/dnd",
+  (payload: DragAndDropElements) => {
+    return {
+      payload,
+    };
+  }
+);
+
+type EditProperty = {
+  data: Omit<IEditorContext, "type">;
+  x;
+  kind: Pick<IEditorContext, "type">;
+  index: number;
+};

@@ -2,13 +2,6 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { Dropdown, DropdownChangeEvent } from "primereact/dropdown";
 
-// - Hooks
-import {
-  ICountry,
-  countryOptionTemplate,
-  selectedCountryTemplate,
-} from "@b1b2/components.ui.country";
-
 import { alias } from "@lang";
 
 const Settings: React.FC = () => {
@@ -23,60 +16,60 @@ const Settings: React.FC = () => {
    * @description
    * Set the current country.
    */
-  const [country, setCountry] = React.useState<ICountry>();
+  // const [country, setCountry] = React.useState<ICountry>();
 
   /**
    * @description
    * Changes the current country.
    */
-  const handleChangeCountry = (option: DropdownChangeEvent) => {
-    setCountry(option.value);
-  };
+  // const handleChangeCountry = (option: DropdownChangeEvent) => {
+  //   setCountry(option.value);
+  // };
 
   /**
    * @description
    * Render countries translated.
    */
-  const countries: ICountry[] = React.useMemo(() => {
-    return [
-      {
-        code: "AR",
-        name: t(alias["dashboard.settings.country.ar"]),
-      },
-      {
-        code: "BR",
-        name: t(alias["dashboard.settings.country.br"]),
-      },
-      {
-        code: "CA",
-        name: t(alias["dashboard.settings.country.ca"]),
-      },
-      {
-        code: "CL",
-        name: t(alias["dashboard.settings.country.cl"]),
-      },
-      {
-        code: "CO",
-        name: t(alias["dashboard.settings.country.co"]),
-      },
-      {
-        code: "EC",
-        name: t(alias["dashboard.settings.country.ec"]),
-      },
-      {
-        code: "ES",
-        name: t(alias["dashboard.settings.country.es"]),
-      },
-      {
-        code: "FR",
-        name: t(alias["dashboard.settings.country.fr"]),
-      },
-      {
-        code: "MX",
-        name: t(alias["dashboard.settings.country.mx"]),
-      },
-    ];
-  }, [t]);
+  // const countries: ICountry[] = React.useMemo(() => {
+  //   return [
+  //     {
+  //       code: "AR",
+  //       name: t(alias["dashboard.settings.country.ar"]),
+  //     },
+  //     {
+  //       code: "BR",
+  //       name: t(alias["dashboard.settings.country.br"]),
+  //     },
+  //     {
+  //       code: "CA",
+  //       name: t(alias["dashboard.settings.country.ca"]),
+  //     },
+  //     {
+  //       code: "CL",
+  //       name: t(alias["dashboard.settings.country.cl"]),
+  //     },
+  //     {
+  //       code: "CO",
+  //       name: t(alias["dashboard.settings.country.co"]),
+  //     },
+  //     {
+  //       code: "EC",
+  //       name: t(alias["dashboard.settings.country.ec"]),
+  //     },
+  //     {
+  //       code: "ES",
+  //       name: t(alias["dashboard.settings.country.es"]),
+  //     },
+  //     {
+  //       code: "FR",
+  //       name: t(alias["dashboard.settings.country.fr"]),
+  //     },
+  //     {
+  //       code: "MX",
+  //       name: t(alias["dashboard.settings.country.mx"]),
+  //     },
+  //   ];
+  // }, [t]);
 
   /**
    * @description
@@ -87,7 +80,7 @@ const Settings: React.FC = () => {
   return (
     <React.Fragment>
       <br />
-      <Dropdown
+      {/* <Dropdown
         value={country}
         options={countries}
         optionLabel="name"
@@ -96,7 +89,7 @@ const Settings: React.FC = () => {
         onChange={handleChangeCountry}
         itemTemplate={countryOptionTemplate}
         valueTemplate={selectedCountryTemplate}
-      />
+      /> */}
       <div />
     </React.Fragment>
   );

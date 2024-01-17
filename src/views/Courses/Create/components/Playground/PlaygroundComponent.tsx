@@ -11,8 +11,6 @@ import {
   FileUploadHeaderTemplateOptions,
 } from "primereact/fileupload";
 import { ProgressBar } from "primereact/progressbar";
-import { ConfirmPopup } from "primereact/confirmpopup";
-import { ConfirmDialog } from "primereact/confirmdialog";
 
 import { useFile } from "@hooks/useFile";
 
@@ -29,12 +27,17 @@ import {
 import { classNames } from "primereact/utils";
 
 // - Reducer
-import playground, { EditorType, initialState } from "./PlaygroundState";
+import playground, { initialState } from "./PlaygroundState";
 
-// - Actions
-import { selectEditor } from "./PlaygroundAction";
+// - Editor
 import Editor from "../Editor/EditorComponent";
+
+// - Context
 import { PlaygroundContext } from "./PlaygroundContext";
+
+// - Hooks
+import { useEditor } from "../../context/EditorHook";
+import { v4 } from "uuid";
 
 interface Props {
   active: boolean;
@@ -47,9 +50,11 @@ const Playground: React.FC<Props> = ({ active, onClose }) => {
   const { size, onTemplateSelect, onTemplateClear, onTemplateUpload } =
     useFile();
 
-  const [upload, setUpload] = React.useState(false);
+  const { editor, onSetNewElement } = useEditor();
 
   const [state, dispatch] = React.useReducer(playground, initialState);
+
+  const [upload, setUpload] = React.useState(false);
 
   const visual = React.useMemo<MenuItem[]>(
     () => [
@@ -87,7 +92,17 @@ const Playground: React.FC<Props> = ({ active, onClose }) => {
             label: "Selección Simple",
             icon: PrimeIcons.QUESTION_CIRCLE,
             command: () => {
-              dispatch(selectEditor(EditorType.SELECTION));
+              /**
+               * @description
+               * Set a new element in the editor.
+               */
+              onSetNewElement?.({
+                uuid: v4(),
+                correct: 0,
+                answers: [],
+                question: "",
+                type: "SimpleSelection",
+              });
             },
           },
         ],
@@ -141,15 +156,15 @@ const Playground: React.FC<Props> = ({ active, onClose }) => {
 
   return (
     <StyledDialog
-      header="Playground"
       visible={active}
       onHide={onClose}
+      header="Playground"
       closeOnEscape={false}
     >
       <Menubar model={visual} />
       <MarginY />
       <PlaygroundContext.Provider value={PlaygroundValueContext}>
-        {state.editor && <Editor mode={state.editor} />}
+        {editor?.length > 0 && <Editor mode={state.editor} />}
       </PlaygroundContext.Provider>
       {upload ? (
         <>

@@ -45,6 +45,10 @@ export const initialState: State = {
 };
 
 const playground = createReducer(initialState, (builder) => {
+  /**
+   * @description
+   * Create answer.
+   */
   builder.addCase(createAnswer, (state, action) => {
     state.answer.push({
       value: action.payload,
@@ -52,10 +56,18 @@ const playground = createReducer(initialState, (builder) => {
     });
   });
 
+  /**
+   * @description
+   * Select editor action.
+   */
   builder.addCase(selectEditor, (state, action) => {
     state.editor = action.payload;
   });
 
+  /**
+   * @description
+   * Trigger up the flux.
+   */
   builder.addCase(setTriggerFlux, (state, action) => {
     state.flux.push({
       ...action.payload,
@@ -67,6 +79,10 @@ const playground = createReducer(initialState, (builder) => {
     state.answer = [];
   });
 
+  /**
+   * @description
+   * Creates a new component.
+   */
   builder.addCase(createComponent, (state, action) => {
     state.components.push({
       ref: action.payload,

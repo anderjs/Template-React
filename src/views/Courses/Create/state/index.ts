@@ -5,6 +5,7 @@ import {
   IModule,
   ICategory,
 } from "@learlifyweb/providers.schema";
+import { v4 } from "uuid";
 import { createReducer } from "@reduxjs/toolkit";
 
 import {
@@ -20,8 +21,15 @@ import {
   selectInstructor,
   setDeleteModule,
   setLessonModule,
+  setEditorProperty,
+  setPushNewElement,
+  setAnswerElement,
+  setDeleteAnswer,
+  setDragAndDropAnswers,
 } from "./action";
 import { defaultModule, defaultLesson } from "./default";
+import { IEditorContext } from "./schema";
+import { dragElements } from "@utils";
 
 type DraftEntity<T> = T & {
   update?: boolean;
@@ -36,6 +44,7 @@ interface IState {
   interactive?: boolean;
   course?: Pick<ICourse, "title" | "description">;
   modules: Pick<IModule, "title" | "description" | "lessons" | "id">[];
+  editor?: IEditorContext[];
 }
 
 enum Step {
@@ -49,6 +58,7 @@ const initialState: IState = {
   active: Step.MODULES,
   tags: [],
   names: [],
+  editor: [],
   modules: [],
 };
 
@@ -146,12 +156,12 @@ const reducer = createReducer(initialState, (builder) => {
    * @param {Object} action - The action object, containing the payload with new state information.
    */
   builder.addCase(setDraftState, (state, action) => {
-    if (action.payload.active) {
+    if (action.payload?.active) {
       state.active = action.payload.active;
 
-      state.category = action.payload.category as DraftEntity<ICategory>;
-
-      state.instructor = action.payload.instructor as DraftEntity<IUser>;
+      if (action.payload?.category) {
+        state.category = action.payload.category as DraftEntity<ICategory>;
+      }
     }
   });
 
@@ -195,6 +205,77 @@ const reducer = createReducer(initialState, (builder) => {
    */
   builder.addCase(setInteractive, (state) => {
     state.interactive = !state.interactive;
+  });
+
+  /**
+   * Edits a current one exercise.
+   * @param {Object} state - The current state of the reducer.
+   */
+  builder.addCase(setEditorProperty, (state, action) => {
+    if (action.payload.kind.type === "SimpleSelection") {
+      const edit = action.payload.data;
+
+      const { index } = action.payload;
+
+      if (action.payload.data.correct) {
+        state.editor[index].correct = edit.correct;
+      }
+
+      if (action.payload.data.answers) {
+        state.editor[index].answers = edit.answers;
+      }
+    }
+  });
+
+  /**
+   * Set a new answer for the editor component.
+   * @param {Object} state - The current state of the reducer.
+   */
+  builder.addCase(setAnswerElement, (state, action) => {
+    if (action.payload.type === "SimpleSelection") {
+      const { index, value } = action.payload;
+
+      state.editor[index].answers.push({
+        id: v4(),
+        value,
+      });
+    }
+  });
+
+  /**
+   * Deletes the current answer.
+   * @param {Object} state - The current state of the reducer.
+   */
+  builder.addCase(setDeleteAnswer, (state, action) => {
+    if (action.payload.type === "SimpleSelection") {
+      const { index, value } = action.payload;
+
+      state.editor[index].answers = state.editor[index].answers.filter(
+        (answer) => answer.id !== value.id
+      );
+    }
+  });
+
+  /**
+   * @description
+   * Creating a new editor.
+   */
+  builder.addCase(setPushNewElement, (state, action) => {
+    state.editor.push(action.payload);
+  });
+
+  /**
+   * @description
+   * Re order elements.
+   */
+  builder.addCase(setDragAndDropAnswers, (state, action) => {
+    const { drop, index } = action.payload;
+
+    state.editor[index].answers = dragElements(
+      state.editor[index].answers,
+      drop.source.index,
+      drop.destination.index
+    );
   });
 });
 

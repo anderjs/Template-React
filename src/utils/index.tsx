@@ -89,3 +89,17 @@ export const cancelOptions = {
 export const beautify = (value: any) => {
   return JSON.stringify(value, null, 2);
 };
+
+export function dragElements<T>(
+  elements: Array<T>,
+  source: number,
+  destination: number
+) {
+  const newItems = Array.from(elements);
+
+  const [reorderedItem] = newItems.splice(source, 1);
+
+  newItems.splice(destination, 0, reorderedItem);
+
+  return newItems;
+}

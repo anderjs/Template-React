@@ -5,6 +5,7 @@ const TsconfigPathsPlugin = require("tsconfig-paths-webpack-plugin");
 const singleSpaDefaults = require("webpack-config-single-spa-react-ts");
 
 const path = require("path");
+
 const dotenv = require("dotenv");
 
 const getEnvPath = () => {
@@ -44,13 +45,12 @@ module.exports = (webpackConfigEnv, argv) => {
         "process.env": JSON.stringify(process.env),
       }),
       new ModuleFederationPlugin({
-        name: "@dashboard",
+        name: "dashboard",
         filename: "remoteEntry.js",
         remotes: {
           components: "components@http://localhost:8080/remoteEntry.js",
         },
-        exposes: {},
-        shared: require("./package.json").dependencies,
+        shared: ["react", "react-dom"],
       }),
     ],
   });
