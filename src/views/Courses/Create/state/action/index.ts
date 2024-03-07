@@ -186,9 +186,26 @@ export const setDragAndDropAnswers = createAction(
   }
 );
 
+export const setDeleteElement = createAction(
+  "@courses/editor/delete/element",
+  (payload: number) => {
+    return {
+      payload,
+    };
+  }
+);
+
+export const setCorrectAnswer = createAction(
+  "@courses/editor/correct/answer",
+  (payload: { index: number; value: number }) => {
+    return {
+      payload,
+    };
+  }
+);
+
 type EditProperty = {
   data: Omit<IEditorContext, "type">;
-  x;
   kind: Pick<IEditorContext, "type">;
   index: number;
 };

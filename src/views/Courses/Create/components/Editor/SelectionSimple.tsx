@@ -1,10 +1,10 @@
 import React from "react";
 import styled from "styled-components";
 import { classNames } from "primereact/utils";
-import CodeMirror, { ReactCodeMirrorProps } from "@uiw/react-codemirror";
-import { useForm, Controller } from "react-hook-form";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useForm, Controller, useWatch } from "react-hook-form";
 import { loadLanguage } from "@uiw/codemirror-extensions-langs";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import CodeMirror, { ReactCodeMirrorProps } from "@uiw/react-codemirror";
 import {
   Draggable,
   Droppable,
@@ -20,6 +20,7 @@ import { MarginY } from "@views/Coupon/coupon.styles";
 // - Prime
 import { Toast } from "primereact/toast";
 import { Button } from "primereact/button";
+import { Checkbox } from "primereact/checkbox";
 import { InputText } from "primereact/inputtext";
 import { InputSwitch } from "primereact/inputswitch";
 import { RadioButton } from "primereact/radiobutton";
@@ -33,14 +34,8 @@ import usePlayground from "../Playground/PlaygroundHooks";
 // - Styles
 import { styles } from "@root.styles";
 
-// - Action
-import { setTriggerFlux } from "../Playground/PlaygroundAction";
-
 // - Utils
 import { beautify } from "@utils";
-
-// - Type
-import { EditorType } from "../Playground/PlaygroundState";
 
 // - Schema
 import { IAnswer, ISimpleSelection } from "@learlifyweb/providers.schema";
@@ -50,7 +45,7 @@ import {
 } from "./SelectionSimpleTypes";
 
 // - Schema
-import { answerSchema } from "./schemas/SelectionSimpleSchema";
+import { answerSchema, selectionSchema } from "./schemas/SelectionSimpleSchema";
 
 const SelectionSimpleEditor: React.FC<SimpleSelectionProps> = ({
   index,
@@ -62,6 +57,8 @@ const SelectionSimpleEditor: React.FC<SimpleSelectionProps> = ({
   const editor = useEditor();
 
   const playground = usePlayground();
+
+  const [checked, setChecked] = React.useState<boolean>(false);
 
   const [codeMirror, setCodeMirror] = React.useState<boolean>(false);
 
@@ -82,12 +79,13 @@ const SelectionSimpleEditor: React.FC<SimpleSelectionProps> = ({
    */
   const code = useForm<AbstractSimpleSelection>({
     defaultValues: {
-      code: beautify({
-        answers,
-        correct,
-        question,
-      }),
+      code: beautify({}),
     },
+  });
+
+  const [questionRef, correctRef] = useWatch({
+    name: ["question", "correct"],
+    control,
   });
 
   const { message, compile } = useCompile({
@@ -190,17 +188,13 @@ const SelectionSimpleEditor: React.FC<SimpleSelectionProps> = ({
    * Insert the flux of a new component.
    */
   const handleInsertComponent = () => {
-    playground.dispatch(
-      setTriggerFlux({
-        key: EditorType.SELECTION,
-        locX: null,
-        locY: null,
-        data: {
-          correct,
-          question,
-          answers: playground.answer,
-        },
-      })
+    compile(
+      {
+        answers,
+        correct: correctRef,
+        question: questionRef,
+      },
+      selectionSchema
     );
   };
 
@@ -209,10 +203,13 @@ const SelectionSimpleEditor: React.FC<SimpleSelectionProps> = ({
    * Insers the correct value to pick.
    */
   const handleSelectCorrectValue = React.useCallback(
-    (index: number) => {
-      setValue("correct", index);
+    (value: number) => {
+      editor.onSelectCorrect({
+        index,
+        value,
+      });
     },
-    [setValue]
+    [index, editor.onSelectCorrect]
   );
 
   /**
@@ -225,7 +222,30 @@ const SelectionSimpleEditor: React.FC<SimpleSelectionProps> = ({
       index,
     });
 
-    setValue("correct", drop.destination.index);
+    const { correct } = getValues();
+
+    if (correct === drop.source.index) {
+      editor.onSelectCorrect({
+        index,
+        value: drop.destination.index,
+      });
+    }
+  };
+
+  /**
+   * @description
+   * Enable checking to question.
+   */
+  const handleCheckEnable = () => {
+    setChecked(true);
+  };
+
+  /**
+   * @description
+   * Disable checking to question.
+   */
+  const handleCheckDisable = () => {
+    setChecked(false);
   };
 
   /**
@@ -285,11 +305,34 @@ const SelectionSimpleEditor: React.FC<SimpleSelectionProps> = ({
     );
   }
 
+  /**
+   * @description
+   * Template to close elements.
+   */
+  const TemplateClose = () => {
+    /**
+     * @description
+     * Handle to delete the current selection item.
+     */
+    const handleDeleteElement = () => {
+      editor.onDeleteElement(index);
+    };
+
+    return (
+      <div onClick={handleDeleteElement} className={styles.closeTemplate}>
+        <FontAwesomeIcon
+          icon="close"
+          className={classNames(styles.fontAwesomeIcon, "text-red-500")}
+        />
+      </div>
+    );
+  };
+
   return (
     <>
       <Toast position="center" ref={message} />
       <Fade delay={0.1}>
-        <Card title="Selección Simple">
+        <Card title="Selección Simple" header={TemplateClose}>
           <p className="p-0 text-gray-400">
             En selección simple podrás elegir una pregunta, con una cantidad
             específicas de respuestas. Al momento de finalizar el workflow,
@@ -303,14 +346,25 @@ const SelectionSimpleEditor: React.FC<SimpleSelectionProps> = ({
                 name="question"
                 control={control}
                 render={({ field }) => (
-                  <InputText
-                    id="question"
-                    name="question"
-                    value={field.value}
-                    className="w-[400px]"
-                    placeholder="Ingresa la pregunta.."
-                    onChange={(e) => field.onChange(e.target.value)}
-                  />
+                  <div className="p-inputgroup flex-1">
+                    <InputText
+                      id="question"
+                      name="question"
+                      value={field.value}
+                      disabled={checked}
+                      className="w-[400px]"
+                      placeholder="Ingresa la pregunta.."
+                      onChange={(e) => field.onChange(e.target.value)}
+                    />
+                    <span className="p-inputgroup-addon">
+                      <Checkbox
+                        checked={checked}
+                        onChange={
+                          checked ? handleCheckDisable : handleCheckEnable
+                        }
+                      />
+                    </span>
+                  </div>
                 )}
               />
             </div>
@@ -354,7 +408,10 @@ const SelectionSimpleEditor: React.FC<SimpleSelectionProps> = ({
             <DragDropContext onDragEnd={handleDragElements}>
               <Droppable droppableId="answers">
                 {(provided) => (
-                  <div {...provided.droppableProps} ref={provided.innerRef}>
+                  <SpacingX
+                    {...provided.droppableProps}
+                    ref={provided.innerRef}
+                  >
                     {answers?.map((answer, index) => (
                       <Draggable
                         draggableId={answer.id}
@@ -362,7 +419,7 @@ const SelectionSimpleEditor: React.FC<SimpleSelectionProps> = ({
                         index={index}
                       >
                         {(provided) => (
-                          <div
+                          <SpacingX
                             ref={provided.innerRef}
                             className="flex items-center"
                             {...provided.draggableProps}
@@ -371,7 +428,7 @@ const SelectionSimpleEditor: React.FC<SimpleSelectionProps> = ({
                             <RadioButton
                               value={answer.value}
                               inputId={answer.id}
-                              checked={index === correct}
+                              checked={index === getValues("correct")}
                               onClick={() => handleSelectCorrectValue(index)}
                               onChange={() => handleSelectCorrectValue(index)}
                             />
@@ -403,17 +460,17 @@ const SelectionSimpleEditor: React.FC<SimpleSelectionProps> = ({
                                 />
                               </div>
                             </div>
-                            <SpacingX />
-                            <SpacingX />
-                          </div>
+                          </SpacingX>
                         )}
                       </Draggable>
                     ))}
-                  </div>
+                  </SpacingX>
                 )}
               </Droppable>
             </DragDropContext>
           )}
+          <MarginY />
+          <MarginY />
           <MarginY />
           <div className={styles.flex}>
             <Button

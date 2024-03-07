@@ -24,9 +24,11 @@ export type DragAndDropElements = {
 export type EditorContextProps = {
   editor: Partial<IEditorContext>[];
   onChangeEditorProperty?: () => void;
+  onDeleteElement?: (editor: number) => void;
   onSetNewElement?: (element: IEditorContext) => void;
   onAddNewAnswer?: (args: PushAnswerCallback) => void;
   onDeleteAnswer?: (args: DeleteAnswerCallback) => void;
+  onSelectCorrect?: (args: { index: number; value: number }) => void;
   onDragAndDropAnswer?: (element: DragAndDropElements) => void;
 };
 

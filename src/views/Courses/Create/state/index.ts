@@ -26,6 +26,8 @@ import {
   setAnswerElement,
   setDeleteAnswer,
   setDragAndDropAnswers,
+  setDeleteElement,
+  setCorrectAnswer,
 } from "./action";
 import { defaultModule, defaultLesson } from "./default";
 import { IEditorContext } from "./schema";
@@ -276,6 +278,24 @@ const reducer = createReducer(initialState, (builder) => {
       drop.source.index,
       drop.destination.index
     );
+  });
+
+  /**
+   * @description
+   * Deletes an editor from the playground.
+   */
+  builder.addCase(setDeleteElement, (state, action) => {
+    const index = action.payload;
+
+    state.editor = state.editor.filter((_e, iterate) => {
+      return iterate !== index;
+    });
+  });
+
+  builder.addCase(setCorrectAnswer, (state, action) => {
+    const { index, value } = action.payload;
+
+    state.editor[index].correct = value;
   });
 });
 

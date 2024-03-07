@@ -35,6 +35,8 @@ import {
   setAnswerElement,
   setDeleteAnswer,
   setDragAndDropAnswers,
+  setDeleteElement,
+  setCorrectAnswer,
 } from "./state/action";
 
 // - API
@@ -265,8 +267,10 @@ const CreateCourse: React.FC = () => {
     dispatch(setDeleteModule(id));
   };
 
-  const handleSetEditorProperty = () => {};
-
+  /**
+   * @description
+   * Steps for the process.
+   */
   const steps = React.useMemo<MenuItem[]>(
     () => [
       {
@@ -360,6 +364,14 @@ const CreateCourse: React.FC = () => {
          */
         dispatch(setAnswerElement(element));
       },
+
+      /**
+       * @description
+       * Deletes a existing element.
+       */
+      onDeleteElement: (element) => {
+        dispatch(setDeleteElement(element));
+      },
       /**
        * Delete answer method.
        */
@@ -369,6 +381,13 @@ const CreateCourse: React.FC = () => {
          * Deleting the current element from the editor.
          */
         dispatch(setDeleteAnswer(element));
+      },
+      /**
+       * @description
+       * Assign the correct answer value.
+       */
+      onSelectCorrect: (element) => {
+        dispatch(setCorrectAnswer(element));
       },
       /**
        * Add new element method.
