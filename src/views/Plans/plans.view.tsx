@@ -111,7 +111,7 @@ const Plans: React.FC = () => {
         ),
       });
     },
-    [deletePlan, plans]
+    [deletePlan]
   );
 
   const ActionTemplateBody = React.useCallback(
