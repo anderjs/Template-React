@@ -40,8 +40,9 @@ const Plans: React.FC = () => {
    * Fetch all plans to manage it.
    */
   const plans = useQuery({
-    queryKey: [PlanQuery.PLANS],
     queryFn: http<IPlan[]>({ token }, api.plans),
+    queryKey: [PlanQuery.PLANS],
+    refetchOnWindowFocus: false,
   });
 
   /**
@@ -49,7 +50,6 @@ const Plans: React.FC = () => {
    * Delete plan service.
    */
   const deletePlan = useMutation({
-    mutationKey: [PlanMutation.DELETE],
     mutationFn: (id: number) => {
       const request = http({ token }, api.delete, {
         params: [id],
@@ -57,6 +57,7 @@ const Plans: React.FC = () => {
 
       return request();
     },
+    mutationKey: [PlanMutation.DELETE],
   });
 
   /**
@@ -98,10 +99,10 @@ const Plans: React.FC = () => {
       return message.current?.show({
         sticky: true,
         severity: "info",
-        content: () => (
+        content: (
           <Deleted
-            onCancel={message?.current?.clear}
             onDelete={handleDeleteService}
+            onCancel={message?.current?.clear}
             title={
               <div>
                 ¿Desea eliminar el plan <b>{name}</b>?

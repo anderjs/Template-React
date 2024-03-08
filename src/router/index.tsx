@@ -1,10 +1,12 @@
 import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
+import App from "@views/App/AppView";
+import Profile from "@views/Profile/profile.view";
+
 // - Views
 import Admin from "@views/Admin/admin.view";
 import Pricing from "@views/Pricing";
-import Settings from "@views/Settings";
 import Dashboard from "@views/Dashboard";
 
 // - Admin Views
@@ -28,10 +30,10 @@ import Courses from "@views/Courses/courses.view";
 import CreateCourse from "@views/Courses/Create";
 
 // - Categories
+import Settings from "@views/Settings/settings.view";
 import Categories from "@views/Categories/categories.view";
 import CreateCategory from "@views/Categories/Create";
 import EditCategory from "@views/Categories/Edit";
-import App from "@views/App/AppView";
 
 /**
  * @description
@@ -50,6 +52,7 @@ export const Router: React.FC = React.memo(() => {
         <Route path="/pricing" element={<Pricing />} />
         <Route path="/courses" element={<Courses />} />
         <Route path="/history" element={<History />} />
+        <Route path="/profile" element={<Profile />} />
         <Route path="/settings" element={<Settings />} />
         <Route path="/categories" element={<Categories />} />
         <Route path="/plans/create" element={<CreatePlan />} />
