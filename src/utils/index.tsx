@@ -1,4 +1,4 @@
-import { capitalize } from "lodash";
+import { capitalize, pick, isEqual } from "lodash";
 import { Button } from "primereact/button";
 import { Tag } from "primereact/tag";
 import styled from "styled-components";
@@ -110,4 +110,16 @@ export function multipartFormData(file: File, name = "file") {
   formData.append(name, file);
 
   return formData;
+}
+
+export function disabledForm<T, U>(
+  obj1: T,
+  obj2: Partial<T>,
+  keys: Array<keyof T>
+) {
+  const filteredObj1 = pick(obj1, keys);
+
+  const filteredObj2 = pick(obj2, keys);
+
+  return isEqual(filteredObj1, filteredObj2);
 }

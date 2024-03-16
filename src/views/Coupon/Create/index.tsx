@@ -46,6 +46,9 @@ import { CouponQuery } from "@query";
 
 // - Components
 import { Created } from "@components/Created";
+import { Elements, TextLabel } from "@styles";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { FormControl } from "@views/Settings/settings.styles";
 
 export interface State {
   enabled: boolean;
@@ -221,19 +224,31 @@ const CreateCoupon: React.FC<Props> = ({ id, isEditMode }) => {
         size={224}
         status={createCouponService.isLoading || updateCouponService.isLoading}
       >
+        <MarginY />
+        <Elements>
+          <FontAwesomeIcon
+            className="text-amber-500"
+            icon="circle-exclamation"
+          />
+          <small className="font-light text-white text-sm">
+            Estás actualizando la información de un cupón
+          </small>
+        </Elements>
+        <MarginY />
         <form onSubmit={handleSubmit(onSubmitCoupon)}>
-          <Title>{isEditMode ? "Editar Cupón" : "Crear Cupón"}</Title>
           <Controller
             name="code"
             control={control}
             rules={codeAsRules}
             disabled={isEditMode}
             render={({ field }) => (
-              <div>
+              <FormControl>
+                <TextLabel htmlFor="name">Nombre</TextLabel>
                 <InputText
+                  id="name"
                   disabled={isEditMode}
                   className={classNames(
-                    "p-inputtext-md",
+                    "p-inputtext-md w-1/4",
                     formState.errors.code && "p-invalid"
                   )}
                   value={field.value?.toUpperCase()}
@@ -246,58 +261,61 @@ const CreateCoupon: React.FC<Props> = ({ id, isEditMode }) => {
                     severity="error"
                   />
                 )}
-              </div>
+              </FormControl>
             )}
           />
           <MarginY />
-          <Title>Tipo de descuento</Title>
-          <Container>
-            <RadioButtonContainer>
-              <Controller
-                control={control}
-                name="discount_type"
-                render={({ field }) => (
-                  <RadioButton
-                    id={DiscountType.FIXED}
-                    value={DiscountType.FIXED}
-                    checked={field.value === DiscountType.FIXED}
-                    onChange={(e) => field.onChange(e.value)}
-                  />
-                )}
-              />
-              <label className="text-white" htmlFor={DiscountType.FIXED}>
-                {capitalize(DiscountType.FIXED)}
-              </label>
-            </RadioButtonContainer>
-            <RadioButtonContainer>
-              <Controller
-                control={control}
-                name="discount_type"
-                render={({ field }) => (
-                  <RadioButton
-                    id={DiscountType.PERCENTAGE}
-                    value={DiscountType.PERCENTAGE}
-                    checked={field.value === DiscountType.PERCENTAGE}
-                    onChange={(e) => field.onChange(e.value)}
-                  />
-                )}
-              />
-              <label className="text-white" htmlFor={DiscountType.PERCENTAGE}>
-                {capitalize(DiscountType.PERCENTAGE)}
-              </label>
-            </RadioButtonContainer>
-          </Container>
+          <FormControl>
+            <TextLabel>Tipo de descuento</TextLabel>
+            <Container>
+              <RadioButtonContainer>
+                <Controller
+                  control={control}
+                  name="discount_type"
+                  render={({ field }) => (
+                    <RadioButton
+                      id={DiscountType.FIXED}
+                      value={DiscountType.FIXED}
+                      checked={field.value === DiscountType.FIXED}
+                      onChange={(e) => field.onChange(e.value)}
+                    />
+                  )}
+                />
+                <label className="text-white" htmlFor={DiscountType.FIXED}>
+                  {capitalize(DiscountType.FIXED)}
+                </label>
+              </RadioButtonContainer>
+              <RadioButtonContainer>
+                <Controller
+                  control={control}
+                  name="discount_type"
+                  render={({ field }) => (
+                    <RadioButton
+                      id={DiscountType.PERCENTAGE}
+                      value={DiscountType.PERCENTAGE}
+                      checked={field.value === DiscountType.PERCENTAGE}
+                      onChange={(e) => field.onChange(e.value)}
+                    />
+                  )}
+                />
+                <label className="text-white" htmlFor={DiscountType.PERCENTAGE}>
+                  {capitalize(DiscountType.PERCENTAGE)}
+                </label>
+              </RadioButtonContainer>
+            </Container>
+          </FormControl>
           <MarginY />
-          <Title>Aplicar descuento</Title>
           <Controller
             control={control}
             name="discount_value"
             rules={discountAsRules}
             render={({ field }) => (
-              <div>
+              <FormControl>
+                <TextLabel htmlFor="discount">Descuento</TextLabel>
                 <InputNumber
                   min={1}
                   max={100}
+                  id="discount"
                   placeholder={
                     discount === DiscountType.FIXED
                       ? "Se aplica en EUR/USD"
@@ -305,9 +323,13 @@ const CreateCoupon: React.FC<Props> = ({ id, isEditMode }) => {
                   }
                   value={field.value}
                   className={classNames(
-                    "p-inputtext-md",
+                    "p-inputtext-md w-1/4",
                     formState.errors?.discount_value && "p-invalid"
                   )}
+                  mode="currency"
+                  locale="de-DE"
+                  currency="EUR"
+                  minFractionDigits={2}
                   onChange={(e) => field.onChange(e.value)}
                 />
                 {formState.errors?.discount_value && (
@@ -316,72 +338,83 @@ const CreateCoupon: React.FC<Props> = ({ id, isEditMode }) => {
                     text={formState.errors?.discount_value?.message}
                   />
                 )}
-              </div>
+              </FormControl>
             )}
           />
-          <Title>Cantidad de usos</Title>
-          <Container>
-            <Controller
-              name="usage_limit"
-              control={control}
-              rules={usageAsRules}
-              render={({ field }) => (
-                <div>
-                  <InputNumber
-                    min={1}
-                    max={9999}
-                    value={field.value}
-                    className={classNames(
-                      "p-inputtext-md",
-                      formState.errors?.usage_limit && "p-invalid"
-                    )}
-                    onChange={(e) => field.onChange(e.value)}
-                    placeholder="Ingresar cantidad máxima de usos"
-                  />
-                  {formState.errors?.usage_limit && (
-                    <Message
-                      severity="error"
-                      text={formState.errors?.usage_limit?.message}
-                    />
-                  )}
-                </div>
-              )}
-            />
-          </Container>
           <MarginY />
-          <Title>Valor de compra mínimo</Title>
-          <Container>
-            <Controller
-              name="purchase_amount"
-              control={control}
-              render={({ field }) => (
+          <Controller
+            name="usage_limit"
+            control={control}
+            rules={usageAsRules}
+            render={({ field }) => (
+              <FormControl>
+                <TextLabel htmlFor="usage">Cantidad de usos</TextLabel>
                 <InputNumber
+                  min={1}
+                  max={9999}
+                  id="usage"
+                  value={field.value}
+                  className={classNames(
+                    "p-inputtext-md w-1/4",
+                    formState.errors?.usage_limit && "p-invalid"
+                  )}
+                  onChange={(e) => field.onChange(e.value)}
+                  placeholder="Ingresar cantidad máxima de usos"
+                />
+                {formState.errors?.usage_limit && (
+                  <Message
+                    severity="error"
+                    text={formState.errors?.usage_limit?.message}
+                  />
+                )}
+              </FormControl>
+            )}
+          />
+          <MarginY />
+          <Controller
+            name="purchase_amount"
+            control={control}
+            render={({ field }) => (
+              <FormControl>
+                <TextLabel htmlFor="purchase">Valor de compra mínimo</TextLabel>
+                <InputNumber
+                  id="purchase"
                   placeholder="0-99"
                   value={field.value}
-                  className="p-inputtext-md"
+                  maxLength={100}
+                  mode="currency"
+                  currency="EUR"
+                  locale="de-DE"
+                  className="p-inputtext-md w-1/4"
                   onChange={(e) => field.onChange(e.value)}
                 />
-              )}
-            />
-          </Container>
+              </FormControl>
+            )}
+          />
           <MarginY />
-          <Title>
-            {enabled ? "Deshabilitar Horario" : "Habilitar Horario"}
-          </Title>
           <Controller
             name="enabled"
             control={control}
             render={({ field }) => (
-              <InputSwitch checked={field.value} onChange={field.onChange} />
+              <FormControl>
+                <TextLabel>
+                  {field.value ? "Deshabilitar Horario" : "Habilitar Horario"}
+                </TextLabel>
+                <InputSwitch checked={field.value} onChange={field.onChange} />
+              </FormControl>
             )}
           />
-          <Title>Descripción del cupón</Title>
-          <InputTextarea
-            placeholder="Descripción del cupón"
-            rows={4}
-            cols={40}
-            {...register("description", { required: false })}
-          />
+          <MarginY />
+          <FormControl>
+            <TextLabel>Descripción</TextLabel>
+            <InputTextarea
+              placeholder="Descripción del cupón"
+              rows={3}
+              cols={30}
+              className="w-1/4"
+              {...register("description", { required: false })}
+            />
+          </FormControl>
           {enabled && (
             <>
               <Title>Fecha</Title>

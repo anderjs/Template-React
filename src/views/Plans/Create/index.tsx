@@ -4,7 +4,7 @@ import { navigateToUrl } from "single-spa";
 import { classNames } from "primereact/utils";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useHost } from "@learlifyweb/providers.host";
-import { Controller, useForm } from "react-hook-form";
+import { Controller, useForm, useWatch } from "react-hook-form";
 import { AxiosError, HttpStatusCode } from "axios";
 
 import { http } from "@learlifyweb/providers.https";
@@ -32,6 +32,7 @@ import { Created } from "@components/Created";
 import { FormControl } from "@views/Settings/settings.styles";
 import { Elements, TextLabel } from "@styles";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { disabledForm } from "@utils";
 
 export interface Props {
   id?: string;
@@ -152,6 +153,11 @@ const CreatePlan: React.FC<Props> = ({ id, isEditMode }) => {
     },
   });
 
+  const [name, price, description] = useWatch({
+    control,
+    name: ["name", "price", "description"],
+  });
+
   /**
    * @description
    * On submit plan updated/created.
@@ -194,16 +200,39 @@ const CreatePlan: React.FC<Props> = ({ id, isEditMode }) => {
     return reset();
   };
 
+  /**
+   * @description
+   * Disabled everything is nothing is touched.
+   */
+  const handleDisabled = React.useMemo(() => {
+    if (isEditMode) {
+      return disabledForm(
+        plan.data?.response,
+        {
+          name,
+          price,
+          description,
+        },
+        ["name", "price", "description"]
+      );
+    }
+  }, [name, price, description, plan.data]);
+
   return (
     <>
       <Toast position="bottom-right" ref={toast} />
       <MarginY />
-      <Elements>
-        <FontAwesomeIcon className="text-amber-500" icon="circle-exclamation" />
-        <small className="font-light text-white text-sm">
-          Estás actualizando la información de un paquete
-        </small>
-      </Elements>
+      {isEditMode && (
+        <Elements>
+          <FontAwesomeIcon
+            className="text-amber-500"
+            icon="circle-exclamation"
+          />
+          <small className="font-light text-white text-sm">
+            Estás actualizando la información de un paquete
+          </small>
+        </Elements>
+      )}
       <form onSubmit={handleSubmit(onSubmitPlan)}>
         <MarginY />
         <Controller
@@ -291,7 +320,12 @@ const CreatePlan: React.FC<Props> = ({ id, isEditMode }) => {
         />
         <MarginY />
         <Container>
-          <Button type="submit" severity="info" size="large">
+          <Button
+            size="large"
+            type="submit"
+            severity="info"
+            disabled={handleDisabled}
+          >
             {isEditMode ? (
               <i className="fa fa-circle-check fa-solid fa-md" />
             ) : (
@@ -299,10 +333,11 @@ const CreatePlan: React.FC<Props> = ({ id, isEditMode }) => {
             )}
           </Button>
           <Button
-            type="reset"
             size="large"
+            type="reset"
             severity="danger"
             onClick={handleReset}
+            disabled={handleDisabled}
           >
             <i className="fa fa-refresh fa-solid fa-md" />
           </Button>
