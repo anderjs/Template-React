@@ -9,7 +9,7 @@ export const Container = tw.form`
   gap-y-2
 `;
 
-export const FormControl = tw.div`
+export const FormControl = tw.form`
   flex
   flex-col
   gap-y-2

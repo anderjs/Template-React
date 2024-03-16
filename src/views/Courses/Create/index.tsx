@@ -45,23 +45,25 @@ import { IDraft } from "../courses.interface";
 
 // - Stepper
 import Course from "./components/Course";
+import Modules from "./components/Modules";
 import Categories from "./components/Categories";
 import Instructor from "./components/Instructor";
 import { Controllers } from "./components/Controllers";
 
 // - Schema
 import {
-  ICategory,
-  ICourse,
   ITags,
   IUser,
+  ICourse,
+  ICategory,
 } from "@learlifyweb/providers.schema";
 
 // - Animation
 import { Fade } from "react-awesome-reveal";
 import { Loading } from "@learlifyweb/providers.loading";
-import Modules from "./components/Modules";
 import { EditorContext, EditorContextProps } from "./context/EditorContext";
+import { MarginY } from "@views/Coupon/coupon.styles";
+import { TextLabel } from "@styles";
 
 const CreateCourse: React.FC = () => {
   const { token } = useHost();
@@ -412,6 +414,14 @@ const CreateCourse: React.FC = () => {
   return (
     <Loading status={draft.isLoading || draft.isRefetching}>
       <Fade delay={0.5}>
+        <div className="flex justify-start gap-x-2 items-center">
+          <TextLabel>Development Stage</TextLabel>
+          <img
+            alt="modules"
+            src="https://learlify.nyc3.cdn.digitaloceanspaces.com/static/pre-built-module.png"
+          />
+        </div>
+        <MarginY />
         <Card footer={FooterTemplate} className="mb-5">
           <Steps model={steps} activeIndex={state.active} />
           <Context>

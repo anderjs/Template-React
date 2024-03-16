@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React from "react";
 import { IState } from "../state";
 import { useForm, Controller } from "react-hook-form";
 import { IModule } from "@learlifyweb/providers.schema";
@@ -12,15 +12,18 @@ import { Toast } from "primereact/toast";
 import { Button } from "primereact/button";
 import { DataView } from "primereact/dataview";
 import { InputText } from "primereact/inputtext";
-import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
 import { ConfirmPopup, confirmPopup } from "primereact/confirmpopup"; // To use <ConfirmPopup> tag
+import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
 
+import Module from "./Module";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { classNames } from "primereact/utils";
 import { PrimeIcons } from "primereact/api";
-import Module from "./Module";
 import { Fade } from "react-awesome-reveal";
+import { TextLabel } from "@styles";
 import { Title } from "@views/Admin/admin.style";
+import { FormControl } from "@views/Settings/settings.styles";
+import { useTimeoutState } from "@hooks/useTimeoutState";
 
 interface Props {
   data: IState["modules"];
@@ -37,53 +40,64 @@ const Modules: React.FC<Props> = ({
   onAddLesson,
   onDeleteModule,
 }) => {
-  const message = useRef<Toast>();
-
-  const [view, setView] = React.useState<number>();
+  const message = React.useRef<Toast>();
 
   const { control, formState, reset, getValues } =
     useForm<Pick<IModule, "title">>();
 
-  const addModuleHandler = () => {
+  const [view, setView] = React.useState<number>();
+
+  const [open, setOpen] = useTimeoutState(true);
+
+  /**
+   * @description
+   * Resets the current dialog.
+   */
+  const addModuleHandler = (e?: React.FormEvent) => {
+    if (e && "preventDefault" in e) {
+      e?.preventDefault();
+    }
+
     if (getValues("title")) {
       onAddModule?.(getValues("title"));
 
       reset();
     }
+
+    setOpen();
   };
 
   const handleConfirmModule = (event: React.MouseEvent<HTMLButtonElement>) => {
     confirmPopup({
+      dismissable: true,
       target: event.currentTarget,
       message: (
-        <div>
-          <label className="text-text-gray-300" htmlFor="module">
+        <FormControl onSubmit={addModuleHandler}>
+          <TextLabel className="text-text-gray-300" htmlFor="module">
             Nombre
-          </label>
-          <br />
-          <div>
-            <Controller
-              name="title"
-              control={control}
-              rules={{
-                required: true,
-              }}
-              render={({ field }) => (
-                <InputText
-                  id="module"
-                  name="module"
-                  className={classNames(formState.errors.title && "p-invalid")}
-                  value={field.value}
-                  placeholder="IELTS - Speaking"
-                  onChange={(e) => field.onChange(e.target.value)}
-                />
-              )}
-            />
-          </div>
-        </div>
+          </TextLabel>
+          <Controller
+            name="title"
+            control={control}
+            rules={{
+              required: true,
+            }}
+            render={({ field }) => (
+              <InputText
+                id="module"
+                name="module"
+                className={classNames(formState.errors.title && "p-invalid")}
+                value={field.value}
+                placeholder="IELTS - Speaking"
+                onChange={(e) => field.onChange(e.target.value)}
+              />
+            )}
+          />
+        </FormControl>
       ),
-      accept: addModuleHandler,
       reject: reset,
+      accept: addModuleHandler,
+      closeOnEscape: true,
       acceptLabel: "Agregar",
       rejectLabel: "Cancelar",
       rejectClassName: "p-button-danger",
@@ -133,9 +147,11 @@ const Modules: React.FC<Props> = ({
 
   const itemTemplate = (item: IModule) => {
     return (
-      <div className="col-12">
+      <div className="grid col-12">
         <ModuleViewer>
-          <div className="text-bold text-900 text-xl">{item.title}</div>
+          <div className="text-bold text-900 text-[#ada8a8] text-xl">
+            {item.title}
+          </div>
           <ModuleActions>
             <Button
               size="small"
@@ -158,8 +174,8 @@ const Modules: React.FC<Props> = ({
   return (
     <React.Fragment>
       <Toast position="bottom-right" ref={message} />
-      <ConfirmPopup />
-      <ConfirmDialog />
+      {open && <ConfirmPopup />}
+      {open && <ConfirmDialog />}
       {data.length === 0 ? (
         <div>
           <p className="text-base">

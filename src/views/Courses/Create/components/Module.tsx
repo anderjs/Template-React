@@ -15,6 +15,8 @@ import { styles } from "@root.styles";
 
 import { classNames } from "primereact/utils";
 import Playground from "./Playground/PlaygroundComponent";
+import { FormControl } from "@views/Settings/settings.styles";
+import { TextLabel } from "@styles";
 
 interface Props {
   lessons?: ILesson[];
@@ -29,13 +31,11 @@ const Module: React.FC<Props> = ({ selected, lessons, onAddContent }) => {
 
   const handleClickAddLesson = (event: React.MouseEvent<HTMLButtonElement>) => {
     confirmPopup({
+      closeOnEscape: true,
       target: event.currentTarget,
       message: (
-        <div>
-          <label className="text-text-gray-300" htmlFor="lesson">
-            Título
-          </label>
-          <br />
+        <FormControl>
+          <TextLabel>Título</TextLabel>
           <div>
             <Controller
               name="title"
@@ -55,7 +55,7 @@ const Module: React.FC<Props> = ({ selected, lessons, onAddContent }) => {
               )}
             />
           </div>
-        </div>
+        </FormControl>
       ),
       accept: () => {
         if (getValues("title")) {

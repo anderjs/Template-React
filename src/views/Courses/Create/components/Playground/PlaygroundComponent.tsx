@@ -50,11 +50,11 @@ const Playground: React.FC<Props> = ({ active, onClose }) => {
   const { size, onTemplateSelect, onTemplateClear, onTemplateUpload } =
     useFile();
 
-  const { editor, onSetNewElement } = useEditor();
-
   const [state, dispatch] = React.useReducer(playground, initialState);
 
   const [upload, setUpload] = React.useState(false);
+
+  const { editor, onSetNewElement } = useEditor();
 
   const visual = React.useMemo<MenuItem[]>(
     () => [
@@ -85,25 +85,41 @@ const Playground: React.FC<Props> = ({ active, onClose }) => {
         ],
       },
       {
-        label: "Component",
+        label: "Components",
         icon: PrimeIcons.BOX,
         items: [
           {
-            label: "Selección Simple",
+            label: "Grammar",
             icon: PrimeIcons.QUESTION_CIRCLE,
-            command: () => {
-              /**
-               * @description
-               * Set a new element in the editor.
-               */
-              onSetNewElement?.({
-                uuid: v4(),
-                correct: 0,
-                answers: [],
-                question: "",
-                type: "SimpleSelection",
-              });
-            },
+            items: [
+              {
+                label: "Selection",
+                icon: PrimeIcons.QUESTION_CIRCLE,
+                command: () => {
+                  /**
+                   * @description
+                   * Set a new element in the editor.
+                   */
+                  onSetNewElement?.({
+                    uuid: v4(),
+                    correct: 0,
+                    answers: [],
+                    question: "",
+                    type: "SimpleSelection",
+                  });
+                },
+              },
+            ],
+          },
+          {
+            label: "Listening",
+            icon: PrimeIcons.PLAY,
+            items: [
+              {
+                label: "Selection",
+                icon: PrimeIcons.QUESTION_CIRCLE,
+              },
+            ],
           },
         ],
       },

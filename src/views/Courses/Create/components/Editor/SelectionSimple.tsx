@@ -66,7 +66,7 @@ const SelectionSimpleEditor: React.FC<SimpleSelectionProps> = ({
    * @description
    * Simple selection usage Graphic User Interface.
    */
-  const { control, reset, getValues, setValue } = useForm<ISimpleSelection>({
+  const { control, reset, getValues } = useForm<ISimpleSelection>({
     defaultValues: {
       correct,
       question,
@@ -95,37 +95,41 @@ const SelectionSimpleEditor: React.FC<SimpleSelectionProps> = ({
   const input = React.useRef<HTMLInputElement>();
 
   const handleStageCreateAnswer = (e: React.MouseEvent<HTMLButtonElement>) => {
+    const handleSubmit = (e?: React.FormEvent) => {
+      e?.preventDefault();
+
+      try {
+        answerSchema.parse(input.current.value);
+
+        editor.onAddNewAnswer({
+          index: index,
+          value: input.current.value,
+          type: "SimpleSelection",
+        });
+      } catch (e) {
+        message?.current?.show({
+          severity: "error",
+          detail: e?.message,
+        });
+      }
+
+      input.current.value = "";
+    };
+
     confirmPopup({
       target: e.currentTarget,
       message: (
-        <InputText
-          autoFocus
-          ref={input}
-          className="p-inputtext-sm"
-          placeholder="Ingresar una respuesta"
-        />
+        <form onSubmit={handleSubmit}>
+          <InputText
+            autoFocus
+            ref={input}
+            className="p-inputtext-sm"
+            placeholder="Ingresar una respuesta"
+          />
+        </form>
       ),
-      accept: () => {
-        try {
-          answerSchema.parse(input.current.value);
-
-          editor.onAddNewAnswer({
-            index: index,
-            value: input.current.value,
-            type: "SimpleSelection",
-          });
-        } catch (e) {
-          message?.current?.show({
-            severity: "error",
-            detail: e?.message,
-          });
-        }
-
-        input.current.value = "";
-      },
-      reject: () => {
-        reset();
-      },
+      reject: () => reset(),
+      accept: () => handleSubmit(),
       acceptLabel: "Agregar",
       rejectLabel: "Cancelar",
       rejectClassName: "p-button-danger",
@@ -257,19 +261,27 @@ const SelectionSimpleEditor: React.FC<SimpleSelectionProps> = ({
       <>
         <Toast position="center" ref={message} />
         <Fade delay={0.1}>
-          <Card title="Selección Simple">
+          <Card className="flex flex-col" title="Selección Simple">
             <p className="p-0 text-gray-400">
               En selección simple (JSON) podrás editar el template del ejercicio
               sin necesidad de modificar nada en GUI. Utiliza los parámetros
               seleccionados para poder adjuntar todo lo que desees.
             </p>
+            <hr className="my-4" />
+            <a
+              href="https://bit.cloud/learlifyweb/components/ui/selection"
+              target="_blank"
+              className="text-indigo-500 font-bold"
+            >
+              Ver documentación de (Selection Simple)
+            </a>
             <MarginY />
             <Controller
               name="code"
               render={({ field }) => (
                 <CodeMirror
-                  extensions={ext}
                   theme="light"
+                  extensions={ext}
                   basicSetup={setup}
                   value={field.value}
                   onChange={(value) => field.onChange(value)}

@@ -1,4 +1,5 @@
 import React from "react";
+import styled from "styled-components";
 
 // - Editor
 import SelectionSimpleEditor from "./SelectionSimple";
@@ -23,7 +24,7 @@ const Editor: React.FC<Props> = () => {
   return (
     <>
       {control.editor?.map((element, index) => (
-        <React.Fragment key={element.uuid}>
+        <UIContainer key={element.uuid}>
           {element.type === "SimpleSelection" && (
             <SelectionSimpleEditor
               index={index}
@@ -32,10 +33,16 @@ const Editor: React.FC<Props> = () => {
               question={element?.question}
             />
           )}
-        </React.Fragment>
+        </UIContainer>
       ))}
     </>
   );
 };
+
+const UIContainer = styled.div`
+  padding: 10px;
+  margin-top: 15px;
+  margin-bottom: 15px;
+`;
 
 export default React.memo(Editor);
