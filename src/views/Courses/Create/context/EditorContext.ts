@@ -21,15 +21,26 @@ export type DragAndDropElements = {
   index: number;
 };
 
+export type CallbackValue = {
+  index: number;
+  value: string;
+};
+
+export type SelectValue = {
+  index: number;
+  value: number;
+};
+
 export type EditorContextProps = {
   editor: Partial<IEditorContext>[];
-  onChangeEditorProperty?: () => void;
   onDeleteElement?: (editor: number) => void;
-  onSetNewElement?: (element: IEditorContext) => void;
+  onSelectCorrect?: (args: SelectValue) => void;
+  onUpdateAnswer?: (args: CallbackValue) => void;
   onAddNewAnswer?: (args: PushAnswerCallback) => void;
   onDeleteAnswer?: (args: DeleteAnswerCallback) => void;
-  onSelectCorrect?: (args: { index: number; value: number }) => void;
+  onSetNewElement?: (element: IEditorContext) => void;
   onDragAndDropAnswer?: (element: DragAndDropElements) => void;
+  onChangeEditorProperty?: () => void;
 };
 
 export const EditorContext = createContext<EditorContextProps>({

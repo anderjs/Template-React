@@ -4,13 +4,13 @@ import { classNames } from "primereact/utils";
 import { useForm, Controller, useWatch } from "react-hook-form";
 import { loadLanguage } from "@uiw/codemirror-extensions-langs";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import CodeMirror, { ReactCodeMirrorProps } from "@uiw/react-codemirror";
 import {
   Draggable,
   Droppable,
   DropResult,
   DragDropContext,
 } from "react-beautiful-dnd";
+import CodeMirror, { ReactCodeMirrorProps } from "@uiw/react-codemirror";
 
 // - Styled
 import { Card } from "primereact/card";
@@ -40,8 +40,8 @@ import { beautify } from "@utils";
 // - Schema
 import { IAnswer, ISimpleSelection } from "@learlifyweb/providers.schema";
 import {
-  AbstractSimpleSelection,
   SimpleSelectionProps,
+  AbstractSimpleSelection,
 } from "./SelectionSimpleTypes";
 
 // - Schema
@@ -58,6 +58,8 @@ const SelectionSimpleEditor: React.FC<SimpleSelectionProps> = ({
 
   const playground = usePlayground();
 
+  const [edit, setEdit] = React.useState<number>(-1);
+
   const [checked, setChecked] = React.useState<boolean>(false);
 
   const [codeMirror, setCodeMirror] = React.useState<boolean>(false);
@@ -72,6 +74,8 @@ const SelectionSimpleEditor: React.FC<SimpleSelectionProps> = ({
       question,
     },
   });
+
+  const draft = useForm<ISimpleSelection>({});
 
   /**
    * @description
@@ -254,6 +258,27 @@ const SelectionSimpleEditor: React.FC<SimpleSelectionProps> = ({
 
   /**
    * @description
+   * Edit draft answer.
+   */
+  const handleUpdateAnswer = React.useCallback(
+    (answer: string, index: number) => {
+      setEdit((draft) => {
+        if (draft === index) {
+          return draft;
+        }
+
+        return index;
+      });
+
+      draft.reset({
+        question: answer,
+      });
+    },
+    [draft.reset]
+  );
+
+  /**
+   * @description
    * Enables VSCode Monaco on our Playground to Edit a JSON file.
    */
   if (codeMirror) {
@@ -386,6 +411,7 @@ const SelectionSimpleEditor: React.FC<SimpleSelectionProps> = ({
             <Button
               size="small"
               severity="info"
+              disabled={questionRef.length === 0}
               icon={
                 <FontAwesomeIcon
                   icon="plus-circle"
@@ -426,9 +452,9 @@ const SelectionSimpleEditor: React.FC<SimpleSelectionProps> = ({
                   >
                     {answers?.map((answer, index) => (
                       <Draggable
-                        draggableId={answer.id}
                         key={answer.id}
                         index={index}
+                        draggableId={answer.id}
                       >
                         {(provided) => (
                           <SpacingX
@@ -437,41 +463,107 @@ const SelectionSimpleEditor: React.FC<SimpleSelectionProps> = ({
                             {...provided.draggableProps}
                             {...provided.dragHandleProps}
                           >
-                            <RadioButton
-                              value={answer.value}
-                              inputId={answer.id}
-                              checked={index === getValues("correct")}
-                              onClick={() => handleSelectCorrectValue(index)}
-                              onChange={() => handleSelectCorrectValue(index)}
-                            />
-                            <div
-                              className={classNames(
-                                styles.elements,
-                                "w-[20rem]"
-                              )}
-                            >
-                              <div>
-                                <label
-                                  htmlFor={answer.id}
-                                  className={styles.label}
-                                >
-                                  {answer.value}
-                                </label>
-                              </div>
-                              <div>
-                                <FontAwesomeIcon
-                                  onClick={() =>
-                                    handleClickDeleteAnswer(answer, index)
-                                  }
-                                  className={classNames(
-                                    styles.fontAwesomeIcon,
-                                    "hover:cursor-pointer",
-                                    "text-red-500"
+                            {edit === index ? (
+                              <div
+                                className={classNames(
+                                  styles.elements,
+                                  "w-[20rem]"
+                                )}
+                              >
+                                <Controller
+                                  name="question"
+                                  control={draft.control}
+                                  render={({ field }) => (
+                                    <div>
+                                      <div className="my-2">
+                                        <span className="font-light text-sm text-slate-500">
+                                          Actualización
+                                        </span>
+                                      </div>
+                                      <div className="flex justify-start gap-x-2 items-center">
+                                        <InputText
+                                          autoFocus
+                                          inputMode="text"
+                                          className="p-inputtext-sm"
+                                          placeholder="Ingresa tu nueva respuesta aquí"
+                                          onChange={(e) =>
+                                            field.onChange(e.target.value)
+                                          }
+                                          value={field.value}
+                                        />
+                                        <FontAwesomeIcon
+                                          className={classNames(
+                                            styles.fontAwesomeIcon,
+                                            "hover:cursor-pointer",
+                                            "text-indigo-500"
+                                          )}
+                                          icon="check"
+                                          onClick={() =>
+                                            handleUpdateAnswer(
+                                              answer.value,
+                                              index
+                                            )
+                                          }
+                                        />
+                                      </div>
+                                    </div>
                                   )}
-                                  icon="xmark"
                                 />
                               </div>
-                            </div>
+                            ) : (
+                              <>
+                                <RadioButton
+                                  value={answer.value}
+                                  inputId={answer.id}
+                                  checked={index === getValues("correct")}
+                                  onClick={() =>
+                                    handleSelectCorrectValue(index)
+                                  }
+                                  onChange={() =>
+                                    handleSelectCorrectValue(index)
+                                  }
+                                />
+                                <div
+                                  className={classNames(
+                                    styles.elements,
+                                    "w-[20rem]"
+                                  )}
+                                >
+                                  <div>
+                                    <label
+                                      htmlFor={answer.id}
+                                      className={styles.label}
+                                    >
+                                      {answer.value}
+                                    </label>
+                                  </div>
+                                  <div className="flex justify-start gap-x-2 items-center">
+                                    <FontAwesomeIcon
+                                      className={classNames(
+                                        styles.fontAwesomeIcon,
+                                        "hover:cursor-pointer",
+                                        "text-emerald-500"
+                                      )}
+                                      icon="pencil-alt"
+                                      onClick={() =>
+                                        handleUpdateAnswer(answer.value, index)
+                                      }
+                                    />
+                                    <FontAwesomeIcon
+                                      onClick={() =>
+                                        handleClickDeleteAnswer(answer, index)
+                                      }
+                                      className={classNames(
+                                        styles.fontAwesomeIcon,
+                                        "hover:cursor-pointer",
+                                        "text-red-500"
+                                      )}
+                                      icon="xmark"
+                                    />
+                                  </div>
+                                </div>
+                              </>
+                            )}
                           </SpacingX>
                         )}
                       </Draggable>
@@ -521,4 +613,4 @@ const SpacingX = styled.div`
   margin-bottom: 10px;
 `;
 
-export default SelectionSimpleEditor;
+export default React.memo(SelectionSimpleEditor);

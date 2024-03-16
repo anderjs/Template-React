@@ -64,6 +64,7 @@ import { Loading } from "@learlifyweb/providers.loading";
 import { EditorContext, EditorContextProps } from "./context/EditorContext";
 import { MarginY } from "@views/Coupon/coupon.styles";
 import { TextLabel } from "@styles";
+import { updateAnswer } from "./components/Playground/PlaygroundAction";
 
 const CreateCourse: React.FC = () => {
   const { token } = useHost();
@@ -357,16 +358,20 @@ const CreateCourse: React.FC = () => {
     return {
       editor: state.editor,
       /**
+       * @description
        * Add answer method.
        */
       onAddNewAnswer: (element) => {
-        /**
-         * @description
-         * Pushing a new answer element from the editor.
-         */
         dispatch(setAnswerElement(element));
       },
-
+      /**
+       *
+       * @description
+       * Update current answer.
+       */
+      onUpdateAnswer: (element) => {
+        dispatch(updateAnswer(element));
+      },
       /**
        * @description
        * Deletes a existing element.
