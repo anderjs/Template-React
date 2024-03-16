@@ -48,6 +48,8 @@ import { descriptionRules, iconRules, nameRules } from "../categories.rules";
 
 // - Utils
 import { randomColor } from "../categories.utils";
+import { Elements, TextLabel } from "@styles";
+import { FormControl } from "@views/Settings/settings.styles";
 
 interface Props {
   id?: string;
@@ -196,15 +198,7 @@ const CreateCategory: React.FC<Props> = ({ id, isEditMode }) => {
       params: [id],
     }),
     onSuccess: (query) => {
-      if (isEditMode && query.status === HttpStatusCode.Ok) {
-        toast.current?.show({
-          severity: "success",
-          summary: query.response?.name,
-          detail: "Se ha cargado el detalle",
-        });
-
-        return reset(query.response);
-      }
+      reset(query.response);
     },
     onError: (err: AxiosError) => {
       switch (err.response?.status) {
@@ -315,135 +309,163 @@ const CreateCategory: React.FC<Props> = ({ id, isEditMode }) => {
     <>
       <Toast ref={toast} position="bottom-right" />
       <Fade delay={0.5}>
-        <Title>Color</Title>
-        <form onSubmit={handleSubmit(handleCreate)}>
-          <div className={styles.flex}>
-            <Controller
-              name="first_color"
-              control={control}
-              render={({ field }) => (
-                <div>
-                  <ColorPicker
-                    name="first_color"
-                    value={field.value}
-                    disabled={enrichment.isLoading}
-                    onChange={(e) => field.onChange(e.value)}
-                    className={classNames(errors.first_color && "p-invalid")}
-                  />
-                </div>
-              )}
-            />
-            <Controller
-              name="second_color"
-              control={control}
-              render={({ field }) => (
-                <div>
-                  <ColorPicker
-                    name="second_color"
-                    value={field.value}
-                    disabled={enrichment.isLoading}
-                    onChange={(e) => field.onChange(e.value)}
-                    className={classNames(errors.second_color && "p-invalid")}
-                  />
-                </div>
-              )}
+        {isEditMode || (
+          <div>
+            <img
+              alt="categories"
+              src="https://learlify.nyc3.cdn.digitaloceanspaces.com/static/tag.png"
             />
           </div>
-          <MarginY />
-          <Title>Icono</Title>
-          <Controller
-            name="icon"
-            rules={iconRules}
-            control={control}
-            render={({ field }) => (
-              <div className={styles.flex}>
-                <Dropdown
-                  filter
-                  filterBy="label"
-                  value={field.value}
-                  options={fontAwesome}
-                  itemTemplate={IconTemplate}
-                  onChange={(e) => handleChangeCallback(e, field)}
-                  disabled={enrichment.isLoading}
-                  className={classNames(errors.icon && "p-invalid")}
-                  placeholder="Selecciona un icono"
-                  virtualScrollerOptions={{ itemSize: 30 }}
-                  valueTemplate={handleRenderIcon}
-                />
-                {errors.icon && (
-                  <Fade delay={0.5}>
-                    <Message text={errors.icon?.message} severity="error" />
-                  </Fade>
+        )}
+        <MarginY />
+        {isEditMode && (
+          <Elements>
+            <FontAwesomeIcon
+              className="text-amber-500"
+              icon="circle-exclamation"
+            />
+            <small className="font-light text-white text-sm">
+              Estás actualizando la información de una categoría
+            </small>
+          </Elements>
+        )}
+        <MarginY />
+        <form onSubmit={handleSubmit(handleCreate)}>
+          <FormControl>
+            <TextLabel>Color</TextLabel>
+            <div className={styles.flex}>
+              <Controller
+                name="first_color"
+                control={control}
+                render={({ field }) => (
+                  <div>
+                    <ColorPicker
+                      name="first_color"
+                      value={field.value}
+                      disabled={enrichment.isLoading}
+                      onChange={(e) => field.onChange(e.value)}
+                      className={classNames(errors.first_color && "p-invalid")}
+                    />
+                  </div>
                 )}
-              </div>
-            )}
-          />
-          <MarginY />
-          <Title>Título</Title>
-          <Controller
-            name="name"
-            rules={nameRules}
-            control={control}
-            render={({ field }) => (
-              <div className={styles.flex}>
-                <InputText
-                  name="name"
-                  className={classNames(
-                    "p-inputtext-md",
-                    errors?.name && "p-invalid"
-                  )}
-                  placeholder="Idiomas"
-                  disabled={enrichment.isLoading}
-                  value={capitalize(field?.value)}
-                  onChange={(e) => field.onChange(e.target.value)}
-                />
-                {errors?.name && (
-                  <Fade delay={0.5}>
-                    <Message severity="error" text={errors?.name?.message} />
-                  </Fade>
+              />
+              <Controller
+                name="second_color"
+                control={control}
+                render={({ field }) => (
+                  <div>
+                    <ColorPicker
+                      name="second_color"
+                      value={field.value}
+                      disabled={enrichment.isLoading}
+                      onChange={(e) => field.onChange(e.value)}
+                      className={classNames(errors.second_color && "p-invalid")}
+                    />
+                  </div>
                 )}
-              </div>
-            )}
-          />
+              />
+            </div>
+          </FormControl>
           <MarginY />
-          <Title>Descripción</Title>
-          <Controller
-            name="description"
-            control={control}
-            rules={descriptionRules}
-            render={({ field }) => (
-              <>
+          <FormControl>
+            <TextLabel>Icono</TextLabel>
+            <Controller
+              name="icon"
+              rules={iconRules}
+              control={control}
+              render={({ field }) => (
                 <div className={styles.flex}>
-                  <InputTextarea
-                    rows={5}
-                    cols={40}
-                    name="description"
-                    className={classNames(
-                      "p-inputtext-md",
-                      errors?.description && "p-invalid"
-                    )}
+                  <Dropdown
+                    filter
+                    filterBy="label"
                     value={field.value}
+                    options={fontAwesome}
+                    itemTemplate={IconTemplate}
+                    onChange={(e) => handleChangeCallback(e, field)}
                     disabled={enrichment.isLoading}
-                    placeholder="Descripción de la categoría"
-                    onChange={(e) => field.onChange(e.target.value)}
+                    className={classNames(errors.icon && "p-invalid")}
+                    placeholder="Selecciona un icono"
+                    virtualScrollerOptions={{ itemSize: 30 }}
+                    valueTemplate={handleRenderIcon}
                   />
-                  {errors.description && (
-                    <Fade delay={0.5} cascade>
-                      <Message
-                        severity="error"
-                        text={errors.description.message}
-                      />
+                  {errors.icon && (
+                    <Fade delay={0.5}>
+                      <Message text={errors.icon?.message} severity="error" />
                     </Fade>
                   )}
                 </div>
-                <br />
-                <p className="text-white">
-                  {field.value?.length ?? 0}/{1000}
-                </p>
-              </>
-            )}
-          />
-          <br />
+              )}
+            />
+          </FormControl>
+          <MarginY />
+          <FormControl>
+            <TextLabel>Título</TextLabel>
+            <Controller
+              name="name"
+              rules={nameRules}
+              control={control}
+              render={({ field }) => (
+                <div className={styles.flex}>
+                  <InputText
+                    name="name"
+                    className={classNames(
+                      "p-inputtext-md",
+                      errors?.name && "p-invalid"
+                    )}
+                    placeholder="Idiomas"
+                    disabled={enrichment.isLoading}
+                    value={capitalize(field?.value)}
+                    onChange={(e) => field.onChange(e.target.value)}
+                  />
+                  {errors?.name && (
+                    <Fade delay={0.5}>
+                      <Message severity="error" text={errors?.name?.message} />
+                    </Fade>
+                  )}
+                </div>
+              )}
+            />
+          </FormControl>
+          <MarginY />
+          <FormControl>
+            <TextLabel>Descripción</TextLabel>
+            <Controller
+              name="description"
+              control={control}
+              rules={descriptionRules}
+              render={({ field }) => (
+                <>
+                  <div className={styles.flex}>
+                    <InputTextarea
+                      rows={5}
+                      cols={40}
+                      name="description"
+                      className={classNames(
+                        "p-inputtext-md",
+                        errors?.description && "p-invalid"
+                      )}
+                      value={field.value}
+                      disabled={enrichment.isLoading}
+                      placeholder="Descripción de la categoría"
+                      onChange={(e) => field.onChange(e.target.value)}
+                    />
+                    {errors.description && (
+                      <Fade delay={0.5} cascade>
+                        <Message
+                          severity="error"
+                          text={errors.description.message}
+                        />
+                      </Fade>
+                    )}
+                  </div>
+                  <p className="text-white font-light">
+                    {field.value?.length ?? 0}/{1000}
+                  </p>
+                </>
+              )}
+            />
+          </FormControl>
+          <MarginY />
           <Button
             className={styles.container}
             onClick={handleClickEnrichmentText}
@@ -466,7 +488,7 @@ const CreateCategory: React.FC<Props> = ({ id, isEditMode }) => {
               className={styles.container}
               disabled={enrichment.isLoading}
             >
-              {isEditMode ? "Actualizar" : "Crear"}{" "}
+              {isEditMode ? "Actualizar" : "Crear"}
               <FontAwesomeIcon icon={isEditMode ? "pencil" : "plus"} />
             </Button>
             <Button
@@ -475,7 +497,7 @@ const CreateCategory: React.FC<Props> = ({ id, isEditMode }) => {
               className={styles.container}
               disabled={enrichment.isLoading}
             >
-              Cancel <FontAwesomeIcon icon="refresh" />
+              Cancelar <FontAwesomeIcon icon="refresh" />
             </Button>
           </div>
         </form>

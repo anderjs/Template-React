@@ -53,12 +53,21 @@ export const Router: React.FC = React.memo(() => {
         <Route path="/history" element={<History />} />
         <Route path="/settings" element={<Settings />} />
         <Route path="/categories" element={<Categories />} />
-        <Route path="/plans/create" element={<CreatePlan />} />
+        <Route
+          path="/plans/create"
+          element={<CreatePlan isEditMode={false} />}
+        />
         <Route path="/plans/edit/:id" element={<EditPlan />} />
-        <Route path="/coupons/create" element={<CreateCoupon />} />
+        <Route
+          path="/coupons/create"
+          element={<CreateCoupon isEditMode={false} />}
+        />
         <Route path="/coupons/edit/:id" element={<EditCoupon />} />
         <Route path="/courses/create/:id" element={<CreateCourse />} />
-        <Route path="/categories/create" element={<CreateCategory />} />
+        <Route
+          path="/categories/create"
+          element={<CreateCategory isEditMode={false} />}
+        />
         <Route path="/categories/edit/:id" element={<EditCategory />} />
       </Routes>
     </BrowserRouter>

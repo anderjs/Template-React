@@ -8,11 +8,7 @@ import CreateCoupon from "@views/Coupon/Create";
 const EditCoupon: React.FC = (props) => {
   const { id } = useParams();
 
-  return (
-    <Fade delay={0.3}>
-      <CreateCoupon id={id} isEditMode={true} {...props} />
-    </Fade>
-  );
+  return <CreateCoupon id={id} isEditMode={true} {...props} />;
 };
 
 export default EditCoupon;

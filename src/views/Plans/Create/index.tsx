@@ -33,6 +33,7 @@ import { FormControl } from "@views/Settings/settings.styles";
 import { Elements, TextLabel } from "@styles";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { disabledForm } from "@utils";
+import { Fade } from "react-awesome-reveal";
 
 export interface Props {
   id?: string;
@@ -42,7 +43,7 @@ export interface Props {
 const CreatePlan: React.FC<Props> = ({ id, isEditMode }) => {
   const { token } = useHost();
 
-  const { control, reset, formState, handleSubmit } = useForm<IPlan>({});
+  const { control, reset, formState, handleSubmit } = useForm<IPlan>();
 
   const { errors } = formState;
 
@@ -207,7 +208,7 @@ const CreatePlan: React.FC<Props> = ({ id, isEditMode }) => {
   const handleDisabled = React.useMemo(() => {
     if (isEditMode) {
       return disabledForm(
-        plan.data?.response,
+        plan?.data?.response,
         {
           name,
           price,
@@ -216,133 +217,143 @@ const CreatePlan: React.FC<Props> = ({ id, isEditMode }) => {
         ["name", "price", "description"]
       );
     }
-  }, [name, price, description, plan.data]);
+  }, [name, price, description, plan?.data]);
 
   return (
     <>
       <Toast position="bottom-right" ref={toast} />
-      <MarginY />
-      {isEditMode && (
-        <Elements>
-          <FontAwesomeIcon
-            className="text-amber-500"
-            icon="circle-exclamation"
-          />
-          <small className="font-light text-white text-sm">
-            Estás actualizando la información de un paquete
-          </small>
-        </Elements>
-      )}
-      <form onSubmit={handleSubmit(onSubmitPlan)}>
+      <>
+        {isEditMode || (
+          <div>
+            <img
+              alt="plans"
+              src="https://learlify.nyc3.cdn.digitaloceanspaces.com/static/dollars.png"
+            />
+          </div>
+        )}
         <MarginY />
-        <Controller
-          name="name"
-          rules={nameRules}
-          control={control}
-          render={({ field }) => (
-            <FormControl>
-              <TextLabel htmlFor="name">Name</TextLabel>
-              <InputText
-                id="name"
-                className={classNames(
-                  "p-inputtext-md w-1/4",
-                  errors.name && "p-invalid"
+        {isEditMode && (
+          <Elements>
+            <FontAwesomeIcon
+              className="text-amber-500"
+              icon="circle-exclamation"
+            />
+            <small className="font-light text-white text-sm">
+              Estás actualizando la información de un paquete
+            </small>
+          </Elements>
+        )}
+        <form onSubmit={handleSubmit(onSubmitPlan)}>
+          <MarginY />
+          <Controller
+            name="name"
+            rules={nameRules}
+            control={control}
+            render={({ field }) => (
+              <FormControl>
+                <TextLabel htmlFor="name">Name</TextLabel>
+                <InputText
+                  id="name"
+                  className={classNames(
+                    "p-inputtext-md w-1/4",
+                    errors.name && "p-invalid"
+                  )}
+                  value={field.value}
+                  disabled={create.isLoading}
+                  placeholder="Ejemplo: PLATINUM"
+                  onChange={(e) => field.onChange(e.target.value)}
+                />
+                {errors.name && (
+                  <Message text={errors.name.message} severity="error" />
                 )}
-                value={field.value}
-                disabled={create.isLoading}
-                placeholder="Ejemplo: PLATINUM"
-                onChange={(e) => field.onChange(e.target.value)}
-              />
-              {errors.name && (
-                <Message text={errors.name.message} severity="error" />
-              )}
-            </FormControl>
-          )}
-        />
-        <MarginY />
-        <Controller
-          name="price"
-          control={control}
-          rules={priceRules}
-          render={({ field }) => (
-            <FormControl>
-              <TextLabel htmlFor="price">Price</TextLabel>
-              <InputNumber
-                min={1}
-                max={1000}
-                className={classNames(
-                  "p-inputtext-md w-1/4",
-                  errors.price && "p-invalid"
-                )}
-                id="price"
-                locale="de-DE"
-                value={field.value}
-                mode="currency"
-                currency="EUR"
-                minFractionDigits={2}
-                placeholder="Valor en EUR"
-                disabled={create.isLoading}
-                onChange={(e) => field.onChange(e.value)}
-              />
-              {errors.price && (
-                <Message text={errors.price.message} severity="error" />
-              )}
-            </FormControl>
-          )}
-        />
-        <MarginY />
-        <Controller
-          name="description"
-          control={control}
-          rules={descriptionRules}
-          render={({ field }) => (
-            <FormControl>
-              <TextLabel htmlFor="description">Description</TextLabel>
-              <InputTextarea
-                rows={2}
-                cols={25}
-                maxLength={255}
-                className={classNames(
-                  "p-inputtext-md w-1/4",
-                  errors.description && "p-invalid"
-                )}
-                id="description"
-                value={field.value}
-                placeholder="Descripción"
-                disabled={create.isLoading}
-                onChange={(e) => field.onChange(e.target.value)}
-              />
-              {errors.description && (
-                <Message text={errors.description.message} severity="error" />
-              )}
-            </FormControl>
-          )}
-        />
-        <MarginY />
-        <Container>
-          <Button
-            size="large"
-            type="submit"
-            severity="info"
-            disabled={handleDisabled}
-          >
-            {isEditMode ? (
-              <i className="fa fa-circle-check fa-solid fa-md" />
-            ) : (
-              <i className="fa fa-plus fa-solid fa-md" />
+              </FormControl>
             )}
-          </Button>
-          <Button
-            size="large"
-            type="reset"
-            severity="danger"
-            onClick={handleReset}
-            disabled={handleDisabled}
-          >
-            <i className="fa fa-refresh fa-solid fa-md" />
-          </Button>
-        </Container>
-      </form>
+          />
+          <MarginY />
+          <Controller
+            name="price"
+            control={control}
+            rules={priceRules}
+            render={({ field }) => (
+              <FormControl>
+                <TextLabel htmlFor="price">Price</TextLabel>
+                <InputNumber
+                  min={1}
+                  max={1000}
+                  className={classNames(
+                    "p-inputtext-md w-1/4",
+                    errors.price && "p-invalid"
+                  )}
+                  id="price"
+                  locale="de-DE"
+                  value={field.value}
+                  mode="currency"
+                  currency="EUR"
+                  minFractionDigits={2}
+                  placeholder="Valor en EUR"
+                  disabled={create.isLoading}
+                  onChange={(e) => field.onChange(e.value)}
+                />
+                {errors.price && (
+                  <Message text={errors.price.message} severity="error" />
+                )}
+              </FormControl>
+            )}
+          />
+          <MarginY />
+          <Controller
+            name="description"
+            control={control}
+            rules={descriptionRules}
+            render={({ field }) => (
+              <FormControl>
+                <TextLabel htmlFor="description">Description</TextLabel>
+                <InputTextarea
+                  rows={2}
+                  cols={25}
+                  maxLength={255}
+                  className={classNames(
+                    "p-inputtext-md w-1/4",
+                    errors.description && "p-invalid"
+                  )}
+                  id="description"
+                  value={field.value}
+                  placeholder="Descripción"
+                  disabled={create.isLoading}
+                  onChange={(e) => field.onChange(e.target.value)}
+                />
+                {errors.description && (
+                  <Message text={errors.description.message} severity="error" />
+                )}
+              </FormControl>
+            )}
+          />
+          <MarginY />
+          <Container>
+            <Button
+              size="large"
+              type="submit"
+              severity="info"
+              disabled={handleDisabled}
+            >
+              {isEditMode ? (
+                <i className="fa fa-circle-check fa-solid fa-md" />
+              ) : (
+                <i className="fa fa-plus fa-solid fa-md" />
+              )}
+            </Button>
+            <Button
+              size="large"
+              type="reset"
+              severity="danger"
+              onClick={handleReset}
+              disabled={handleDisabled}
+            >
+              <i className="fa fa-refresh fa-solid fa-md" />
+            </Button>
+          </Container>
+        </form>
+      </>
     </>
   );
 };

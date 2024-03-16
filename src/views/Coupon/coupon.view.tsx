@@ -35,6 +35,7 @@ import { service } from "./coupon.service";
 // - Utils
 import { render } from "./coupon.utils";
 import { pageReportTemplate, paginatorTemplate, path } from "@utils";
+import { Fade } from "react-awesome-reveal";
 
 const Coupon: React.FC = () => {
   const { token } = useHost();
@@ -205,34 +206,36 @@ const Coupon: React.FC = () => {
   return (
     <>
       <Toast position="bottom-right" ref={message} />
-      <Container>
-        <div>
-          <Title>Cupones</Title>
-          <Menubar model={menu} />
-          <Divider type="solid" />
-          <Loading status={coupon.isLoading || coupon.isRefetching}>
-            <TableTreeStyled
-              paginator
-              rows={10}
-              showGridlines
-              value={nodes}
-              resizableColumns
-              paginatorLeft={paginatorLeft}
-              paginatorRight={paginatorRight}
-              paginatorTemplate={paginatorTemplate}
-              currentPageReportTemplate={pageReportTemplate}
-              emptyMessage="No hay cupones disponibles"
-            >
-              <Column header="Código" field="code" />
-              <Column header="Cantidad" field="usage_limit" />
-              <Column header="Estado" field="status" />
-              <Column header="Descuento" field="discount_type" />
-              <Column header="Expira" field="end_date" />
-              <Column body={ActionTemplateBody} />
-            </TableTreeStyled>
-          </Loading>
-        </div>
-      </Container>
+      <Fade delay={0.3}>
+        <Container>
+          <div>
+            <Title>Cupones</Title>
+            <Menubar model={menu} />
+            <Divider type="solid" />
+            <Loading status={coupon.isLoading || coupon.isRefetching}>
+              <TableTreeStyled
+                paginator
+                rows={10}
+                showGridlines
+                value={nodes}
+                resizableColumns
+                paginatorLeft={paginatorLeft}
+                paginatorRight={paginatorRight}
+                paginatorTemplate={paginatorTemplate}
+                currentPageReportTemplate={pageReportTemplate}
+                emptyMessage="No hay cupones disponibles"
+              >
+                <Column header="Código" field="code" />
+                <Column header="Cantidad" field="usage_limit" />
+                <Column header="Estado" field="status" />
+                <Column header="Descuento" field="discount_type" />
+                <Column header="Expira" field="end_date" />
+                <Column body={ActionTemplateBody} />
+              </TableTreeStyled>
+            </Loading>
+          </div>
+        </Container>
+      </Fade>
     </>
   );
 };
