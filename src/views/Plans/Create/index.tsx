@@ -29,6 +29,9 @@ import { api, PlanMutation, PlanQuery } from "../plans.service";
 
 // - Components
 import { Created } from "@components/Created";
+import { FormControl } from "@views/Settings/settings.styles";
+import { Elements, TextLabel } from "@styles";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 export interface Props {
   id?: string;
@@ -194,18 +197,26 @@ const CreatePlan: React.FC<Props> = ({ id, isEditMode }) => {
   return (
     <>
       <Toast position="bottom-right" ref={toast} />
+      <MarginY />
+      <Elements>
+        <FontAwesomeIcon className="text-amber-500" icon="circle-exclamation" />
+        <small className="font-light text-white text-sm">
+          Estás actualizando la información de un paquete
+        </small>
+      </Elements>
       <form onSubmit={handleSubmit(onSubmitPlan)}>
         <MarginY />
-        <Title>Nombre</Title>
         <Controller
           name="name"
           rules={nameRules}
           control={control}
           render={({ field }) => (
-            <div>
+            <FormControl>
+              <TextLabel htmlFor="name">Name</TextLabel>
               <InputText
+                id="name"
                 className={classNames(
-                  "p-inputtext-md",
+                  "p-inputtext-md w-1/4",
                   errors.name && "p-invalid"
                 )}
                 value={field.value}
@@ -216,25 +227,30 @@ const CreatePlan: React.FC<Props> = ({ id, isEditMode }) => {
               {errors.name && (
                 <Message text={errors.name.message} severity="error" />
               )}
-            </div>
+            </FormControl>
           )}
         />
         <MarginY />
-        <Title>Precio</Title>
         <Controller
           name="price"
           control={control}
           rules={priceRules}
           render={({ field }) => (
-            <div>
+            <FormControl>
+              <TextLabel htmlFor="price">Price</TextLabel>
               <InputNumber
                 min={1}
                 max={1000}
                 className={classNames(
-                  "p-inputtext-md",
+                  "p-inputtext-md w-1/4",
                   errors.price && "p-invalid"
                 )}
+                id="price"
+                locale="de-DE"
                 value={field.value}
+                mode="currency"
+                currency="EUR"
+                minFractionDigits={2}
                 placeholder="Valor en EUR"
                 disabled={create.isLoading}
                 onChange={(e) => field.onChange(e.value)}
@@ -242,25 +258,26 @@ const CreatePlan: React.FC<Props> = ({ id, isEditMode }) => {
               {errors.price && (
                 <Message text={errors.price.message} severity="error" />
               )}
-            </div>
+            </FormControl>
           )}
         />
         <MarginY />
-        <Title>Descripción</Title>
         <Controller
           name="description"
           control={control}
           rules={descriptionRules}
           render={({ field }) => (
-            <div>
+            <FormControl>
+              <TextLabel htmlFor="description">Description</TextLabel>
               <InputTextarea
                 rows={2}
                 cols={25}
                 maxLength={255}
                 className={classNames(
-                  "p-inputtext-md",
+                  "p-inputtext-md w-1/4",
                   errors.description && "p-invalid"
                 )}
+                id="description"
                 value={field.value}
                 placeholder="Descripción"
                 disabled={create.isLoading}
@@ -269,7 +286,7 @@ const CreatePlan: React.FC<Props> = ({ id, isEditMode }) => {
               {errors.description && (
                 <Message text={errors.description.message} severity="error" />
               )}
-            </div>
+            </FormControl>
           )}
         />
         <MarginY />

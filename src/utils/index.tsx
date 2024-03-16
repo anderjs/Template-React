@@ -103,3 +103,11 @@ export function dragElements<T>(
 
   return newItems;
 }
+
+export function multipartFormData(file: File, name = "file") {
+  const formData = new FormData();
+
+  formData.append(name, file);
+
+  return formData;
+}

@@ -34,6 +34,7 @@ import { service } from "./roles.service";
 // - Utils
 import { render } from "./roles.utils";
 import { pageReportTemplate, paginatorTemplate } from "@utils";
+import { Fade } from "react-awesome-reveal";
 
 const Coupon: React.FC = () => {
   /**
@@ -111,29 +112,31 @@ const Coupon: React.FC = () => {
   return (
     <>
       <Toast position="bottom-right" ref={message} />
-      <Container>
-        <div>
-          <Title>Roles</Title>
-          <Loading status={roles.isLoading || roles.isRefetching}>
-            <Menubar model={menu} />
-            <Divider type="solid" />
-            <TableTreeStyled
-              paginator
-              rows={10}
-              showGridlines
-              value={nodes}
-              resizableColumns
-              paginatorLeft={paginatorLeft}
-              paginatorRight={paginatorRight}
-              paginatorTemplate={paginatorTemplate}
-              currentPageReportTemplate={pageReportTemplate}
-              emptyMessage="No hay cupones disponibles"
-            >
-              <Column header="Tipo" field="name" />
-            </TableTreeStyled>
-          </Loading>
-        </div>
-      </Container>
+      <Fade delay={0.3}>
+        <Container>
+          <div>
+            <Title>Roles</Title>
+            <Loading status={roles.isLoading || roles.isRefetching}>
+              <Menubar model={menu} />
+              <Divider type="solid" />
+              <TableTreeStyled
+                paginator
+                rows={10}
+                showGridlines
+                value={nodes}
+                resizableColumns
+                paginatorLeft={paginatorLeft}
+                paginatorRight={paginatorRight}
+                paginatorTemplate={paginatorTemplate}
+                currentPageReportTemplate={pageReportTemplate}
+                emptyMessage="No hay cupones disponibles"
+              >
+                <Column header="Tipo" field="name" />
+              </TableTreeStyled>
+            </Loading>
+          </div>
+        </Container>
+      </Fade>
     </>
   );
 };

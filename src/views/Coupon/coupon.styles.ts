@@ -9,7 +9,7 @@ export const styles = {
 
 export const Container = tailwind.div`
   flex
-  gap-20
+  gap-10
   justify-start
   items-center
 `;

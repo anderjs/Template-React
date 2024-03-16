@@ -2,7 +2,6 @@ import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import App from "@views/App/AppView";
-import Profile from "@views/Profile/profile.view";
 
 // - Views
 import Admin from "@views/Admin/admin.view";
@@ -52,7 +51,6 @@ export const Router: React.FC = React.memo(() => {
         <Route path="/pricing" element={<Pricing />} />
         <Route path="/courses" element={<Courses />} />
         <Route path="/history" element={<History />} />
-        <Route path="/profile" element={<Profile />} />
         <Route path="/settings" element={<Settings />} />
         <Route path="/categories" element={<Categories />} />
         <Route path="/plans/create" element={<CreatePlan />} />

@@ -51,13 +51,21 @@ const Courses: React.FC = () => {
 
   const message = React.useRef<Toast>();
 
-  const [isDraftMode, setIsDraftMode] = React.useState(true);
+  const [isDraftMode, setIsDraftMode] = React.useState<boolean>(true);
 
   const draftService = useMutation({
     onError: (err: AxiosError) => {
+      message?.current?.clear();
+
       switch (err.response.status) {
         case HttpStatusCode.Unauthorized:
           return navigateToUrl("/login");
+
+        default:
+          return message?.current?.show({
+            detail: "Hubo un error al intentar crear un Workspace",
+            severity: "error",
+          });
       }
     },
     onSuccess: ({ response }) => {
@@ -154,7 +162,7 @@ const Courses: React.FC = () => {
           paginatorTemplate={paginatorTemplate}
           currentPageReportTemplate={pageReportTemplate}
           loading={drafts.isLoading || drafts.isRefetching}
-          emptyMessage="No hay cupones disponibles"
+          emptyMessage="No hay cursos disponibles"
         >
           <Column header="Draft" field="_id" />
           <Column header="Estado" field="status" />

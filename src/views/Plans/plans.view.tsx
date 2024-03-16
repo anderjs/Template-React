@@ -8,6 +8,9 @@ import { Loading } from "@learlifyweb/providers.loading";
 import { useNodes } from "@learlifyweb/providers.services";
 import { http } from "@learlifyweb/providers.https";
 
+// - Animation
+import { Fade } from "react-awesome-reveal";
+
 // - Components
 import { Toast } from "primereact/toast";
 import { Column } from "primereact/column";
@@ -155,31 +158,33 @@ const Plans: React.FC = () => {
   return (
     <>
       <Toast position="bottom-right" ref={message} />
-      <Title>Planes</Title>
-      <Button type="button" onClick={handleClickCreate}>
-        Crear <i className="fa fa-plus fa-solid ml-1" />
-      </Button>
-      <MarginY />
-      <Container>
-        <Loading status={plans.isLoading || plans.isFetching}>
-          <TableTreeStyled
-            paginator
-            rows={10}
-            showGridlines
-            resizableColumns
-            selectionMode="checkbox"
-            value={plansNodeRef.nodes}
-            paginatorLeft={paginatorLeft}
-            paginatorRight={paginatorRight}
-            paginatorTemplate={paginatorTemplate}
-            currentPageReportTemplate={pageReportTemplate}
-          >
-            <Column header="Nombre" field="name" />
-            <Column header="Precio" field="price" />
-            <Column body={ActionTemplateBody} />
-          </TableTreeStyled>
-        </Loading>
-      </Container>
+      <Fade delay={0.3}>
+        <Title>Planes</Title>
+        <Button type="button" onClick={handleClickCreate}>
+          Crear <i className="fa fa-plus fa-solid ml-1" />
+        </Button>
+        <MarginY />
+        <Container>
+          <Loading status={plans.isLoading || plans.isFetching}>
+            <TableTreeStyled
+              paginator
+              rows={10}
+              showGridlines
+              resizableColumns
+              selectionMode="checkbox"
+              value={plansNodeRef.nodes}
+              paginatorLeft={paginatorLeft}
+              paginatorRight={paginatorRight}
+              paginatorTemplate={paginatorTemplate}
+              currentPageReportTemplate={pageReportTemplate}
+            >
+              <Column header="Nombre" field="name" />
+              <Column header="Precio" field="price" />
+              <Column body={ActionTemplateBody} />
+            </TableTreeStyled>
+          </Loading>
+        </Container>
+      </Fade>
     </>
   );
 };
