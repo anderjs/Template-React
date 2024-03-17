@@ -217,7 +217,7 @@ const CreatePlan: React.FC<Props> = ({ id, isEditMode }) => {
         ["name", "price", "description"]
       );
     }
-  }, [name, price, description, plan?.data]);
+  }, [isEditMode, name, price, description, plan?.data]);
 
   return (
     <>

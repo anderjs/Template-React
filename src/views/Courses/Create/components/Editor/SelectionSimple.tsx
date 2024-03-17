@@ -277,6 +277,21 @@ const SelectionSimpleEditor: React.FC<SimpleSelectionProps> = ({
     [draft.reset]
   );
 
+  const handleCompleteUpdate = React.useCallback(
+    (value: string, answer: number) => {
+      editor.onUpdateAnswer({
+        value,
+        answer,
+        index,
+      });
+
+      setEdit(-1);
+
+      draft.reset();
+    },
+    [draft.reset, editor.onUpdateAnswer]
+  );
+
   /**
    * @description
    * Enables VSCode Monaco on our Playground to Edit a JSON file.
@@ -499,8 +514,8 @@ const SelectionSimpleEditor: React.FC<SimpleSelectionProps> = ({
                                           )}
                                           icon="check"
                                           onClick={() =>
-                                            handleUpdateAnswer(
-                                              answer.value,
+                                            handleCompleteUpdate(
+                                              draft.getValues("question"),
                                               index
                                             )
                                           }
@@ -515,13 +530,13 @@ const SelectionSimpleEditor: React.FC<SimpleSelectionProps> = ({
                                 <RadioButton
                                   value={answer.value}
                                   inputId={answer.id}
-                                  checked={index === getValues("correct")}
                                   onClick={() =>
                                     handleSelectCorrectValue(index)
                                   }
                                   onChange={() =>
                                     handleSelectCorrectValue(index)
                                   }
+                                  checked={index === correctRef}
                                 />
                                 <div
                                   className={classNames(

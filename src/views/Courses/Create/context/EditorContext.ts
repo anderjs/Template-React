@@ -24,6 +24,7 @@ export type DragAndDropElements = {
 export type CallbackValue = {
   index: number;
   value: string;
+  answer: number;
 };
 
 export type SelectValue = {

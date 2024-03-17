@@ -28,6 +28,7 @@ import {
   setDragAndDropAnswers,
   setDeleteElement,
   setCorrectAnswer,
+  setUpdateAnswer,
 } from "./action";
 import { defaultModule, defaultLesson } from "./default";
 import { IEditorContext } from "./schema";
@@ -296,6 +297,12 @@ const reducer = createReducer(initialState, (builder) => {
     const { index, value } = action.payload;
 
     state.editor[index].correct = value;
+  });
+
+  builder.addCase(setUpdateAnswer, (state, action) => {
+    const { index, value, answer } = action.payload;
+
+    state.editor[index].answers[answer].value = value;
   });
 });
 

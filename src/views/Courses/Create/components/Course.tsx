@@ -29,6 +29,7 @@ import { generateFreshColor } from "@views/Categories/categories.utils";
 // - Schemas
 import { ICategory, ICourse, ITags } from "@learlifyweb/providers.schema";
 import { api } from "@views/Categories/categories.service";
+import { ChipRemoveEvent } from "primereact/chip";
 
 interface Props {
   title: string;
@@ -83,7 +84,7 @@ const Course: React.FC<Props> = (props) => {
   );
 
   const handleRemoveTag = React.useCallback(
-    (event: React.MouseEvent<HTMLElement, MouseEvent>, index: number) => {
+    (event: ChipRemoveEvent, index: number) => {
       const tag = props.tags[index];
 
       props.onRemoveTag(tag);

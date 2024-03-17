@@ -34,8 +34,7 @@ export const createAnswer = createAction("create/answer", (payload: string) => {
   };
 });
 
-
-export const updateAnswer = createAction(
+export const setUpdateAnswer = createAction(
   "update/answer",
   (payload: { index: number; value: string }) => {
     return {

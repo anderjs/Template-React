@@ -3,10 +3,9 @@ import { createReducer } from "@reduxjs/toolkit";
 
 import {
   createAnswer,
-  createComponent,
   selectEditor,
   setTriggerFlux,
-  updateAnswer,
+  createComponent,
 } from "./PlaygroundAction";
 
 interface IBox {
@@ -56,15 +55,6 @@ const playground = createReducer(initialState, (builder) => {
       uuid: v4(),
     });
   });
-
-
-    /**
-   * @description
-   * Updates the current answer.
-   */
-    builder.addCase(updateAnswer, (state, action) => {
-      state.answer[action.payload.index].value = action.payload.value;
-    });
 
   /**
    * @description

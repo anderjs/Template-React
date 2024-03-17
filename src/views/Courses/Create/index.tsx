@@ -34,9 +34,10 @@ import {
   setPushNewElement,
   setAnswerElement,
   setDeleteAnswer,
-  setDragAndDropAnswers,
   setDeleteElement,
   setCorrectAnswer,
+  setDragAndDropAnswers,
+  setUpdateAnswer,
 } from "./state/action";
 
 // - API
@@ -64,7 +65,6 @@ import { Loading } from "@learlifyweb/providers.loading";
 import { EditorContext, EditorContextProps } from "./context/EditorContext";
 import { MarginY } from "@views/Coupon/coupon.styles";
 import { TextLabel } from "@styles";
-import { updateAnswer } from "./components/Playground/PlaygroundAction";
 
 const CreateCourse: React.FC = () => {
   const { token } = useHost();
@@ -370,7 +370,7 @@ const CreateCourse: React.FC = () => {
        * Update current answer.
        */
       onUpdateAnswer: (element) => {
-        dispatch(updateAnswer(element));
+        dispatch(setUpdateAnswer(element));
       },
       /**
        * @description

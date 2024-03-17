@@ -5,18 +5,14 @@ import { IDraft } from "@views/Courses/courses.interface";
 import { createAction } from "@reduxjs/toolkit";
 
 // - Schemas
-import {
-  IAnswer,
-  ICategory,
-  ITags,
-  IUser,
-} from "@learlifyweb/providers.schema";
+import { ICategory, ITags, IUser } from "@learlifyweb/providers.schema";
 
 // - Schema Editor
 import { IEditorContext } from "../schema";
 
 // - Context Callback
 import {
+  CallbackValue,
   DeleteAnswerCallback,
   DragAndDropElements,
   PushAnswerCallback,
@@ -198,6 +194,15 @@ export const setDeleteElement = createAction(
 export const setCorrectAnswer = createAction(
   "@courses/editor/correct/answer",
   (payload: { index: number; value: number }) => {
+    return {
+      payload,
+    };
+  }
+);
+
+export const setUpdateAnswer = createAction(
+  "@courses/editor/update/answer",
+  (payload: CallbackValue) => {
     return {
       payload,
     };
