@@ -38,6 +38,7 @@ import {
   setCorrectAnswer,
   setDragAndDropAnswers,
   setUpdateAnswer,
+  setCompileEditor,
 } from "./state/action";
 
 // - API
@@ -417,7 +418,9 @@ const CreateCourse: React.FC = () => {
        * @description
        * Compile all context into new property.
        */
-      onCompile: (element) => {},
+      onChangeEditorProperty: (element) => {
+        dispatch(setCompileEditor(element));
+      },
     };
   }, [state.editor]);
 
