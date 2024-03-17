@@ -37,6 +37,16 @@ module.exports = (webpackConfigEnv, argv) => {
   });
 
   return merge(defaultConfig, {
+    module: {
+      rules: [
+        {
+          test: /\.m?js/,
+          resolve: {
+            fullySpecified: false,
+          },
+        },
+      ],
+    },
     resolve: {
       plugins: [new TsconfigPathsPlugin()],
     },

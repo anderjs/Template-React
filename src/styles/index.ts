@@ -13,3 +13,7 @@ export const Elements = tw.div`
   justify-start 
   items-center
 `;
+
+export const Margin = tw.div`
+  my-4
+`;

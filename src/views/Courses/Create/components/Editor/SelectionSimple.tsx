@@ -17,6 +17,9 @@ import { Card } from "primereact/card";
 import { Fade } from "react-awesome-reveal";
 import { MarginY } from "@views/Coupon/coupon.styles";
 
+// - Web Components
+import { Selection } from "@learlifyweb/components.ui.selection";
+
 // - Prime
 import { Toast } from "primereact/toast";
 import { Button } from "primereact/button";
@@ -46,6 +49,7 @@ import {
 
 // - Schema
 import { answerSchema, selectionSchema } from "./schemas/SelectionSimpleSchema";
+import { Margin } from "@styles";
 
 const SelectionSimpleEditor: React.FC<SimpleSelectionProps> = ({
   index,
@@ -59,6 +63,8 @@ const SelectionSimpleEditor: React.FC<SimpleSelectionProps> = ({
   const playground = usePlayground();
 
   const [edit, setEdit] = React.useState<number>(-1);
+
+  const [preview, setPreview] = React.useState<boolean>(false);
 
   const [checked, setChecked] = React.useState<boolean>(false);
 
@@ -146,7 +152,6 @@ const SelectionSimpleEditor: React.FC<SimpleSelectionProps> = ({
    * Before enable code mirror we should pass the current version of code.
    */
   const handleEnableCodeMirror = () => {
-    const { correct, question } = getValues();
     /**
      * @description
      * Setted by the current values.
@@ -155,7 +160,7 @@ const SelectionSimpleEditor: React.FC<SimpleSelectionProps> = ({
       code: beautify({
         answers,
         correct,
-        question,
+        question: questionRef,
       }),
     });
 
@@ -292,6 +297,20 @@ const SelectionSimpleEditor: React.FC<SimpleSelectionProps> = ({
     [draft.reset, editor.onUpdateAnswer]
   );
 
+  const handleCancelUpdate = () => {
+    setEdit(-1);
+
+    draft.reset();
+  };
+
+  /**
+   * @description
+   * Preview mode.
+   */
+  const handlePreviewMode = () => {
+    setPreview((preview) => !preview);
+  };
+
   /**
    * @description
    * Enables VSCode Monaco on our Playground to Edit a JSON file.
@@ -307,7 +326,9 @@ const SelectionSimpleEditor: React.FC<SimpleSelectionProps> = ({
               sin necesidad de modificar nada en GUI. Utiliza los parámetros
               seleccionados para poder adjuntar todo lo que desees.
             </p>
-            <hr className="my-4" />
+            <Margin>
+              <hr />
+            </Margin>
             <a
               href="https://bit.cloud/learlifyweb/components/ui/selection"
               target="_blank"
@@ -332,6 +353,7 @@ const SelectionSimpleEditor: React.FC<SimpleSelectionProps> = ({
             <MarginY />
             <div className={styles.flex}>
               <Button
+                size="small"
                 severity="info"
                 className="p-inputtext-sm"
                 icon={
@@ -351,6 +373,68 @@ const SelectionSimpleEditor: React.FC<SimpleSelectionProps> = ({
                 tooltip="Code Enabled. ¿Deseas activar la visualización de Interfaz Gráfica de Usuario?"
               />
             </div>
+          </Card>
+        </Fade>
+      </>
+    );
+  }
+
+  if (preview) {
+    return (
+      <>
+        <Toast position="center" ref={message} />
+        <Fade delay={0.1}>
+          <Card className="bg-black-alpha-50">
+            <Selection
+              value=""
+              disabled={false}
+              correct={correct}
+              answers={answers}
+              onChange={() => {}}
+              question={questionRef}
+              textColor="text-slate-500"
+              description="Select the correct answer"
+            />
+            <Margin>
+              <hr />
+            </Margin>
+            <Margin>
+              <p className="p-0 text-slate-500 font-light text-center">
+                En preview mode (UI) podrás ver el contenido del ejercicio
+                visualmente. Podrás seguir editando todo el contenido si deseas.
+              </p>
+            </Margin>
+            <Margin className="flex justify-center items-center gap-x-2">
+              <Button
+                size="small"
+                icon={
+                  <FontAwesomeIcon
+                    className={styles.fontAwesomeIcon}
+                    icon="arrow-pointer"
+                  />
+                }
+                severity="info"
+                tooltip="Vuelve al modo de construcción"
+                onClick={handlePreviewMode}
+              >
+                Design Mode
+              </Button>
+              <Button
+                size="small"
+                severity="help"
+                className="p-inputtext-sm"
+                onClick={handleEnableCodeMirror}
+                tooltip="Permite editar el ejercicio en versión código"
+                icon={
+                  <FontAwesomeIcon
+                    icon="code"
+                    className={styles.fontAwesomeIcon}
+                  />
+                }
+              >
+                JSON
+              </Button>
+            </Margin>
           </Card>
         </Fade>
       </>
@@ -426,6 +510,7 @@ const SelectionSimpleEditor: React.FC<SimpleSelectionProps> = ({
             <Button
               size="small"
               severity="info"
+              className="p-inputtext-sm"
               disabled={questionRef.length === 0}
               icon={
                 <FontAwesomeIcon
@@ -439,17 +524,32 @@ const SelectionSimpleEditor: React.FC<SimpleSelectionProps> = ({
             </Button>
             <Button
               size="small"
-              severity="help"
-              tooltip="Permite editar el ejercicio en versión código"
               icon={
                 <FontAwesomeIcon
                   icon="code"
                   className={styles.fontAwesomeIcon}
                 />
               }
+              severity="help"
               onClick={handleEnableCodeMirror}
+              tooltip="Permite editar el ejercicio en versión código"
             >
-              Código
+              JSON
+            </Button>
+            <Button
+              size="small"
+              severity="secondary"
+              className="p-inputtext-sm"
+              tooltip="Permite visualizar el contenido"
+              icon={
+                <FontAwesomeIcon
+                  icon="eye"
+                  className={styles.fontAwesomeIcon}
+                />
+              }
+              onClick={handlePreviewMode}
+            >
+              Preview
             </Button>
           </div>
           <MarginY />
@@ -490,12 +590,12 @@ const SelectionSimpleEditor: React.FC<SimpleSelectionProps> = ({
                                   control={draft.control}
                                   render={({ field }) => (
                                     <div>
-                                      <div className="my-2">
+                                      <Margin>
                                         <span className="font-light text-sm text-slate-500">
                                           Actualización
                                         </span>
-                                      </div>
-                                      <div className="flex justify-start gap-x-2 items-center">
+                                      </Margin>
+                                      <div className="flex justify-start gap-x-1 items-center">
                                         <InputText
                                           autoFocus
                                           inputMode="text"
@@ -519,6 +619,15 @@ const SelectionSimpleEditor: React.FC<SimpleSelectionProps> = ({
                                               index
                                             )
                                           }
+                                        />
+                                        <FontAwesomeIcon
+                                          className={classNames(
+                                            styles.fontAwesomeIcon,
+                                            "hover:cursor-pointer",
+                                            "text-red-500"
+                                          )}
+                                          icon="xmark"
+                                          onClick={handleCancelUpdate}
                                         />
                                       </div>
                                     </div>
@@ -554,17 +663,18 @@ const SelectionSimpleEditor: React.FC<SimpleSelectionProps> = ({
                                   </div>
                                   <div className="flex justify-start gap-x-2 items-center">
                                     <FontAwesomeIcon
+                                      icon="pencil-alt"
                                       className={classNames(
                                         styles.fontAwesomeIcon,
                                         "hover:cursor-pointer",
                                         "text-emerald-500"
                                       )}
-                                      icon="pencil-alt"
                                       onClick={() =>
                                         handleUpdateAnswer(answer.value, index)
                                       }
                                     />
                                     <FontAwesomeIcon
+                                      icon="xmark"
                                       onClick={() =>
                                         handleClickDeleteAnswer(answer, index)
                                       }
@@ -573,7 +683,6 @@ const SelectionSimpleEditor: React.FC<SimpleSelectionProps> = ({
                                         "hover:cursor-pointer",
                                         "text-red-500"
                                       )}
-                                      icon="xmark"
                                     />
                                   </div>
                                 </div>
