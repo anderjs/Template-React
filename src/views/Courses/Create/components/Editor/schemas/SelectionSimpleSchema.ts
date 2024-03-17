@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 const answer = z.object({
-  uuid: z.number(),
+  id: z.string(),
   value: z.string(),
 });
 

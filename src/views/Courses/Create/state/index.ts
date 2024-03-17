@@ -29,6 +29,7 @@ import {
   setDeleteElement,
   setCorrectAnswer,
   setUpdateAnswer,
+  setCompileEditor,
 } from "./action";
 import { defaultModule, defaultLesson } from "./default";
 import { IEditorContext } from "./schema";
@@ -293,16 +294,41 @@ const reducer = createReducer(initialState, (builder) => {
     });
   });
 
+  /**
+   * @description
+   * Set correct answer.
+   */
   builder.addCase(setCorrectAnswer, (state, action) => {
     const { index, value } = action.payload;
 
     state.editor[index].correct = value;
   });
 
+  /**
+   * @description
+   * Update property.
+   */
   builder.addCase(setUpdateAnswer, (state, action) => {
     const { index, value, answer } = action.payload;
 
     state.editor[index].answers[answer].value = value;
+  });
+
+  /**
+   * @description
+   * Once compiled or inserted here we'll go all logic.
+   */
+  builder.addCase(setCompileEditor, (state, action) => {
+    if (action.payload.kind.type === "SimpleSelection") {
+      const { index, data } = action.payload;
+
+      state.editor[index] = {
+        ...state.editor[index],
+        answers: data.answers,
+        correct: data.correct,
+        question: data.question,
+      };
+    }
   });
 });
 

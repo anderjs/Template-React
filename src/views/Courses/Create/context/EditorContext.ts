@@ -3,6 +3,7 @@ import { IAnswer } from "@learlifyweb/providers.schema";
 
 import { IEditorContext } from "../state/schema";
 import { DropResult } from "react-beautiful-dnd";
+import { EditProperty } from "../state/action";
 
 export type PushAnswerCallback = {
   type: IEditorContext["type"];
@@ -41,7 +42,7 @@ export type EditorContextProps = {
   onDeleteAnswer?: (args: DeleteAnswerCallback) => void;
   onSetNewElement?: (element: IEditorContext) => void;
   onDragAndDropAnswer?: (element: DragAndDropElements) => void;
-  onChangeEditorProperty?: () => void;
+  onChangeEditorProperty?: (element: EditProperty) => void;
 };
 
 export const EditorContext = createContext<EditorContextProps>({

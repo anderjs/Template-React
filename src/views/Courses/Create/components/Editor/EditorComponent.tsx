@@ -31,6 +31,20 @@ const Editor: React.FC<Props> = () => {
               correct={element?.correct}
               answers={element?.answers}
               question={element?.question}
+              onCompile={(model) =>
+                control.onChangeEditorProperty({
+                  kind: {
+                    type: element.type,
+                  },
+                  data: {
+                    uuid: element.uuid,
+                    correct: model.correct,
+                    answers: model.answers,
+                    question: model.question,
+                  },
+                  index,
+                })
+              }
             />
           )}
         </UIContainer>

@@ -36,6 +36,7 @@ import usePlayground from "../Playground/PlaygroundHooks";
 
 // - Styles
 import { styles } from "@root.styles";
+import { Margin } from "@styles";
 
 // - Utils
 import { beautify } from "@utils";
@@ -49,7 +50,7 @@ import {
 
 // - Schema
 import { answerSchema, selectionSchema } from "./schemas/SelectionSimpleSchema";
-import { Margin } from "@styles";
+import { v4 } from "uuid";
 
 const SelectionSimpleEditor: React.FC<SimpleSelectionProps> = ({
   index,
@@ -98,8 +99,19 @@ const SelectionSimpleEditor: React.FC<SimpleSelectionProps> = ({
     control,
   });
 
-  const { message, compile } = useCompile({
-    onSuccess: () => {},
+  /**
+   * @description
+   * Compile hook to transform values into UI.
+   */
+  const { message, compile } = useCompile<ISimpleSelection>({
+    onSuccess: (code) => {
+      reset({
+        correct: code.correct,
+        question: code.question,
+      });
+
+      return onCompile?.(code);
+    },
   });
 
   const input = React.useRef<HTMLInputElement>();
@@ -194,7 +206,9 @@ const SelectionSimpleEditor: React.FC<SimpleSelectionProps> = ({
    * @description
    * Compile syntax for CodeMirror instance.
    */
-  const handleCompileCodeMirror = () => {};
+  const handleCompileCodeMirror = (output: AbstractSimpleSelection) => {
+    compile(output.code, selectionSchema);
+  };
 
   /**
    * @description
@@ -313,6 +327,16 @@ const SelectionSimpleEditor: React.FC<SimpleSelectionProps> = ({
 
   /**
    * @description
+   * Generate an UUID and copy it into clipboard.
+   */
+  const handleCreateUUIDClipboard = () => {
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(v4());
+    }
+  };
+
+  /**
+   * @description
    * Enables VSCode Monaco on our Playground to Edit a JSON file.
    */
   if (codeMirror) {
@@ -337,42 +361,60 @@ const SelectionSimpleEditor: React.FC<SimpleSelectionProps> = ({
               Ver documentación de (Selection Simple)
             </a>
             <MarginY />
-            <Controller
-              name="code"
-              render={({ field }) => (
-                <CodeMirror
-                  theme="light"
-                  extensions={ext}
-                  basicSetup={setup}
-                  value={field.value}
-                  onChange={(value) => field.onChange(value)}
-                />
-              )}
-              control={code.control}
-            />
-            <MarginY />
-            <div className={styles.flex}>
-              <Button
-                size="small"
-                severity="info"
-                className="p-inputtext-sm"
-                icon={
-                  <FontAwesomeIcon
-                    className={styles.fontAwesomeIcon}
-                    icon="terminal"
+            <form onSubmit={code.handleSubmit(handleCompileCodeMirror)}>
+              <Controller
+                name="code"
+                render={({ field }) => (
+                  <CodeMirror
+                    theme="light"
+                    extensions={ext}
+                    basicSetup={setup}
+                    value={field.value}
+                    onChange={(value) => field.onChange(value)}
                   />
-                }
-                onClick={handleCompileCodeMirror}
-                tooltip="Comprueba la sintaxis, y la estructura de este JSON en particular."
-              >
-                Compile
-              </Button>
-              <InputSwitch
-                checked={codeMirror}
-                onChange={handleDisableCodeMirror}
-                tooltip="Code Enabled. ¿Deseas activar la visualización de Interfaz Gráfica de Usuario?"
+                )}
+                control={code.control}
               />
-            </div>
+              <MarginY />
+              <div className={styles.flex}>
+                <Button
+                  size="small"
+                  type="submit"
+                  severity="info"
+                  className="p-inputtext-sm"
+                  icon={
+                    <FontAwesomeIcon
+                      className={styles.fontAwesomeIcon}
+                      icon="terminal"
+                    />
+                  }
+                  tooltip="Comprueba la sintaxis, y la estructura de este JSON en particular."
+                >
+                  Run
+                </Button>
+                <Button
+                  size="small"
+                  type="button"
+                  severity="help"
+                  className="p-inputtext-sm"
+                  icon={
+                    <FontAwesomeIcon
+                      className={styles.fontAwesomeIcon}
+                      icon="clipboard"
+                    />
+                  }
+                  tooltip="Genera un id único"
+                  onClick={handleCreateUUIDClipboard}
+                >
+                  Clipboard UUID
+                </Button>
+                <InputSwitch
+                  checked={codeMirror}
+                  onChange={handleDisableCodeMirror}
+                  tooltip="Code Enabled. ¿Deseas activar la visualización de Interfaz Gráfica de Usuario?"
+                />
+              </div>
+            </form>
           </Card>
         </Fade>
       </>
@@ -697,7 +739,6 @@ const SelectionSimpleEditor: React.FC<SimpleSelectionProps> = ({
               </Droppable>
             </DragDropContext>
           )}
-          <MarginY />
           <MarginY />
           <MarginY />
           <div className={styles.flex}>

@@ -8,13 +8,13 @@ type UseCompileReturnType = {
   compile: (text: string | object, schema: z.ZodTypeAny) => void;
 };
 
-type UseCompileCallbacks = Partial<{
-  onSuccess?: () => void;
+type UseCompileCallbacks<T> = Partial<{
+  onSuccess?: (data: T) => void;
 }>;
 
-export const useCompile = ({
+export const useCompile = <T extends object>({
   onSuccess,
-}: UseCompileCallbacks): UseCompileReturnType => {
+}: UseCompileCallbacks<T>): UseCompileReturnType => {
   const message = React.useRef<Toast>(null);
 
   const [success, setSuccess] = React.useState(false);
@@ -32,12 +32,10 @@ export const useCompile = ({
           detail: "JSON is valid.",
         });
 
-        onSuccess?.();
+        onSuccess?.(json as T);
 
         setSuccess(true);
       } catch (e) {
-        onSuccess?.();
-
         setSuccess(false);
 
         if (e instanceof z.ZodError) {

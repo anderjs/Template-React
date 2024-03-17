@@ -8,7 +8,7 @@ import { createAction } from "@reduxjs/toolkit";
 import { ICategory, ITags, IUser } from "@learlifyweb/providers.schema";
 
 // - Schema Editor
-import { IEditorContext } from "../schema";
+import { IEditorContext, IEditorSimple } from "../schema";
 
 // - Context Callback
 import {
@@ -209,7 +209,16 @@ export const setUpdateAnswer = createAction(
   }
 );
 
-type EditProperty = {
+export const setCompileEditor = createAction(
+  "@courses/editor/compile",
+  (payload: EditProperty) => {
+    return {
+      payload,
+    };
+  }
+);
+
+export type EditProperty = {
   data: Omit<IEditorContext, "type">;
   kind: Pick<IEditorContext, "type">;
   index: number;

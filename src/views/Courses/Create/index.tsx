@@ -413,6 +413,11 @@ const CreateCourse: React.FC = () => {
       onDragAndDropAnswer: (element) => {
         dispatch(setDragAndDropAnswers(element));
       },
+      /**
+       * @description
+       * Compile all context into new property.
+       */
+      onCompile: (element) => {},
     };
   }, [state.editor]);
 
