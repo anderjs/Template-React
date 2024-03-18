@@ -8,7 +8,7 @@ import { createAction } from "@reduxjs/toolkit";
 import { ICategory, ITags, IUser } from "@learlifyweb/providers.schema";
 
 // - Schema Editor
-import { IEditorContext, IEditorSimple } from "../schema";
+import { IEditorContext } from "../schema";
 
 // - Context Callback
 import {

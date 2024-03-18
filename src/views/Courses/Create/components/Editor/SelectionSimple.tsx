@@ -51,9 +51,11 @@ import {
 // - Schema
 import { answerSchema, selectionSchema } from "./schemas/SelectionSimpleSchema";
 import { v4 } from "uuid";
+import { useToggle } from "usehooks-ts";
 
 const SelectionSimpleEditor: React.FC<SimpleSelectionProps> = ({
   index,
+  status,
   answers,
   correct,
   question,
@@ -65,9 +67,9 @@ const SelectionSimpleEditor: React.FC<SimpleSelectionProps> = ({
 
   const [edit, setEdit] = React.useState<number>(-1);
 
-  const [preview, setPreview] = React.useState<boolean>(false);
+  const [preview, setPreview] = useToggle(false);
 
-  const [checked, setChecked] = React.useState<boolean>(false);
+  const [checked, setChecked] = useToggle(false);
 
   const [codeMirror, setCodeMirror] = React.useState<boolean>(false);
 
@@ -110,7 +112,9 @@ const SelectionSimpleEditor: React.FC<SimpleSelectionProps> = ({
         question: code.question,
       });
 
-      return onCompile?.(code);
+      setChecked();
+
+      onCompile?.(code);
     },
   });
 
@@ -215,7 +219,7 @@ const SelectionSimpleEditor: React.FC<SimpleSelectionProps> = ({
    * Insert the flux of a new component.
    */
   const handleInsertComponent = () => {
-    compile(
+    return compile(
       {
         answers,
         correct: correctRef,
@@ -261,22 +265,6 @@ const SelectionSimpleEditor: React.FC<SimpleSelectionProps> = ({
 
   /**
    * @description
-   * Enable checking to question.
-   */
-  const handleCheckEnable = () => {
-    setChecked(true);
-  };
-
-  /**
-   * @description
-   * Disable checking to question.
-   */
-  const handleCheckDisable = () => {
-    setChecked(false);
-  };
-
-  /**
-   * @description
    * Edit draft answer.
    */
   const handleUpdateAnswer = React.useCallback(
@@ -315,14 +303,6 @@ const SelectionSimpleEditor: React.FC<SimpleSelectionProps> = ({
     setEdit(-1);
 
     draft.reset();
-  };
-
-  /**
-   * @description
-   * Preview mode.
-   */
-  const handlePreviewMode = () => {
-    setPreview((preview) => !preview);
   };
 
   /**
@@ -457,7 +437,7 @@ const SelectionSimpleEditor: React.FC<SimpleSelectionProps> = ({
                 }
                 severity="info"
                 tooltip="Vuelve al modo de construcción"
-                onClick={handlePreviewMode}
+                onClick={setPreview}
               >
                 Design Mode
               </Button>
@@ -535,12 +515,7 @@ const SelectionSimpleEditor: React.FC<SimpleSelectionProps> = ({
                       onChange={(e) => field.onChange(e.target.value)}
                     />
                     <span className="p-inputgroup-addon">
-                      <Checkbox
-                        checked={checked}
-                        onChange={
-                          checked ? handleCheckDisable : handleCheckEnable
-                        }
-                      />
+                      <Checkbox checked={checked} onChange={setChecked} />
                     </span>
                   </div>
                 )}
@@ -589,7 +564,7 @@ const SelectionSimpleEditor: React.FC<SimpleSelectionProps> = ({
                   className={styles.fontAwesomeIcon}
                 />
               }
-              onClick={handlePreviewMode}
+              onClick={setPreview}
             >
               Preview
             </Button>

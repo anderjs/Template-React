@@ -1,8 +1,9 @@
 import React from "react";
+import { useToggle } from "usehooks-ts";
 import { navigateToUrl } from "single-spa";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { Fade } from "react-awesome-reveal";
 
+import { Fade } from "react-awesome-reveal";
 import { Loading } from "@learlifyweb/providers.loading";
 import { useNodes } from "@learlifyweb/providers.services";
 
@@ -34,10 +35,10 @@ import { flex } from "./styles";
 // - Utils
 import {
   path,
-  pageReportTemplate,
   paginatorLeft,
   paginatorRight,
   paginatorTemplate,
+  pageReportTemplate,
 } from "@utils";
 import { draft, render } from "./courses.utils";
 
@@ -51,7 +52,7 @@ const Courses: React.FC = () => {
 
   const message = React.useRef<Toast>();
 
-  const [isDraftMode, setIsDraftMode] = React.useState<boolean>(true);
+  const [draftMode, setDraftMode] = useToggle(true);
 
   const draftService = useMutation({
     onError: (err: AxiosError) => {
@@ -105,10 +106,6 @@ const Courses: React.FC = () => {
     draftService.mutate();
   };
 
-  const handleChangeIsDraft = () => {
-    setIsDraftMode((draftStatus) => !draftStatus);
-  };
-
   const ActionTemplateBody = React.useCallback((node: TreeNode) => {
     const ref = node?.data as Partial<IDraft>;
 
@@ -146,8 +143,8 @@ const Courses: React.FC = () => {
           </Button>
           <InputSwitch
             tooltip="Desactiva el draft mode para ver los cursos creados"
-            checked={isDraftMode}
-            onChange={handleChangeIsDraft}
+            checked={draftMode}
+            onChange={setDraftMode}
           />
         </div>
         <MarginY />

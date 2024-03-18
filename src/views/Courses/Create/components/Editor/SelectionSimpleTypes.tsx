@@ -6,6 +6,7 @@ export type CodeMirrorSimpleSelection = {
 
 export type SimpleSelectionProps = ISimpleSelection & {
   index: number;
+  status: boolean;
   onCompile?: (model: ISimpleSelection) => void;
   onAddAnswer?: (model: string) => void;
 };

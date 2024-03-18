@@ -105,6 +105,8 @@ const Playground: React.FC<Props> = ({ active, onClose }) => {
                     correct: 0,
                     answers: [],
                     question: "",
+                    toggled: true,
+                    completed: false,
                     type: "SimpleSelection",
                   });
                 },

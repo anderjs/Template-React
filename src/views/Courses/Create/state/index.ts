@@ -324,6 +324,8 @@ const reducer = createReducer(initialState, (builder) => {
 
       state.editor[index] = {
         ...state.editor[index],
+        toggled: true,
+        completed: true,
         answers: data.answers,
         correct: data.correct,
         question: data.question,

@@ -1,8 +1,10 @@
 import { ISimpleSelection } from "@learlifyweb/providers.schema";
 
 export type IEditorSimple = {
-  uuid: string;
   type: "SimpleSelection";
+  uuid: string;
+  toggled: boolean;
+  completed: boolean;
 } & ISimpleSelection;
 
 export type IEditorContext = IEditorSimple & {
