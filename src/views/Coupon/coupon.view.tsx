@@ -1,6 +1,7 @@
 import React from "react";
 import { navigateToUrl } from "single-spa";
 import { PrimeIcons } from "primereact/api";
+import { useDocumentTitle } from "usehooks-ts";
 
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useHost } from "@learlifyweb/providers.host";
@@ -45,6 +46,12 @@ const Coupon: React.FC = () => {
    * Message ref.
    */
   const message = React.useRef<Toast>();
+
+  /**
+   * @description
+   * Setting view name.
+   */
+  useDocumentTitle("Learlify - Coupons");
 
   /**
    * @description

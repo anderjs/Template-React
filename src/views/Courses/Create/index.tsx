@@ -4,6 +4,7 @@ import { useParams } from "react-router-dom";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useForm, useWatch } from "react-hook-form";
 import { AxiosError, HttpStatusCode } from "axios";
+import { useDocumentTitle } from "usehooks-ts";
 import "./styles.css";
 
 import { http } from "@learlifyweb/providers.https";
@@ -23,22 +24,22 @@ import {
   nextStep,
   removeTag,
   selectTag,
+  setNewModule,
   setDraftState,
   selectCategory,
   setInteractive,
-  selectInstructor,
   setUpdateDraft,
-  setNewModule,
   setDeleteModule,
   setLessonModule,
+  selectInstructor,
   setPushNewElement,
   setAnswerElement,
   setDeleteAnswer,
   setDeleteElement,
   setCorrectAnswer,
-  setDragAndDropAnswers,
   setUpdateAnswer,
   setCompileEditor,
+  setDragAndDropAnswers,
 } from "./state/action";
 
 // - API
@@ -62,9 +63,10 @@ import {
 
 // - Animation
 import { Fade } from "react-awesome-reveal";
+import { MarginY } from "@views/Coupon/coupon.styles";
 import { Loading } from "@learlifyweb/providers.loading";
 import { EditorContext, EditorContextProps } from "./context/EditorContext";
-import { MarginY } from "@views/Coupon/coupon.styles";
+// - @styles
 import { TextLabel } from "@styles";
 
 const CreateCourse: React.FC = () => {
@@ -80,6 +82,8 @@ const CreateCourse: React.FC = () => {
     control,
     name: "title",
   });
+
+  useDocumentTitle("Learlify - Courses");
 
   const draft = useQuery({
     queryKey: ["draft"],

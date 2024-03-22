@@ -2,6 +2,7 @@ import React from "react";
 import styled from "styled-components";
 
 // - Editor
+import Listening from "./Listening";
 import SelectionSimpleEditor from "./SelectionSimple";
 
 // - Playground
@@ -38,6 +39,31 @@ const Editor: React.FC<Props> = () => {
           <UIContainer>
             {element.type === "SimpleSelection" && (
               <SelectionSimpleEditor
+                index={index}
+                status={element.toggled}
+                correct={element?.correct}
+                answers={element?.answers}
+                question={element?.question}
+                onCompile={(model) =>
+                  control.onChangeEditorProperty({
+                    kind: {
+                      type: element.type,
+                    },
+                    data: {
+                      toggled: true,
+                      completed: true,
+                      uuid: element.uuid,
+                      correct: model.correct,
+                      answers: model.answers,
+                      question: model.question,
+                    },
+                    index,
+                  })
+                }
+              />
+            )}
+            {element.type === "Listening" && (
+              <Listening
                 index={index}
                 status={element.toggled}
                 correct={element?.correct}

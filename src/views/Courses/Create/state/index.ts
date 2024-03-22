@@ -59,7 +59,7 @@ enum Step {
 }
 
 const initialState: IState = {
-  active: Step.MODULES,
+  active: Step.CATEGORIES,
   tags: [],
   names: [],
   editor: [],

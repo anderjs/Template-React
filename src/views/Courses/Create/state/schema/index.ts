@@ -7,6 +7,15 @@ export type IEditorSimple = {
   completed: boolean;
 } & ISimpleSelection;
 
-export type IEditorContext = IEditorSimple & {
-  ref?: null;
-};
+export type IEditorListening = {
+  type: "Listening";
+  uuid: string;
+  toggled: boolean;
+  completed: boolean;
+} & ISimpleSelection;
+
+export type IEditorContext =
+  | IEditorSimple
+  | (IEditorListening & {
+      ref?: null;
+    });
