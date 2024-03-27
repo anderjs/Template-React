@@ -1,3 +1,4 @@
+import moment from "moment";
 import { IDraft } from "./courses.interface";
 import { Node } from "@learlifyweb/providers.services";
 
@@ -6,6 +7,8 @@ import { Node } from "@learlifyweb/providers.services";
 export const render: Node<IDraft>["data"] = {
   _id: ({ _id }) => _id,
   status: ({ status }) => status,
+  created_at: ({ created_at }) =>
+    moment(created_at).format("(DD/MM/YYYY) HH:mm a"),
 };
 
 export const draft = {

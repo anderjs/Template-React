@@ -18,24 +18,25 @@ import {
   setUpdateDraft,
   selectCategory,
   setInteractive,
-  selectInstructor,
   setDeleteModule,
   setLessonModule,
+  setDeleteAnswer,
+  setUpdateAnswer,
+  setDeleteElement,
+  setAnswerElement,
+  setCorrectAnswer,
+  selectInstructor,
+  setCompileEditor,
   setEditorProperty,
   setPushNewElement,
-  setAnswerElement,
-  setDeleteAnswer,
   setDragAndDropAnswers,
-  setDeleteElement,
-  setCorrectAnswer,
-  setUpdateAnswer,
-  setCompileEditor,
 } from "./action";
 import { defaultModule, defaultLesson } from "./default";
 import { IEditorContext } from "./schema";
+import { Information } from "@common/types";
 import { dragElements } from "@utils";
 
-type DraftEntity<T> = T & {
+export type DraftEntity<T> = T & {
   update?: boolean;
 };
 
@@ -44,11 +45,12 @@ interface IState {
   names: string[];
   tags: Pick<ITags, "name" | "color">[];
   instructor?: DraftEntity<IUser>;
-  category?: DraftEntity<ICategory>;
+  information?: DraftEntity<Information>;
   interactive?: boolean;
   course?: Pick<ICourse, "title" | "description">;
   modules: Pick<IModule, "title" | "description" | "lessons" | "id">[];
   editor?: IEditorContext[];
+  category?: DraftEntity<ICategory>;
 }
 
 enum Step {
@@ -75,11 +77,15 @@ const reducer = createReducer(initialState, (builder) => {
    */
   builder.addCase(selectCategory, (state, action) => {
     if (state.category?.id === action.payload?.id) {
-      state.category.update = false;
+      state.category = {
+        ...state.category,
+        update: false,
+      };
     } else {
-      state.category = action.payload;
-
-      state.category.update = true;
+      state.category = {
+        ...action.payload,
+        update: true,
+      };
     }
   });
 
@@ -91,12 +97,18 @@ const reducer = createReducer(initialState, (builder) => {
    */
   builder.addCase(selectInstructor, (state, action) => {
     if (state.instructor?.id === action.payload?.id) {
-      state.instructor.update = false;
-    } else {
-      state.instructor = action.payload;
+      state.instructor = {
+        ...state.instructor,
+        update: false,
+      };
 
-      state.instructor.update = true;
+      return;
     }
+
+    state.instructor = {
+      ...action.payload,
+      update: true,
+    };
   });
 
   /**
@@ -152,6 +164,10 @@ const reducer = createReducer(initialState, (builder) => {
     if (state.instructor?.update) {
       state.instructor.update = false;
     }
+
+    if (state.instructor?.update) {
+      state.information.update = false;
+    }
   });
 
   /**
@@ -164,7 +180,24 @@ const reducer = createReducer(initialState, (builder) => {
       state.active = action.payload.active;
 
       if (action.payload?.category) {
-        state.category = action.payload.category as DraftEntity<ICategory>;
+        const category = action.payload.category as DraftEntity<ICategory>;
+
+        state.category = category;
+      }
+
+      if (action.payload?.instructor) {
+        const instructor = action.payload.instructor as DraftEntity<IUser>;
+
+        state.instructor = instructor;
+      }
+
+      if (action.payload?.information) {
+        const info = action.payload.information as DraftEntity<Information>;
+
+        state.information = action.payload
+          .information as DraftEntity<Information>;
+
+        state.tags = info.tags;
       }
     }
   });
@@ -176,10 +209,14 @@ const reducer = createReducer(initialState, (builder) => {
    * @param {Object} action - The action object, used to pass any additional data if needed.
    */
   builder.addCase(setNewModule, (state, action) => {
+    const id = state.modules.length + 1;
+
+    const title = action.payload;
+
     state.modules.push({
       ...defaultModule,
-      id: state.modules.length + 1,
-      title: action.payload,
+      id,
+      title,
     });
   });
 
@@ -216,7 +253,10 @@ const reducer = createReducer(initialState, (builder) => {
    * @param {Object} state - The current state of the reducer.
    */
   builder.addCase(setEditorProperty, (state, action) => {
-    if (action.payload.kind.type === "SimpleSelection") {
+    if (
+      action.payload.kind.type === "SimpleSelection" ||
+      action.payload.kind.type === "Listening"
+    ) {
       const edit = action.payload.data;
 
       const { index } = action.payload;
@@ -236,7 +276,10 @@ const reducer = createReducer(initialState, (builder) => {
    * @param {Object} state - The current state of the reducer.
    */
   builder.addCase(setAnswerElement, (state, action) => {
-    if (action.payload.type === "SimpleSelection") {
+    if (
+      action.payload.type === "SimpleSelection" ||
+      action.payload.type === "Listening"
+    ) {
       const { index, value } = action.payload;
 
       state.editor[index].answers.push({
@@ -251,7 +294,10 @@ const reducer = createReducer(initialState, (builder) => {
    * @param {Object} state - The current state of the reducer.
    */
   builder.addCase(setDeleteAnswer, (state, action) => {
-    if (action.payload.type === "SimpleSelection") {
+    if (
+      action.payload.type === "SimpleSelection" ||
+      action.payload.type === "Listening"
+    ) {
       const { index, value } = action.payload;
 
       state.editor[index].answers = state.editor[index].answers.filter(
@@ -319,7 +365,10 @@ const reducer = createReducer(initialState, (builder) => {
    * Once compiled or inserted here we'll go all logic.
    */
   builder.addCase(setCompileEditor, (state, action) => {
-    if (action.payload.kind.type === "SimpleSelection") {
+    if (
+      action.payload.kind.type === "SimpleSelection" ||
+      action.payload.kind.type === "Listening"
+    ) {
       const { index, data } = action.payload;
 
       state.editor[index] = {

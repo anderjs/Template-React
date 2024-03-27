@@ -13,9 +13,9 @@ import { IEditorContext } from "../schema";
 // - Context Callback
 import {
   CallbackValue,
-  DeleteAnswerCallback,
-  DragAndDropElements,
   PushAnswerCallback,
+  DragAndDropElements,
+  DeleteAnswerCallback,
 } from "../../context/EditorContext";
 
 export const selectCategory = createAction(

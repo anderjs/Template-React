@@ -20,6 +20,7 @@ import { IUser, Role } from "@learlifyweb/providers.schema";
 import { request } from "@views/Admin/api/requests";
 import { InputSwitch } from "primereact/inputswitch";
 import { Fade } from "react-awesome-reveal";
+import { StyledDropdown } from "@styles";
 
 interface Props {
   value?: IUser;
@@ -39,27 +40,14 @@ const Instructor: React.FC<Props> = ({
   const message = React.useRef<Toast>();
 
   const instructors = useQuery({
-    enabled: false,
     queryKey: ["instructor"],
     queryFn: http<IUser[]>({ token }, request.users, {
       query: {
         role: Role.INSTRUCTOR,
       },
     }),
-    onSuccess: () => {
-      if (isUndefined(value)) {
-        return message?.current?.show({
-          sticky: true,
-          severity: "info",
-          detail: "Selecciona un instructor disponible",
-        });
-      }
-    },
+    refetchOnWindowFocus: false,
   });
-
-  React.useEffect(() => {
-    instructors.refetch();
-  }, []);
 
   React.useEffect(() => {
     if (interactive) {
@@ -68,16 +56,15 @@ const Instructor: React.FC<Props> = ({
   }, [interactive]);
 
   const handleSelectInstructor = (e: DropdownChangeEvent) => {
-    onSelect?.(e.value);
+    onSelect?.(e.target.value);
   };
 
   const ValueTemplate = (instructor: IUser) => {
-    return <>Instructor {instructor?.first_name}</>;
+    return <span>Instructor {instructor?.first_name}</span>;
   };
 
   return (
     <>
-      <Toast ref={message} />
       <Loading status={instructors.isLoading || instructors.isRefetching}>
         <StepperTitle>Instructor:</StepperTitle>
         <br />
@@ -107,15 +94,15 @@ const Instructor: React.FC<Props> = ({
           </Fade>
         ) : (
           <Fade delay={0.5}>
-            <Dropdown
+            <StyledDropdown
               clearIcon
               value={value}
-              optionValue="first_name"
+              panelClassName="p-0"
               optionLabel="first_name"
               options={instructors?.data?.response}
               placeholder="Selecciona un instructor"
               onChange={handleSelectInstructor}
-              valueTemplate={value ? ValueTemplate : undefined}
+              valueTemplate={value ? ValueTemplate(value) : undefined}
             />
           </Fade>
         )}
@@ -124,4 +111,4 @@ const Instructor: React.FC<Props> = ({
   );
 };
 
-export default Instructor;
+export default React.memo(Instructor);

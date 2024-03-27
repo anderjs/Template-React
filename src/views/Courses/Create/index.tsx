@@ -18,7 +18,7 @@ import { MenuItem } from "primereact/menuitem";
 import { Context } from "../styles";
 
 // - State
-import { initialState, reducer, Step } from "./state";
+import { DraftEntity, initialState, reducer, Step } from "./state";
 import {
   backStep,
   nextStep,
@@ -47,10 +47,10 @@ import { api } from "../courses.service";
 import { IDraft } from "../courses.interface";
 
 // - Stepper
-import Course from "./components/Course";
 import Modules from "./components/Modules";
 import Categories from "./components/Categories";
 import Instructor from "./components/Instructor";
+import Information from "./components/Information";
 import { Controllers } from "./components/Controllers";
 
 // - Schema
@@ -68,22 +68,21 @@ import { Loading } from "@learlifyweb/providers.loading";
 import { EditorContext, EditorContextProps } from "./context/EditorContext";
 // - @styles
 import { TextLabel } from "@styles";
+import { Information as Info } from "@common/types";
 
 const CreateCourse: React.FC = () => {
   const { token } = useHost();
 
   const [state, dispatch] = React.useReducer(reducer, initialState);
 
-  const { control, getValues, setValue } = useForm<ICourse>();
+  const { control, getValues, setValue, reset } = useForm<ICourse>();
 
   const { id } = useParams();
 
-  const title = useWatch({
+  const [title, description] = useWatch({
     control,
-    name: "title",
+    name: ["title", "description"],
   });
-
-  useDocumentTitle("Learlify - Courses");
 
   const draft = useQuery({
     queryKey: ["draft"],
@@ -93,6 +92,13 @@ const CreateCourse: React.FC = () => {
     }),
     onSuccess: ({ response }) => {
       dispatch(setDraftState(response));
+
+      const info = response.information as Info;
+
+      reset({
+        title: info?.title,
+        description: info?.description,
+      });
     },
     onError: (err: AxiosError) => {
       switch (err.response.status) {
@@ -128,6 +134,8 @@ const CreateCourse: React.FC = () => {
     },
   });
 
+  useDocumentTitle("Learlify - Courses");
+
   React.useEffect(() => {
     window.scrollTo({
       top: 0,
@@ -137,18 +145,10 @@ const CreateCourse: React.FC = () => {
 
   /**
    * @description
-   * Handle click back.
-   */
-  const handleBackStep = () => {
-    return dispatch(backStep());
-  };
-
-  /**
-   * @description
    * Search for every instance of draft to update.
    * If one entity contain "update", it will be updated.
    */
-  const update = () => {
+  const update = (action: "back" | "next") => {
     /**
      * @description
      * Omitting unnecesary keys.
@@ -183,14 +183,32 @@ const CreateCourse: React.FC = () => {
 
     /**
      * @description
-     * Avoiding unnecesary update call.
+     * Check if can be updated.
      */
-    if (state.category?.update || state.instructor?.update) {
-      updateDraft.mutate({
-        ...args,
-        active: state.active + 1,
-      });
-    }
+    args.information = {
+      title,
+      description,
+      tags: state.tags,
+    };
+
+    /**
+     * @description
+     * Check if is back or not.
+     */
+    updateDraft.mutate({
+      ...args,
+      active: action === "back" ? state.active - 1 : state.active + 1,
+    });
+  };
+
+  /**
+   * @description
+   * Handle click back.
+   */
+  const handleBackStep = () => {
+    update("back");
+
+    return dispatch(backStep());
   };
 
   /**
@@ -198,7 +216,7 @@ const CreateCourse: React.FC = () => {
    * Handle click next.
    */
   const handleNextStep = () => {
-    update();
+    update("next");
 
     return dispatch(nextStep());
   };
@@ -457,7 +475,7 @@ const CreateCourse: React.FC = () => {
             )}
             {state.active === Step.COURSES && (
               <Fade delay={0.1}>
-                <Course
+                <Information
                   title={title}
                   tags={state.tags}
                   control={control}

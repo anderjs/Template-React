@@ -151,8 +151,8 @@ const Courses: React.FC = () => {
         <TableTreeStyled
           paginator
           rows={10}
-          showGridlines
           value={nodes}
+          showGridlines
           resizableColumns
           paginatorLeft={paginatorLeft}
           paginatorRight={paginatorRight}
@@ -162,7 +162,8 @@ const Courses: React.FC = () => {
           emptyMessage="No hay cursos disponibles"
         >
           <Column header="Draft" field="_id" />
-          <Column header="Estado" field="status" />
+          <Column header="Status" field="status" />
+          <Column header="Created At" field="created_at" />
           <Column body={ActionTemplateBody} />
         </TableTreeStyled>
       </Fade>

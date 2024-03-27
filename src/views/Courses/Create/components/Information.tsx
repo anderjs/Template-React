@@ -15,6 +15,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 // - Prime API
 import { Editor } from "primereact/editor";
 import { InputText } from "primereact/inputtext";
+import { ChipRemoveEvent } from "primereact/chip";
 
 // - Componets
 import EnrichmentButton from "@components/EnrichmentButton";
@@ -27,9 +28,12 @@ import { MarginY } from "@views/Coupon/coupon.styles";
 import { generateFreshColor } from "@views/Categories/categories.utils";
 
 // - Schemas
+import { Cols, TextLabel } from "@styles";
 import { ICategory, ICourse, ITags } from "@learlifyweb/providers.schema";
+
+// - Service
 import { api } from "@views/Categories/categories.service";
-import { ChipRemoveEvent } from "primereact/chip";
+import { FormElement } from "@views/Settings/settings.styles";
 
 interface Props {
   title: string;
@@ -41,8 +45,8 @@ interface Props {
   onEnrichDescription: (enrichment: string) => void;
 }
 
-const Course: React.FC<Props> = (props) => {
-  const { control, reset, setValue } = useForm<ITags>();
+const Information: React.FC<Props> = (props) => {
+  const { control, reset } = useForm<ITags>();
 
   const { token } = useHost();
 
@@ -94,42 +98,41 @@ const Course: React.FC<Props> = (props) => {
 
   return (
     <>
-      <div className="flex justify-evenly p-1 m-2">
+      <Cols>
         <div>
           <StepperTitle>Información del Curso</StepperTitle>
           <MarginY />
-          <StepperTitle>Título</StepperTitle>
           <Controller
             name="title"
             control={props?.control}
             render={({ field }) => (
-              <div>
+              <FormElement>
+                <TextLabel htmlFor="title">Title</TextLabel>
                 <InputText
+                  id="title"
                   className={size}
                   value={field.value}
                   placeholder="IELTS - English"
                   onChange={(e) => field.onChange(e.target.value)}
                 />
-              </div>
+              </FormElement>
             )}
           />
-          <EnrichmentButton />
           <MarginY />
-          <div className={size}>
-            <StepperTitle>Descripción</StepperTitle>
-          </div>
           <Controller
             name="description"
             control={props?.control}
             render={({ field }) => (
-              <div>
+              <FormElement>
+                <TextLabel htmlFor="description">Description</TextLabel>
                 <Editor
+                  id="description"
                   value={field.value}
                   className="h-[280px]"
                   placeholder="Descripción del curso de IELTS"
                   onTextChange={(e) => field.onChange(e.htmlValue)}
                 />
-              </div>
+              </FormElement>
             )}
           />
           <MarginY />
@@ -140,15 +143,16 @@ const Course: React.FC<Props> = (props) => {
           />
         </div>
         <div>
-          <StepperTitle>Marketing</StepperTitle>
+          <StepperTitle>Marketing & Strategies</StepperTitle>
           <MarginY />
-          <StepperTitle>Tags</StepperTitle>
           <Controller
             name="name"
             control={control}
             render={({ field }) => (
-              <div>
+              <FormElement>
+                <TextLabel htmlFor="tags">Tags</TextLabel>
                 <InputText
+                  id="tags"
                   name="tags"
                   className={size}
                   onKeyDown={(e) => handleKeyDown(e, field)}
@@ -156,30 +160,32 @@ const Course: React.FC<Props> = (props) => {
                   placeholder="Marketing"
                   value={field.value}
                 />
-                <br />
                 <div className="flex justify-start items-center gap-2">
-                  <FontAwesomeIcon icon="circle-exclamation" />
-                  <small>Máximo 10 tags</small>
+                  <FontAwesomeIcon
+                    className="text-ember-500"
+                    icon="circle-exclamation"
+                  />
+                  <small className="font-light text-sm">Máximo 10 tags</small>
                 </div>
-              </div>
+              </FormElement>
             )}
           />
           <MarginY />
           <Tags>
             {props?.tags?.map((tag, index) => (
               <Tag
+                removable
                 key={tag.name}
                 label={tag.name}
                 color={tag.color}
-                removable
                 onRemove={(e) => handleRemoveTag(e, index)}
               />
             ))}
           </Tags>
         </div>
-      </div>
+      </Cols>
     </>
   );
 };
 
-export default React.memo(Course);
+export default React.memo(Information);

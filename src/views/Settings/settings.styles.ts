@@ -15,6 +15,12 @@ export const FormControl = tw.form`
   gap-y-2
 `;
 
+export const FormElement = tw.div`
+  flex
+  flex-col
+  gap-y-2
+`;
+
 export const CheckboxContainer = tw.div`
   flex
   justify-start

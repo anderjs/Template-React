@@ -1,10 +1,8 @@
 import React from "react";
 import { v4 } from "uuid";
-import styled from "styled-components";
 import { useToggle } from "usehooks-ts";
 import { classNames } from "primereact/utils";
 import { useForm, Controller, useWatch } from "react-hook-form";
-import { loadLanguage } from "@uiw/codemirror-extensions-langs";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   Draggable,
@@ -12,7 +10,8 @@ import {
   DropResult,
   DragDropContext,
 } from "react-beautiful-dnd";
-import CodeMirror, { ReactCodeMirrorProps } from "@uiw/react-codemirror";
+import styled from "styled-components";
+import CodeMirror from "@uiw/react-codemirror";
 
 // - Styled
 import { Card } from "primereact/card";
@@ -45,14 +44,14 @@ import { beautify } from "@utils";
 
 // - Schema
 import { ListeningProps } from "@learlifyweb/components.ui.listening";
-import {
-  SimpleSelectionProps,
-  AbstractSimpleSelection,
-} from "./SelectionSimpleTypes";
+import { AbstractSimpleSelection } from "./SelectionSimpleTypes";
 
 // - Schema
-import { answerSchema, selectionSchema } from "./schemas/SelectionSimpleSchema";
 import { IAnswer } from "@learlifyweb/providers.schema";
+import { listeningSchema } from "./schemas/ListeningSchema";
+
+// - Common
+import { ext, setup } from "@common";
 
 export type ListeningEditorProps = Pick<
   ListeningProps,
@@ -138,12 +137,12 @@ const ListeningEditor: React.FC<ListeningEditorProps> = ({
       e?.preventDefault();
 
       try {
-        answerSchema.parse(input.current.value);
+        listeningSchema.parse(input.current.value);
 
         editor.onAddNewAnswer({
           index: index,
           value: input.current.value,
-          type: "SimpleSelection",
+          type: "Listening",
         });
       } catch (e) {
         message?.current?.show({
@@ -203,7 +202,7 @@ const ListeningEditor: React.FC<ListeningEditorProps> = ({
   const handleClickDeleteAnswer = React.useCallback(
     (value: IAnswer, index: number) => {
       editor.onDeleteAnswer({
-        type: "SimpleSelection",
+        type: "Listening",
         index: index,
         value,
       });
@@ -224,7 +223,7 @@ const ListeningEditor: React.FC<ListeningEditorProps> = ({
    * Compile syntax for CodeMirror instance.
    */
   const handleCompileCodeMirror = (output: AbstractSimpleSelection) => {
-    compile(output.code, selectionSchema);
+    compile(output.code, listeningSchema);
   };
 
   /**
@@ -238,7 +237,7 @@ const ListeningEditor: React.FC<ListeningEditorProps> = ({
         correct: correctRef,
         question: questionRef,
       },
-      selectionSchema
+      listeningSchema
     );
   };
 
@@ -339,19 +338,19 @@ const ListeningEditor: React.FC<ListeningEditorProps> = ({
         <Fade delay={0.1}>
           <Card className="flex flex-col" title="Selección Simple">
             <p className="p-0 text-gray-400">
-              En selección simple (JSON) podrás editar el template del ejercicio
-              sin necesidad de modificar nada en GUI. Utiliza los parámetros
+              En Listening (JSON) podrás editar el template del ejercicio sin
+              necesidad de modificar nada en GUI. Utiliza los parámetros
               seleccionados para poder adjuntar todo lo que desees.
             </p>
             <Margin>
               <hr />
             </Margin>
             <a
-              href="https://bit.cloud/learlifyweb/components/ui/selection"
+              href="https://bit.cloud/learlifyweb/components/ui/listening"
               target="_blank"
               className="text-indigo-500 font-bold"
             >
-              Ver documentación de (Selection Simple)
+              Ver documentación de (Listening)
             </a>
             <MarginY />
             <form onSubmit={code.handleSubmit(handleCompileCodeMirror)}>
@@ -728,7 +727,6 @@ const ListeningEditor: React.FC<ListeningEditorProps> = ({
             </DragDropContext>
           )}
           <MarginY />
-          <MarginY />
           <div className={styles.flex}>
             <Button
               severity="success"
@@ -749,16 +747,6 @@ const ListeningEditor: React.FC<ListeningEditorProps> = ({
       </Fade>
     </>
   );
-};
-
-const ext = [loadLanguage("json")];
-
-const setup: ReactCodeMirrorProps["basicSetup"] = {
-  highlightActiveLineGutter: true,
-  highlightActiveLine: true,
-  syntaxHighlighting: true,
-  lineNumbers: true,
-  lintKeymap: true,
 };
 
 const SpacingX = styled.div`

@@ -8,4 +8,5 @@ export interface IDraft {
   category: object;
   instructor: object;
   created_at: Date;
+  information: object;
 }

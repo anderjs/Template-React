@@ -9,12 +9,6 @@ import { library } from "@fortawesome/fontawesome-svg-core";
 // - Root Component
 import Root from "./root.component";
 
-// - Code Mirror
-
-/**
- * @description
- * @see https://uiwjs.github.io/react-codemirror/#/extensions/languages
- */
 loadLanguage("json");
 
 langs.json();
