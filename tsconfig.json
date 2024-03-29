@@ -9,7 +9,7 @@
       "@*": ["./src/*"]
     }
   },
-  "files": ["src/learlify-dashboard.tsx"],
+  "files": ["src/learlify-template.tsx"],
   "include": ["src/**/*"],
   "exclude": ["src/**/*.test*", "node_modules"]
 }

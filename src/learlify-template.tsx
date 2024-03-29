@@ -1,17 +1,12 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import singleSpaReact from "single-spa-react";
-import { langs, loadLanguage } from "@uiw/codemirror-extensions-langs";
 
 import { fas } from "@fortawesome/free-solid-svg-icons";
 import { library } from "@fortawesome/fontawesome-svg-core";
 
 // - Root Component
 import Root from "./root.component";
-
-loadLanguage("json");
-
-langs.json();
 
 library.add(fas);
 

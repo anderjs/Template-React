@@ -7,16 +7,16 @@ dotenv.config({
   path: ".env.development",
 });
 
-function convertToJsonToTs(json) {
+function convertToJsonToTs(json: object) {
   let tsCode = "export const alias = {\n";
 
   Object.keys(json)
     .map((key) => {
       if (key === "en") {
         Object.entries(json[key]).forEach(([k, v]) => {
-          const KE = k as string;
+          const key = k as string;
 
-          tsCode += `  ['${KE.toLowerCase()}']: "${KE.toLowerCase()}", \n`;
+          tsCode += `  ['${key.toLowerCase()}']: "${key.toLowerCase()}", \n`;
         });
       }
     })
@@ -47,7 +47,7 @@ const createSrcLang = async () => {
 
   const src = path.join(__dirname, "src", "lang", "index.ts");
 
-  fs.writeFile(src, convertToJsonToTs(lang.data), (err) => {
+  fs.writeFile(src, convertToJsonToTs(lang.data), () => {
     console.log({ fileGenerated: true });
   });
 };

@@ -32,7 +32,7 @@ module.exports = (webpackConfigEnv, argv) => {
   const defaultConfig = singleSpaDefaults({
     argv,
     orgName: "learlify",
-    projectName: "dashboard",
+    projectName: "template",
     webpackConfigEnv,
   });
 
@@ -55,7 +55,7 @@ module.exports = (webpackConfigEnv, argv) => {
         "process.env": JSON.stringify(process.env),
       }),
       new ModuleFederationPlugin({
-        name: "dashboard",
+        name: "template",
         filename: "remoteEntry.js",
         remotes: {
           components: "components@http://localhost:8080/remoteEntry.js",

@@ -1,7 +1,7 @@
 {
-  "name": "@learlify/dashboard",
+  "name": "@learlify/template",
   "scripts": {
-    "start": "cross-env NODE_ENV=development webpack serve --port 9004 --env development",
+    "start": "cross-env NODE_ENV=development webpack serve --port 9005 --env development",
     "start:standalone": "webpack serve --env standalone",
     "build": "concurrently npm:build:*",
     "build:webpack": "webpack --mode=production",
@@ -85,8 +85,6 @@
     "@types/react-dom": "^17.0.9",
     "@types/systemjs": "^6.1.1",
     "@types/webpack-env": "^1.16.2",
-    "@uiw/codemirror-extensions-langs": "^4.21.21",
-    "@uiw/react-codemirror": "^4.21.21",
     "axios": "^1.6.0",
     "i18next": "^23.6.0",
     "i18next-browser-languagedetector": "^7.1.0",
@@ -100,7 +98,6 @@
     "radash": "^12.1.0",
     "react": "^17.0.2",
     "react-awesome-reveal": "^4.2.7",
-    "react-beautiful-dnd": "^13.1.1",
     "react-dom": "^17.0.2",
     "react-hook-form": "^7.48.2",
     "react-i18next": "^13.3.1",
@@ -112,7 +109,6 @@
     "tailwindcss-classnames": "^3.1.0",
     "usehooks-ts": "^3.0.1",
     "uuid": "^9.0.1",
-    "video-react": "^0.16.0",
     "zod": "^3.22.4"
   },
   "types": "dist/learlify-dashboard.d.ts"
