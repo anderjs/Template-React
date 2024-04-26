@@ -1,32 +1,9 @@
 const { merge } = require("webpack-merge");
-const { DefinePlugin } = require("webpack");
 const { ModuleFederationPlugin } = require("webpack").container;
 const TsconfigPathsPlugin = require("tsconfig-paths-webpack-plugin");
 const singleSpaDefaults = require("webpack-config-single-spa-react-ts");
-
-const path = require("path");
-
-const dotenv = require("dotenv");
-
-const getEnvPath = () => {
-  switch (process.env.NODE_ENV) {
-    case "production":
-      return path.resolve(__dirname, ".env.production");
-
-    case "staging":
-      return path.resolve(__dirname, ".env.staging");
-
-    case "development":
-      return path.resolve(__dirname, ".env.development");
-
-    default:
-      return path.resolve(__dirname, ".env");
-  }
-};
-
-dotenv.config({
-  path: getEnvPath(),
-});
+const DotenvWebpackPlugin = require("dotenv-webpack");
+const loadEnv = require("./env");
 
 module.exports = (webpackConfigEnv, argv) => {
   const defaultConfig = singleSpaDefaults({
@@ -51,8 +28,9 @@ module.exports = (webpackConfigEnv, argv) => {
       plugins: [new TsconfigPathsPlugin()],
     },
     plugins: [
-      new DefinePlugin({
-        "process.env": JSON.stringify(process.env),
+      new DotenvWebpackPlugin({
+        safe: true,
+        path: loadEnv(process.env),
       }),
       new ModuleFederationPlugin({
         name: "template",

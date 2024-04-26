@@ -5,7 +5,6 @@
     "declarationDir": "dist",
     "baseUrl": ".",
     "paths": {
-      "*": ["./shared/*"],
       "@*": ["./src/*"]
     }
   },
